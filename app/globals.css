@@ -2,26 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================================
+   Chomp Typography System
+   - Vazirmatn (variable) for body
+   - Peyda (optional, see app/layout.tsx) for display, falls back to Vazirmatn
+   - Persian-first, mobile-first, fluid scale
+   ========================================================================= */
+
 :root {
   --background: #fff8f2;
   --foreground: #171717;
+
+  /* Family aliases so components can reference one stable token. */
+  --font-body: var(--font-vazir);
+  --font-display: var(--font-peyda, var(--font-vazir));
 }
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Persian text reads better with a slightly looser default leading. */
+  line-height: 1.7;
+  font-family:
+    var(--font-body),
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Tahoma,
+    "Geeza Pro",
+    Arial,
+    sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-feature-settings: "ss01", "ss02";
+  font-feature-settings: "ss01", "ss02", "ss03", "cv01", "cv11";
+  font-variant-ligatures: common-ligatures contextual;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* Prevent horizontal scroll caused by Persian quotation marks etc. */
+  overflow-x: hidden;
 }
 
-/* RTL number digit fix */
-.tabular {
+/* Headings — bold, premium, tight tracking, balanced wrapping. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.heading {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+h1,
+.h1 {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+/* Tabular numerals — used for prices, counts, phone numbers, qty. */
+.tabular,
+.tabular-nums {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Price treatment — strong, tight, tabular. */
+.price {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Typographic helpers. */
+.text-balance {
+  text-wrap: balance;
+}
+.text-pretty {
+  text-wrap: pretty;
 }
 
 /* Hide scrollbar for horizontal scrollers */
@@ -35,7 +102,9 @@ body {
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-bold transition-all duration-200 active:scale-[.97] disabled:opacity-50 disabled:cursor-not-allowed select-none;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-bold text-[0.95rem] leading-none transition-all duration-200 active:scale-[.97] disabled:opacity-50 disabled:cursor-not-allowed select-none;
+    font-family: var(--font-display), system-ui, sans-serif;
+    letter-spacing: -0.01em;
   }
   .btn-primary {
     @apply btn bg-brand-500 text-white shadow-glow hover:bg-brand-600;
@@ -47,13 +116,19 @@ body {
     @apply btn border-2 border-brand-500 text-brand-600 hover:bg-brand-50;
   }
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium bg-brand-50 text-brand-700;
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-brand-50 text-brand-700;
+    letter-spacing: 0;
   }
   .container-x {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
   .heading {
     @apply font-display tracking-tight;
+  }
+  /* Reusable scroll containers inside drawers / modals. */
+  .drawer-scroll {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -72,4 +147,16 @@ body {
   outline: 2px solid #f56a16;
   outline-offset: 2px;
   border-radius: 8px;
+}
+
+/* Respect users who reduce motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

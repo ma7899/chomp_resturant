@@ -5,11 +5,62 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 
+/**
+ * Body / content font — Vazirmatn (variable axis, 100–900).
+ * Loaded via `next/font/google` so it is self-hosted at build time,
+ * preloaded, and inlined as `font-display: swap` to avoid CLS.
+ *
+ * `adjustFontFallback: "Arial"` injects a metrics-matched fallback so
+ * the layout does not shift when the web font finishes loading.
+ */
 const vazir = Vazirmatn({
   subsets: ["arabic", "latin"],
   display: "swap",
   variable: "--font-vazir",
+  preload: true,
+  fallback: [
+    "system-ui",
+    "-apple-system",
+    "Segoe UI",
+    "Tahoma",
+    "Geeza Pro",
+    "Arial",
+    "sans-serif",
+  ],
 });
+
+/**
+ * Display / heading font — Peyda.
+ *
+ * Peyda is a commercial Persian display family by Fontiran and is NOT
+ * distributed via Google Fonts or npm. To enable it:
+ *
+ *   1. Drop the woff2 files into `public/fonts/peyda/`:
+ *        Peyda-Regular.woff2, Peyda-Medium.woff2,
+ *        Peyda-SemiBold.woff2, Peyda-Bold.woff2, Peyda-Black.woff2
+ *   2. Uncomment the `localFont` block below.
+ *   3. Add `${peyda.variable}` to the `<html>` className.
+ *
+ * Until then the design system gracefully degrades to Vazirmatn at
+ * heavier weights via the CSS variable cascade defined in tailwind.config.
+ *
+ * Example:
+ *
+ *   import localFont from "next/font/local";
+ *   const peyda = localFont({
+ *     src: [
+ *       { path: "../public/fonts/peyda/Peyda-Regular.woff2",  weight: "400", style: "normal" },
+ *       { path: "../public/fonts/peyda/Peyda-Medium.woff2",   weight: "500", style: "normal" },
+ *       { path: "../public/fonts/peyda/Peyda-SemiBold.woff2", weight: "600", style: "normal" },
+ *       { path: "../public/fonts/peyda/Peyda-Bold.woff2",     weight: "700", style: "normal" },
+ *       { path: "../public/fonts/peyda/Peyda-Black.woff2",    weight: "900", style: "normal" },
+ *     ],
+ *     variable: "--font-peyda",
+ *     display: "swap",
+ *     preload: true,
+ *     fallback: ["system-ui", "Tahoma", "Arial", "sans-serif"],
+ *   });
+ */
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://chomp-sandwich.example"),
@@ -59,8 +110,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fa" dir="rtl" className={vazir.variable}>
-      <body className="min-h-screen flex flex-col bg-[var(--background)]">
+    <html
+      lang="fa"
+      dir="rtl"
+      className={vazir.variable}
+      suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col bg-[var(--background)] font-sans antialiased text-ink-900">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

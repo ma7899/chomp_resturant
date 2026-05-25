@@ -22,16 +22,19 @@ export default function SandwichCard({ s }: { s: Sandwich }) {
         )}
       </div>
       <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-bold text-lg">{s.name}</h3>
-        <p className="text-sm text-brand-600 mt-1">{s.tagline}</p>
+        <h3 className="font-display font-extrabold text-lg tracking-tight">
+          {s.name}
+        </h3>
+        <p className="text-sm font-medium text-brand-600 mt-1">{s.tagline}</p>
         <p className="text-xs text-ink-500 mt-3 line-clamp-2 leading-6">
           {s.description}
         </p>
         <div className="mt-auto pt-5 flex items-center justify-between">
           <div>
             <span className="text-xs text-ink-400">از</span>
-            <div className="font-bold text-ink-900 tabular">
-              {formatPrice(s.basePrice)} <span className="text-xs">تومان</span>
+            <div className="price text-lg text-ink-900">
+              {formatPrice(s.basePrice)}{" "}
+              <span className="text-xs font-medium text-ink-500">تومان</span>
             </div>
           </div>
           <Link

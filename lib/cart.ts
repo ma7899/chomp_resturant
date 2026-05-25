@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { ALL_TOPPINGS, getSandwich, getTopping } from "./menu";
+import { safeUUID } from "./uuid";
 
 export type CartItem = {
   id: string; // unique line id
@@ -33,7 +34,7 @@ export const useCart = create<CartState>()(
         set((s) => ({
           items: [
             ...s.items,
-            { ...item, id: crypto.randomUUID(), qty: Math.max(1, item.qty) },
+            { ...item, id: safeUUID(), qty: Math.max(1, item.qty) },
           ],
           isOpen: true,
         })),

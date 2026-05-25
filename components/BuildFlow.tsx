@@ -209,9 +209,9 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
         <div className="container-x py-3 flex items-center justify-between gap-3">
           <div>
             <div className="text-[11px] text-ink-400">جمع کل</div>
-            <div className="font-black tabular text-lg">
+            <div className="price text-xl text-ink-900">
               {formatPrice(total)}
-              <span className="text-xs font-normal"> تومان</span>
+              <span className="text-xs font-medium text-ink-500"> تومان</span>
             </div>
           </div>
           <div className="flex gap-2">
@@ -298,7 +298,7 @@ function BaseStep({
             <div className="p-5">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold">{s.name}</h3>
-                <span className="text-brand-600 font-bold tabular text-sm">
+                <span className="price text-brand-600 text-sm">
                   {formatPrice(s.basePrice)} T
                 </span>
               </div>
@@ -352,9 +352,11 @@ function ToppingsGrid({
                 {active ? <Check size={14} /> : <Plus size={14} />}
               </span>
             </div>
-            <div className="mt-3 font-bold text-brand-600 tabular text-sm">
+            <div className="mt-3 price text-brand-600 text-sm">
               + {formatPrice(t.price)}{" "}
-              <span className="text-[10px] text-ink-400">تومان</span>
+              <span className="text-[10px] font-medium text-ink-400">
+                تومان
+              </span>
             </div>
           </button>
         );
@@ -528,8 +530,9 @@ function SummaryCard({
 
             <div className="border-t border-ink-100 pt-3 flex items-center justify-between">
               <span className="text-sm">جمع کل</span>
-              <span className="font-black text-lg tabular text-brand-700">
-                {formatPrice(total)} <span className="text-xs">تومان</span>
+              <span className="price text-2xl text-brand-700">
+                {formatPrice(total)}{" "}
+                <span className="text-xs font-medium text-ink-500">تومان</span>
               </span>
             </div>
 

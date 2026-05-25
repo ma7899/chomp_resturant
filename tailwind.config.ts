@@ -1,5 +1,19 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * Typography scale — fluid, mobile-first.
+ * Each step uses `clamp(min, preferred, max)` so type scales smoothly
+ * from 360px phones up to large desktops without media-query stair-steps.
+ * Line-heights and letter-spacing are tuned for Persian text
+ * (Persian glyphs are taller than Latin so we use a slightly more
+ * generous default line-height and a near-zero tracking).
+ */
+const fluid = (minRem: number, maxRem: number, minVw = 360, maxVw = 1280) => {
+  const slope = ((maxRem - minRem) * 16) / (maxVw - minVw);
+  const intercept = minRem - (slope * minVw) / 16;
+  return `clamp(${minRem}rem, ${intercept.toFixed(4)}rem + ${(slope * 100).toFixed(4)}vw, ${maxRem}rem)`;
+};
+
 const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
@@ -37,8 +51,71 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-vazir)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        sans: [
+          "var(--font-vazir)",
+          "system-ui",
+          "-apple-system",
+          "Segoe UI",
+          "Tahoma",
+          "Geeza Pro",
+          "Arial",
+          "sans-serif",
+        ],
+        display: [
+          "var(--font-peyda)",
+          "var(--font-vazir)",
+          "system-ui",
+          "-apple-system",
+          "Segoe UI",
+          "Tahoma",
+          "Arial",
+          "sans-serif",
+        ],
+      },
+      // Fluid type ramp [size, { lineHeight, letterSpacing }]
+      fontSize: {
+        xs: [fluid(0.75, 0.8125), { lineHeight: "1.6", letterSpacing: "0" }],
+        sm: [fluid(0.8125, 0.9375), { lineHeight: "1.65", letterSpacing: "0" }],
+        base: [
+          fluid(0.9375, 1.0625),
+          { lineHeight: "1.75", letterSpacing: "0" },
+        ],
+        lg: [
+          fluid(1.0625, 1.1875),
+          { lineHeight: "1.7", letterSpacing: "-0.005em" },
+        ],
+        xl: [
+          fluid(1.1875, 1.375),
+          { lineHeight: "1.55", letterSpacing: "-0.01em" },
+        ],
+        "2xl": [
+          fluid(1.375, 1.75),
+          { lineHeight: "1.35", letterSpacing: "-0.015em" },
+        ],
+        "3xl": [
+          fluid(1.625, 2.25),
+          { lineHeight: "1.25", letterSpacing: "-0.02em" },
+        ],
+        "4xl": [
+          fluid(1.875, 2.875),
+          { lineHeight: "1.15", letterSpacing: "-0.025em" },
+        ],
+        "5xl": [
+          fluid(2.25, 3.5),
+          { lineHeight: "1.1", letterSpacing: "-0.03em" },
+        ],
+        "6xl": [
+          fluid(2.625, 4.25),
+          { lineHeight: "1.05", letterSpacing: "-0.035em" },
+        ],
+        "7xl": [fluid(3.125, 5), { lineHeight: "1", letterSpacing: "-0.04em" }],
+      },
+      letterSpacing: {
+        tightest: "-0.04em",
+        tighter: "-0.025em",
+        tight: "-0.015em",
+        normal: "0",
+        wide: "0.01em",
       },
       boxShadow: {
         glow: "0 10px 40px -10px rgba(245,106,22,0.55)",
