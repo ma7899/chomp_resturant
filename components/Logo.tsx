@@ -1,3 +1,11 @@
+import Image from "next/image";
+
+/**
+ * Chomp Sandwich brand logo.
+ *
+ * Drop the raster artwork at `public/images/logo.png` (recommended 512×512,
+ * orange background per brand kit). Both variants render the same asset.
+ */
 export default function Logo({
   className = "",
   variant = "full",
@@ -5,54 +13,20 @@ export default function Logo({
   className?: string;
   variant?: "full" | "mark";
 }) {
-  if (variant === "mark") {
-    return (
-      <svg
-        viewBox="0 0 64 64"
-        className={className}
-        aria-label="Chomp"
-        role="img">
-        <rect width="64" height="64" rx="14" fill="#f56a16" />
-        <text
-          x="50%"
-          y="58%"
-          textAnchor="middle"
-          fontFamily="system-ui, sans-serif"
-          fontWeight="900"
-          fontSize="22"
-          fill="white"
-          letterSpacing="-1">
-          CHOMP
-        </text>
-      </svg>
-    );
-  }
+  const isMark = variant === "mark";
   return (
-    <svg
-      viewBox="0 0 220 80"
-      className={className}
-      aria-label="Chomp Sandwich"
-      role="img">
-      <text
-        x="0"
-        y="48"
-        fontFamily="system-ui, sans-serif"
-        fontWeight="900"
-        fontSize="52"
-        fill="#f56a16"
-        letterSpacing="-2">
-        CHOMP
-      </text>
-      <text
-        x="4"
-        y="70"
-        fontFamily="system-ui, sans-serif"
-        fontWeight="600"
-        fontSize="16"
-        fill="#f56a16"
-        letterSpacing="2">
-        Sandwich
-      </text>
-    </svg>
+    <span
+      className={`inline-flex items-center ${className}`}
+      aria-label="Chomp Sandwich">
+      <Image
+        src="/images/logo.png"
+        alt="Chomp Sandwich"
+        width={256}
+        height={256}
+        priority
+        sizes="(max-width: 768px) 64px, 96px"
+        className={`h-full w-auto object-contain ${isMark ? "rounded-xl" : "rounded-lg"}`}
+      />
+    </span>
   );
 }

@@ -38,8 +38,7 @@ export const SANDWICHES: Sandwich[] = [
       "قارچ",
       "زیتون سبز",
     ],
-    image:
-      "https://images.unsplash.com/photo-1539252554453-80ab65ce3586?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/roastbeef.png",
     badge: "پرفروش",
     hero: true,
   },
@@ -61,8 +60,7 @@ export const SANDWICHES: Sandwich[] = [
       "نخود",
       "زیتون سیاه",
     ],
-    image:
-      "https://images.unsplash.com/photo-1521305916504-4a1121188589?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/turkey.png",
   },
   {
     id: "bacon",
@@ -80,8 +78,7 @@ export const SANDWICHES: Sandwich[] = [
       "خیارشور",
       "فلفل دلمه‌ای رست",
     ],
-    image:
-      "https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/bacon.png",
     badge: "ویژه",
   },
   {
@@ -103,8 +100,7 @@ export const SANDWICHES: Sandwich[] = [
       "پاپریکا",
       "زیتون سیاه",
     ],
-    image:
-      "https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=1200&q=80",
+    image: "/images/chicken.png",
     badge: "اقتصادی",
   },
 ];

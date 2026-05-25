@@ -56,7 +56,7 @@ export default function HomePage() {
             <div className="absolute -inset-6 rounded-full bg-white/20 blur-3xl" />
             <div className="relative aspect-square rounded-[2rem] overflow-hidden shadow-2xl ring-8 ring-white/20">
               <Image
-                src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=1200&q=80"
+                src="/images/roastbeef.png"
                 alt="ساندویچ ویژه چاپ"
                 fill
                 priority
