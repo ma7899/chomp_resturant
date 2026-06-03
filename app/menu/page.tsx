@@ -1,22 +1,24 @@
-import type { Metadata } from "next";
-import SandwichCard from "@/components/SandwichCard";
-import {
-  CHEESES,
-  PROTEINS,
-  SANDWICHES,
-  SAUCES,
-  VEGGIES,
-  formatPrice,
-  type Topping,
-} from "@/lib/menu";
+"use client";
 
-export const metadata: Metadata = {
-  title: "منوی کامل",
-  description:
-    "منوی کامل چامپ: ساندویچ‌های امضایی، پروتئین‌ها، پنیرها، سبزیجات و سس‌های ویژه.",
-};
+import {
+  useCheeses,
+  useProteins,
+  useSandwiches,
+  useSauces,
+  useVeggies,
+  formatPrice,
+} from "@/lib/menu";
+import type { Topping } from "@/lib/types";
+import Link from "next/link";
+import SandwichCard from "@/components/SandwichCard";
 
 export default function MenuPage() {
+  const sandwiches = useSandwiches();
+  const proteins = useProteins();
+  const cheeses = useCheeses();
+  const veggies = useVeggies();
+  const sauces = useSauces();
+
   return (
     <div className="container-x py-10 md:py-16">
       <header className="mb-10 text-center md:text-right">
@@ -31,7 +33,7 @@ export default function MenuPage() {
       <section className="mb-16">
         <h2 className="heading text-2xl font-black mb-6">ساندویچ‌ها</h2>
         <div className="grid gap-5 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {SANDWICHES.map((s) => (
+          {sandwiches.map((s) => (
             <SandwichCard key={s.id} s={s} />
           ))}
         </div>
@@ -39,22 +41,22 @@ export default function MenuPage() {
 
       <ToppingSection
         title="پروتئین‌ها (افزودنی)"
-        items={PROTEINS}
+        items={proteins}
         accent="bg-rose-50 text-rose-700"
       />
       <ToppingSection
         title="پنیرها"
-        items={CHEESES}
+        items={cheeses}
         accent="bg-amber-50 text-amber-700"
       />
       <ToppingSection
         title="سبزیجات و افزودنی‌ها"
-        items={VEGGIES}
+        items={veggies}
         accent="bg-emerald-50 text-emerald-700"
       />
       <ToppingSection
         title="سس‌ها"
-        items={SAUCES}
+        items={sauces}
         accent="bg-orange-50 text-orange-700"
       />
 
@@ -80,8 +82,9 @@ function ToppingSection({
       <h2 className="heading text-2xl font-black mb-5">{title}</h2>
       <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {items.map((t) => (
-          <div
+          <Link
             key={t.id}
+            href={`/toppings/${t.id}`}
             className="rounded-2xl bg-white border border-ink-100 p-4 flex items-center justify-between hover:border-brand-300 hover:shadow-card transition">
             <div>
               <div className="font-medium">{t.name}</div>
@@ -94,7 +97,7 @@ function ToppingSection({
               {formatPrice(t.price)}
               <span className="text-[10px] text-ink-400"> T</span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>

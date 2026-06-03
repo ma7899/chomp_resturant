@@ -12,6 +12,7 @@ const NAV = [
   { href: "/", label: "خانه" },
   { href: "/menu", label: "منو" },
   { href: "/build", label: "ساندویچ خودت رو بساز" },
+  { href: "/taste", label: "ذائقه‌سنج" },
   { href: "/about", label: "درباره ما" },
 ];
 

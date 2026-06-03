@@ -14,15 +14,14 @@ import {
 } from "lucide-react";
 import clsx from "clsx";
 import {
-  ALL_TOPPINGS,
-  CHEESES,
-  PROTEINS,
-  SANDWICHES,
-  SAUCES,
-  VEGGIES,
   formatPrice,
   getSandwich,
   getTopping,
+  useCheeses,
+  useProteins,
+  useSandwiches,
+  useSauces,
+  useVeggies,
   type Sandwich,
   type Topping,
 } from "@/lib/menu";
@@ -46,6 +45,11 @@ const STEPS: { id: StepId; title: string; subtitle: string }[] = [
 export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
   const router = useRouter();
   const addItem = useCart((s) => s.addItem);
+  const proteins = useProteins();
+  const cheeses = useCheeses();
+  const veggies = useVeggies();
+  const sauces = useSauces();
+  const sandwiches = useSandwiches();
   const [stepIdx, setStepIdx] = useState(0);
   const [slug, setSlug] = useState<string | undefined>(initialSlug);
   const [toppings, setToppings] = useState<string[]>([]);
@@ -142,6 +146,7 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
               transition={{ duration: 0.25 }}>
               {step.id === "base" && (
                 <BaseStep
+                  sandwiches={sandwiches}
                   selected={slug}
                   onSelect={(s) => {
                     setSlug(s);
@@ -150,28 +155,28 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
               )}
               {step.id === "protein" && (
                 <ToppingsGrid
-                  items={PROTEINS}
+                  items={proteins}
                   selected={toppings}
                   onToggle={toggleTopping}
                 />
               )}
               {step.id === "cheese" && (
                 <ToppingsGrid
-                  items={CHEESES}
+                  items={cheeses}
                   selected={toppings}
                   onToggle={toggleTopping}
                 />
               )}
               {step.id === "veggie" && (
                 <ToppingsGrid
-                  items={VEGGIES}
+                  items={veggies}
                   selected={toppings}
                   onToggle={toggleTopping}
                 />
               )}
               {step.id === "sauce" && (
                 <ToppingsGrid
-                  items={SAUCES}
+                  items={sauces}
                   selected={toppings}
                   onToggle={toggleTopping}
                 />
@@ -260,15 +265,17 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
 /* ---------- Steps ---------- */
 
 function BaseStep({
+  sandwiches,
   selected,
   onSelect,
 }: {
+  sandwiches: Sandwich[];
   selected?: string;
   onSelect: (slug: string) => void;
 }) {
   return (
     <div className="grid sm:grid-cols-2 gap-4">
-      {SANDWICHES.map((s) => {
+      {sandwiches.map((s) => {
         const active = selected === s.slug;
         return (
           <button

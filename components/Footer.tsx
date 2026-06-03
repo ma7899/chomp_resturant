@@ -44,13 +44,14 @@ export default function Footer() {
           <h3 className="font-bold mb-4">تماس</h3>
           <ul className="space-y-3 text-sm text-ink-300">
             <li className="flex items-center gap-2">
-              <Phone size={16} className="text-brand-400" /> ۰۲۱-۰۰۰۰۰۰۰۰
+              <Phone size={16} className="text-brand-400" /> ۰۹۱۳۴۶۶۷۹۵۹
             </li>
             <li className="flex items-center gap-2">
-              <MapPin size={16} className="text-brand-400" /> آدرس شعبه
+              <MapPin size={16} className="text-brand-400" />
+              اصفهان، شیخ صدوق جنوبی، میدان برج، ساندویچ چامپ
             </li>
             <li className="flex items-center gap-2">
-              <Clock size={16} className="text-brand-400" /> هر روز ۱۲ تا ۲۴
+              <Clock size={16} className="text-brand-400" /> هر روز ۱۷ تا ۲۳:۳۰
             </li>
           </ul>
         </div>

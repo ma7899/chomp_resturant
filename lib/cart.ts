@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { ALL_TOPPINGS, getSandwich, getTopping } from "./menu";
+import { getSandwich, getTopping } from "./menu";
 import { safeUUID } from "./uuid";
 
 export type CartItem = {
@@ -72,5 +72,3 @@ export function cartTotal(items: CartItem[]) {
 export function cartCount(items: CartItem[]) {
   return items.reduce((sum, i) => sum + i.qty, 0);
 }
-
-export { ALL_TOPPINGS };

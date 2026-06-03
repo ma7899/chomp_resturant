@@ -2,12 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Sandwich } from "@/lib/menu";
 import { formatPrice } from "@/lib/menu";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export default function SandwichCard({ s }: { s: Sandwich }) {
   return (
     <article className="group relative rounded-3xl overflow-hidden bg-white shadow-card hover:shadow-glow transition-all duration-300 flex flex-col">
-      <div className="relative aspect-[4/3] overflow-hidden bg-brand-50">
+      <Link
+        href={`/menu/${s.slug}`}
+        className="relative aspect-[4/3] overflow-hidden bg-brand-50 block"
+        aria-label={s.name}>
         <Image
           src={s.image}
           alt={s.name}
@@ -20,16 +23,18 @@ export default function SandwichCard({ s }: { s: Sandwich }) {
             {s.badge}
           </span>
         )}
-      </div>
+      </Link>
       <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-display font-extrabold text-lg tracking-tight">
-          {s.name}
-        </h3>
+        <Link href={`/menu/${s.slug}`} className="hover:text-brand-600">
+          <h3 className="font-display font-extrabold text-lg tracking-tight">
+            {s.name}
+          </h3>
+        </Link>
         <p className="text-sm font-medium text-brand-600 mt-1">{s.tagline}</p>
         <p className="text-xs text-ink-500 mt-3 line-clamp-2 leading-6">
           {s.description}
         </p>
-        <div className="mt-auto pt-5 flex items-center justify-between">
+        <div className="mt-auto pt-5 flex items-center justify-between gap-2">
           <div>
             <span className="text-xs text-ink-400">از</span>
             <div className="price text-lg text-ink-900">
@@ -37,11 +42,19 @@ export default function SandwichCard({ s }: { s: Sandwich }) {
               <span className="text-xs font-medium text-ink-500">تومان</span>
             </div>
           </div>
-          <Link
-            href={`/build?sandwich=${s.slug}`}
-            className="btn-primary !py-2 !px-4 text-sm">
-            <Plus size={16} /> سفارشی‌سازی
-          </Link>
+          <div className="flex gap-1.5">
+            <Link
+              href={`/menu/${s.slug}`}
+              className="btn-ghost !py-2 !px-3 text-xs"
+              aria-label="جزئیات">
+              جزئیات
+            </Link>
+            <Link
+              href={`/build?sandwich=${s.slug}`}
+              className="btn-primary !py-2 !px-3 text-xs">
+              <Plus size={14} /> سفارش
+            </Link>
+          </div>
         </div>
       </div>
     </article>

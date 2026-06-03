@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ChefHat, Clock, Sparkles, Star } from "lucide-react";
-import { SANDWICHES, formatPrice } from "@/lib/menu";
-import SandwichCard from "@/components/SandwichCard";
+import { SEED_SANDWICHES } from "@/lib/seed";
+import FeaturedSandwiches from "@/components/FeaturedSandwiches";
 
 export default function HomePage() {
   return (
@@ -111,11 +111,7 @@ export default function HomePage() {
             مشاهده منوی کامل <ArrowLeft size={16} />
           </Link>
         </div>
-        <div className="grid gap-5 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {SANDWICHES.map((s) => (
-            <SandwichCard key={s.id} s={s} />
-          ))}
-        </div>
+        <FeaturedSandwiches />
       </section>
 
       {/* BUILD CTA */}
@@ -176,7 +172,7 @@ function StructuredData() {
       hasMenuSection: {
         "@type": "MenuSection",
         name: "ساندویچ‌ها",
-        hasMenuItem: SANDWICHES.map((s) => ({
+        hasMenuItem: SEED_SANDWICHES.map((s) => ({
           "@type": "MenuItem",
           name: s.name,
           description: s.description,

@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { cartTotal, lineTotal, useCart } from "@/lib/cart";
 import { formatPrice, getSandwich, getTopping } from "@/lib/menu";
+import { useData } from "@/lib/store";
 import { ArrowLeft, Check } from "lucide-react";
 
 export default function CheckoutPage() {
   const { items, clear } = useCart();
+  const addOrder = useData((s) => s.addOrder);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -54,6 +56,39 @@ export default function CheckoutPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          // Persist order to the data store so the admin dashboard can
+          // see purchases and the user keeps a fresh, empty cart.
+          const orderItems = items.map((it) => {
+            const s = getSandwich(it.sandwichSlug);
+            const toppings = it.toppingIds
+              .map((id) => getTopping(id))
+              .filter((t): t is NonNullable<typeof t> => !!t);
+            const unit =
+              (s?.basePrice ?? 0) +
+              toppings.reduce((sum, t) => sum + t.price, 0);
+            return {
+              sandwichSlug: it.sandwichSlug,
+              sandwichName: s?.name ?? "—",
+              toppingIds: it.toppingIds,
+              toppingNames: toppings.map((t) => t.name),
+              qty: it.qty,
+              unitPrice: unit,
+              lineTotal: unit * it.qty,
+            };
+          });
+          addOrder({
+            items: orderItems,
+            subtotal: total,
+            delivery,
+            total: grand,
+            customer: {
+              name: form.name,
+              phone: form.phone,
+              address: form.method === "delivery" ? form.address : undefined,
+              note: form.note || undefined,
+              method: form.method as "delivery" | "pickup",
+            },
+          });
           setSubmitted(true);
           clear();
         }}

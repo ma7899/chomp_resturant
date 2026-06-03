@@ -20,9 +20,13 @@ export default function ContactPage() {
 
       <div className="mt-10 grid sm:grid-cols-3 gap-4">
         {[
-          { icon: Phone, t: "تلفن", d: "۰۲۱-۰۰۰۰۰۰۰۰" },
-          { icon: MapPin, t: "آدرس", d: "آدرس شعبه" },
-          { icon: Clock, t: "ساعت کاری", d: "هر روز ۱۲ تا ۲۴" },
+          { icon: Phone, t: "تلفن", d: "۰۹۱۳۴۶۶۷۹۵۹" },
+          {
+            icon: MapPin,
+            t: "آدرس",
+            d: "اصفهان، شیخ صدوق جنوبی، میدان برج، ساندویچ چامپ",
+          },
+          { icon: Clock, t: "ساعت کاری", d: "هر روز ۱۷ تا ۲۳:۳۰" },
         ].map(({ icon: Icon, t, d }) => (
           <div
             key={t}

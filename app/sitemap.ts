@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SANDWICHES } from "@/lib/menu";
+import { SEED_SANDWICHES as SANDWICHES } from "@/lib/seed";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://chomp-sandwich.example";
