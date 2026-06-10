@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, User, X } from "lucide-react";
 import Logo from "./Logo";
 import { useCart, cartCount } from "@/lib/cart";
 import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
+import { useCurrentUser } from "@/lib/auth/client";
+import { useAuthModal } from "@/lib/authModal";
 import clsx from "clsx";
 
 const NAV = [
@@ -22,6 +24,8 @@ export default function Header() {
   const items = useCart((s) => s.items);
   const openCart = useCart((s) => s.open);
   const count = cartCount(items);
+  const { isAuthed } = useCurrentUser();
+  const openAuth = useAuthModal((s) => s.open);
 
   // Lock the page behind the mobile drawer so the user can't scroll the
   // background through the menu (fixes the "menu floating over scrolling
@@ -79,6 +83,21 @@ export default function Header() {
               </span>
             )}
           </button>
+          {isAuthed ? (
+            <Link
+              href="/dashboard"
+              className="btn-ghost !px-3 !py-2"
+              aria-label="حساب کاربری">
+              <User size={20} />
+            </Link>
+          ) : (
+            <button
+              onClick={() => openAuth("/dashboard")}
+              className="btn-ghost !px-3 !py-2"
+              aria-label="ورود">
+              <User size={20} />
+            </button>
+          )}
           <Link
             href="/build"
             className="hidden sm:inline-flex btn-primary !py-2 !px-4 text-sm">

@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
+import Providers from "@/components/Providers";
 
 /**
  * Body / content font — Vazirmatn (variable axis, 100–900).
@@ -116,10 +117,12 @@ export default function RootLayout({
       className={vazir.variable}
       suppressHydrationWarning>
       <body className="min-h-screen flex flex-col bg-[var(--background)] font-sans antialiased text-ink-900">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <CartDrawer />
+        <Providers>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <CartDrawer />
+        </Providers>
       </body>
     </html>
   );

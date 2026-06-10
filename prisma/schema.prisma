@@ -1,0 +1,412 @@
+// Chomp Sandwich — Prisma schema
+// Datasource: PostgreSQL (Neon free tier in production, local Postgres in dev).
+// See docs/deployment.html for full 0→100 setup.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ──────────────────────────── Enums ────────────────────────────
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  NEW
+  PREPARING
+  DELIVERED
+  CANCELLED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum OtpPurpose {
+  LOGIN
+  REGISTER
+  RESET
+}
+
+enum OrderMethod {
+  DELIVERY
+  PICKUP
+}
+
+// ──────────────────────────── Identity ────────────────────────────
+
+model User {
+  id           String  @id @default(cuid())
+  phone        String  @unique
+  name         String?
+  email        String? @unique
+  passwordHash String?
+  role         Role    @default(CUSTOMER)
+
+  // Referral program (Phase 11)
+  referralCode   String     @unique
+  referralClicks Int        @default(0)
+  invitedById    String?
+  invitedBy      User?      @relation("UserReferrals", fields: [invitedById], references: [id], onDelete: SetNull)
+  invitees       User[]     @relation("UserReferrals")
+  referralsMade  Referral[] @relation("Inviter")
+  referralRecord Referral?  @relation("Invitee")
+
+  phoneVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  addresses           Address[]
+  orders              Order[]
+  customSandwiches    CustomSandwich[]
+  ratings             SandwichRating[]
+  allergies           UserAllergy[]
+  customerDiscounts   CustomerDiscount[]
+  discountRedemptions DiscountRedemption[]
+
+  @@index([invitedById])
+  @@index([createdAt])
+}
+
+// Short-lived one-time codes for OTP login / registration / password reset.
+// Stored hashed; verified server-side. (Phase 3)
+model OtpCode {
+  id         String     @id @default(cuid())
+  phone      String
+  codeHash   String
+  purpose    OtpPurpose
+  attempts   Int        @default(0)
+  consumedAt DateTime?
+  expiresAt  DateTime
+  createdAt  DateTime   @default(now())
+
+  @@index([phone, purpose])
+  @@index([expiresAt])
+}
+
+// ──────────────────────────── Addresses (Phase 2) ────────────────────────────
+
+model Address {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  province       String
+  city           String
+  street         String
+  alley          String?
+  buildingNumber String?
+  unit           String?
+  postalCode     String?
+  latitude       Float?
+  longitude      Float?
+  isDefault      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  orders Order[]
+
+  @@index([userId, isDefault])
+}
+
+// ──────────────────────────── Referral (Phase 11) ────────────────────────────
+
+model Referral {
+  id                String    @id @default(cuid())
+  inviterId         String
+  inviter           User      @relation("Inviter", fields: [inviterId], references: [id], onDelete: Cascade)
+  invitedUserId     String    @unique
+  invitedUser       User      @relation("Invitee", fields: [invitedUserId], references: [id], onDelete: Cascade)
+  referralCode      String
+  registrationDate  DateTime  @default(now())
+  firstPurchaseDate DateTime?
+
+  @@index([inviterId])
+  @@index([referralCode])
+}
+
+// ──────────────────────────── Catalog ────────────────────────────
+
+// Category management (Phase 13): Bread, Protein, Vegetable, Sauce, Cheese, Extras…
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  // Stable key used by the builder steps (bread/protein/veggie/cheese/sauce/extra)
+  kind      String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  ingredients Ingredient[]
+
+  @@index([kind])
+}
+
+// Canonical ingredient (was the old "Topping").
+model Ingredient {
+  id             String    @id @default(cuid())
+  name           String
+  price          Int       @default(0)
+  description    String?
+  calories       Int?      @default(0)
+  isAllergen     Boolean   @default(false)
+  categoryId     String?
+  category       Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  // Legacy category key kept for a smooth migration from the old store.
+  legacyCategory String?
+  createdAt      DateTime  @default(now())
+
+  tags                Tag[]                      @relation("IngredientTags")
+  allergyFlags        UserAllergy[]
+  customSandwichItems CustomSandwichIngredient[]
+
+  @@index([categoryId])
+}
+
+model Tag {
+  id    String  @id @default(cuid())
+  name  String
+  color String?
+
+  ingredients Ingredient[] @relation("IngredientTags")
+  sandwiches  Sandwich[]   @relation("SandwichTags")
+}
+
+// Ready / signature menu sandwiches.
+model Sandwich {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  name                String
+  tagline             String
+  description         String
+  basePrice           Int
+  includedIngredients String[]
+  image               String
+  badge               String?
+  hero                Boolean  @default(false)
+  calories            Int?     @default(0)
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+
+  tags       Tag[]       @relation("SandwichTags")
+  comboItems ComboItem[]
+
+  @@index([hero])
+}
+
+// ──────────────────────────── Custom / community sandwiches (Phases 5,6,7,10) ────────────────────────────
+
+model CustomSandwich {
+  id            String   @id @default(cuid())
+  creatorId     String
+  creator       User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  name          String
+  description   String?
+  image         String?
+  basePrice     Int      @default(0)
+  isPublic      Boolean  @default(false)
+  // Denormalized aggregates kept in sync by the rating/order services (Phase 16).
+  averageRating Float    @default(0)
+  totalRatings  Int      @default(0)
+  totalOrders   Int      @default(0)
+  // De-dupe key: stable hash of sorted ingredient+qty list (Phase 10).
+  recipeHash    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  ingredients CustomSandwichIngredient[]
+  ratings     SandwichRating[]
+
+  @@index([isPublic, averageRating])
+  @@index([isPublic, totalOrders])
+  @@index([creatorId])
+  @@index([recipeHash])
+}
+
+model CustomSandwichIngredient {
+  id           String         @id @default(cuid())
+  sandwichId   String
+  sandwich     CustomSandwich @relation(fields: [sandwichId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Ingredient     @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  quantity     Int            @default(1)
+
+  @@unique([sandwichId, ingredientId])
+  @@index([ingredientId])
+}
+
+// Ratings — only purchasers can rate; unique constraint blocks duplicates. (Phase 8)
+model SandwichRating {
+  id         String         @id @default(cuid())
+  sandwichId String
+  sandwich   CustomSandwich @relation(fields: [sandwichId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId    String
+  order      Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  rating     Int
+  review     String?
+  createdAt  DateTime       @default(now())
+
+  @@unique([userId, orderId, sandwichId])
+  @@index([sandwichId])
+}
+
+// ──────────────────────────── Allergies (Phase 9) ────────────────────────────
+
+model UserAllergy {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ingredientId])
+  @@index([userId])
+}
+
+// ──────────────────────────── Discounts (Phases 2,13,17) ────────────────────────────
+
+model Discount {
+  id           String       @id @default(cuid())
+  code         String       @unique
+  type         DiscountType
+  percentage   Int?
+  fixedAmount  Int?
+  minPurchase  Int?
+  maxDiscount  Int?
+  startDate    DateTime?
+  endDate      DateTime?
+  usageLimit   Int?
+  usagePerUser Int?
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+
+  customerDiscounts CustomerDiscount[]
+  redemptions       DiscountRedemption[]
+  orders            Order[]
+
+  @@index([isActive])
+}
+
+model CustomerDiscount {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  discountId String
+  discount   Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, discountId])
+}
+
+// Tracks each use so usageLimit / usagePerUser can be enforced server-side. (Phase 17)
+model DiscountRedemption {
+  id         String   @id @default(cuid())
+  discountId String
+  discount   Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId    String   @unique
+  createdAt  DateTime @default(now())
+
+  @@index([discountId, userId])
+}
+
+// ──────────────────────────── Combos (Phase 14) ────────────────────────────
+
+model Combo {
+  id            String       @id @default(cuid())
+  name          String
+  description   String?
+  discountType  DiscountType
+  discountValue Int
+  image         String?
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+
+  items ComboItem[]
+}
+
+model ComboItem {
+  id         String   @id @default(cuid())
+  comboId    String
+  combo      Combo    @relation(fields: [comboId], references: [id], onDelete: Cascade)
+  sandwichId String
+  sandwich   Sandwich @relation(fields: [sandwichId], references: [id], onDelete: Cascade)
+  quantity   Int      @default(1)
+
+  @@unique([comboId, sandwichId])
+}
+
+// ──────────────────────────── Orders ────────────────────────────
+
+model Order {
+  id             String      @id @default(cuid())
+  number         Int         @default(autoincrement())
+  userId         String?
+  user           User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  status         OrderStatus @default(NEW)
+  method         OrderMethod @default(DELIVERY)
+  subtotal       Int
+  deliveryFee    Int         @default(0)
+  discountId     String?
+  discount       Discount?   @relation(fields: [discountId], references: [id], onDelete: SetNull)
+  discountAmount Int         @default(0)
+  total          Int
+
+  // Snapshot of delivery details at time of order.
+  addressId     String?
+  address       Address? @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  customerName  String
+  customerPhone String
+  addressText   String?
+  note          String?
+
+  createdAt DateTime @default(now())
+
+  items   OrderItem[]
+  ratings SandwichRating[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id               String   @id @default(cuid())
+  orderId          String
+  order            Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  sandwichSlug     String?
+  customSandwichId String?
+  name             String
+  toppingIds       String[]
+  toppingNames     String[]
+  qty              Int
+  unitPrice        Int
+  lineTotal        Int
+
+  @@index([orderId])
+}
+
+// ──────────────────────────── Public reviews (legacy menu reviews) ────────────────────────────
+
+model Review {
+  id        String   @id @default(cuid())
+  itemType  String
+  itemId    String
+  author    String
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+
+  @@index([itemType, itemId])
+}

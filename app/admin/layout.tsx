@@ -18,7 +18,7 @@ import {
   X,
 } from "lucide-react";
 import clsx from "clsx";
-import { useAuth } from "@/lib/auth";
+import { useIsAdmin, signOut } from "@/lib/auth/client";
 
 import type { LucideIcon } from "lucide-react";
 
@@ -39,33 +39,26 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const isAuthed = useAuth((s) => s.isAuthed);
-  const logout = useAuth((s) => s.logout);
-  const [ready, setReady] = useState(false);
+  const { isAdmin, isLoading } = useIsAdmin();
   const [open, setOpen] = useState(false);
 
-  // Wait one tick so persisted auth state is read on the client before
-  // we decide to redirect (zustand-persist hydrates after mount).
+  // The edge middleware already blocks non-admins, but we guard the UI too.
   useEffect(() => {
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (ready && !isAuthed) router.replace("/login");
-  }, [ready, isAuthed, router]);
+    if (!isLoading && !isAdmin) router.replace("/");
+  }, [isLoading, isAdmin, router]);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
-  if (!ready) {
+  if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center text-ink-400">
         در حال بارگذاری پنل...
       </div>
     );
   }
-  if (!isAuthed) return null;
+  if (!isAdmin) return null;
 
   return (
     <div className="bg-ink-50/40 min-h-[calc(100vh-4rem)]">
@@ -89,8 +82,7 @@ export default function AdminLayout({
         {/* Sidebar (desktop) */}
         <aside className="hidden lg:block">
           <Sidebar pathname={pathname || ""} onLogout={() => {
-            logout();
-            router.replace("/login");
+            signOut({ callbackUrl: "/" });
           }} />
         </aside>
 
@@ -114,8 +106,7 @@ export default function AdminLayout({
                 <Sidebar
                   pathname={pathname || ""}
                   onLogout={() => {
-                    logout();
-                    router.replace("/login");
+                    signOut({ callbackUrl: "/" });
                   }}
                 />
               </div>

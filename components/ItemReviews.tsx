@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Star, StarOff, Trash2 } from "lucide-react";
 import { useData } from "@/lib/store";
-import { useAuth } from "@/lib/auth";
+import { useIsAdmin } from "@/lib/auth/client";
 import type { Review } from "@/lib/types";
 
 export default function ItemReviews({
@@ -16,7 +16,8 @@ export default function ItemReviews({
   const all = useData((s) => s.reviews);
   const addReview = useData((s) => s.addReview);
   const deleteReview = useData((s) => s.deleteReview);
-  const isAuthed = useAuth((s) => s.isAuthed);
+  const { isAdmin } = useIsAdmin();
+  const isAuthed = isAdmin;
 
   const reviews = useMemo(
     () =>
