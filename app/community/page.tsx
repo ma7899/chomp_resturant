@@ -79,11 +79,16 @@ export default async function CommunityPage({
                     {(i + 1).toLocaleString("fa-IR")}
                   </span>
                   <span className="inline-flex items-center gap-1 text-sm font-bold">
-                    <Star size={15} className="fill-yellow-300 text-yellow-300" />
+                    <Star
+                      size={15}
+                      className="fill-yellow-300 text-yellow-300"
+                    />
                     {s.averageRating.toFixed(1)}
                   </span>
                 </div>
-                <h3 className="font-display font-black text-lg mt-3">{s.name}</h3>
+                <h3 className="font-display font-black text-lg mt-3">
+                  {s.name}
+                </h3>
                 <p className="text-white/80 text-xs mt-1 leading-6 line-clamp-2 min-h-[3rem]">
                   {s.description ||
                     s.ingredients.map((x) => x.ingredient.name).join("، ")}

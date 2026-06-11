@@ -32,8 +32,7 @@ export default function RatePanel({ items }: { items: Rateable[] }) {
                 prev.filter(
                   (x) =>
                     !(
-                      x.orderId === it.orderId &&
-                      x.sandwichId === it.sandwichId
+                      x.orderId === it.orderId && x.sandwichId === it.sandwichId
                     ),
                 ),
               )
@@ -45,13 +44,7 @@ export default function RatePanel({ items }: { items: Rateable[] }) {
   );
 }
 
-function RateRow({
-  item,
-  onDone,
-}: {
-  item: Rateable;
-  onDone: () => void;
-}) {
+function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [review, setReview] = useState("");
@@ -122,9 +115,7 @@ function RateRow({
             placeholder="نظرت درباره این ساندویچ (اختیاری)"
             className="mt-3 w-full rounded-xl border border-ink-100 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-100 transition"
           />
-          {error && (
-            <p className="text-xs text-red-600 mt-1">{error}</p>
-          )}
+          {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
           <button
             onClick={submit}
             disabled={pending}

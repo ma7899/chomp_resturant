@@ -48,9 +48,7 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
   // Load the catalog rows we need in batched queries (no N+1).
   const slugs = Array.from(
     new Set(
-      input.items
-        .filter((i) => !i.customSandwichId)
-        .map((i) => i.sandwichSlug),
+      input.items.filter((i) => !i.customSandwichId).map((i) => i.sandwichSlug),
     ),
   );
   const customIds = Array.from(

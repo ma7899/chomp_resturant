@@ -76,9 +76,9 @@ export type RateInput = {
   review?: string | null;
 };
 
-export async function rateCustomSandwich(input: RateInput): Promise<
-  { ok: true } | { ok: false; error: string }
-> {
+export async function rateCustomSandwich(
+  input: RateInput,
+): Promise<{ ok: true } | { ok: false; error: string }> {
   if (input.rating < 1 || input.rating > 5) {
     return { ok: false, error: "امتیاز باید بین ۱ تا ۵ باشد." };
   }

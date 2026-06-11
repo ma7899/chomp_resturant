@@ -103,7 +103,9 @@ export async function listPublicCustomSandwiches(q: CommunityQuery) {
       ? {
           OR: [
             { name: { contains: q.search, mode: "insensitive" as const } },
-            { description: { contains: q.search, mode: "insensitive" as const } },
+            {
+              description: { contains: q.search, mode: "insensitive" as const },
+            },
           ],
         }
       : {}),
@@ -113,7 +115,10 @@ export async function listPublicCustomSandwiches(q: CommunityQuery) {
     q.sort === "top_orders"
       ? [{ totalOrders: "desc" as const }]
       : q.sort === "top_rated"
-        ? [{ averageRating: "desc" as const }, { totalRatings: "desc" as const }]
+        ? [
+            { averageRating: "desc" as const },
+            { totalRatings: "desc" as const },
+          ]
         : q.sort === "trending"
           ? // Trending = recent + ordered. Approximated by recency then orders.
             [{ createdAt: "desc" as const }, { totalOrders: "desc" as const }]
