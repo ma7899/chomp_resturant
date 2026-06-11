@@ -28,7 +28,11 @@ function generateCode(): string {
 
 export type RequestOtpResult =
   | { ok: true; cooldownMs: number }
-  | { ok: false; error: "INVALID_PHONE" | "RATE_LIMITED"; retryAfterMs?: number };
+  | {
+      ok: false;
+      error: "INVALID_PHONE" | "RATE_LIMITED";
+      retryAfterMs?: number;
+    };
 
 export async function requestOtp(
   rawPhone: string,
@@ -42,11 +46,16 @@ export async function requestOtp(
 
   // Throttle: recent code in the last cooldown window?
   const recent = await prisma.otpCode.findFirst({
-    where: { phone, purpose, createdAt: { gte: new Date(now - RESEND_COOLDOWN_MS) } },
+    where: {
+      phone,
+      purpose,
+      createdAt: { gte: new Date(now - RESEND_COOLDOWN_MS) },
+    },
     orderBy: { createdAt: "desc" },
   });
   if (recent) {
-    const retryAfterMs = RESEND_COOLDOWN_MS - (now - recent.createdAt.getTime());
+    const retryAfterMs =
+      RESEND_COOLDOWN_MS - (now - recent.createdAt.getTime());
     return { ok: false, error: "RATE_LIMITED", retryAfterMs };
   }
 
@@ -82,7 +91,15 @@ export async function requestOtp(
 
 export type VerifyOtpResult =
   | { ok: true; phone: string }
-  | { ok: false; error: "INVALID_PHONE" | "NO_CODE" | "EXPIRED" | "TOO_MANY_ATTEMPTS" | "MISMATCH" };
+  | {
+      ok: false;
+      error:
+        | "INVALID_PHONE"
+        | "NO_CODE"
+        | "EXPIRED"
+        | "TOO_MANY_ATTEMPTS"
+        | "MISMATCH";
+    };
 
 export async function verifyOtp(
   rawPhone: string,

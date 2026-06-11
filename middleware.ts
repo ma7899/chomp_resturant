@@ -1,5 +1,9 @@
 import NextAuth from "next-auth";
-import { authConfig, PUBLIC_ROUTES, PUBLIC_PREFIXES } from "@/lib/auth/auth.config";
+import {
+  authConfig,
+  PUBLIC_ROUTES,
+  PUBLIC_PREFIXES,
+} from "@/lib/auth/auth.config";
 
 /**
  * Edge middleware — gates every route except the public ones (Phase 3 + 17).
@@ -25,7 +29,9 @@ export default auth((req) => {
   // Admin area requires the ADMIN role.
   if (path.startsWith("/admin")) {
     if (!isLoggedIn) {
-      return Response.redirect(new URL(`/login?next=${encodeURIComponent(path)}`, nextUrl));
+      return Response.redirect(
+        new URL(`/login?next=${encodeURIComponent(path)}`, nextUrl),
+      );
     }
     const role = (req.auth?.user as { role?: string } | undefined)?.role;
     if (role !== "ADMIN") {

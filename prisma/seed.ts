@@ -7,11 +7,7 @@
  */
 import { PrismaClient, DiscountType, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import {
-  SEED_SANDWICHES,
-  SEED_TAGS,
-  SEED_TOPPINGS,
-} from "../lib/seed";
+import { SEED_SANDWICHES, SEED_TAGS, SEED_TOPPINGS } from "../lib/seed";
 import { randomBytes } from "crypto";
 
 const prisma = new PrismaClient();

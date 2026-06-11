@@ -20,136 +20,366 @@
         --shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.7);
         --radius: 16px;
       }
-      * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
       body {
         margin: 0;
-        background: radial-gradient(1200px 600px at 80% -10%, #20242f 0%, var(--bg) 55%) no-repeat;
+        background: radial-gradient(
+            1200px 600px at 80% -10%,
+            #20242f 0%,
+            var(--bg) 55%
+          )
+          no-repeat;
         color: var(--ink);
-        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          Arial,
+          sans-serif;
         line-height: 1.7;
         -webkit-font-smoothing: antialiased;
       }
-      a { color: var(--brand-2); text-decoration: none; }
-      a:hover { text-decoration: underline; }
-      code, pre, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      a {
+        color: var(--brand-2);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      code,
+      pre,
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
 
       /* Layout */
-      .wrap { display: grid; grid-template-columns: 280px 1fr; max-width: 1280px; margin: 0 auto; }
-      .sidebar {
-        position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
-        padding: 28px 20px; border-right: 1px solid var(--line);
+      .wrap {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        max-width: 1280px;
+        margin: 0 auto;
       }
-      .content { padding: 48px 40px 120px; max-width: 920px; }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 28px 20px;
+        border-right: 1px solid var(--line);
+      }
+      .content {
+        padding: 48px 40px 120px;
+        max-width: 920px;
+      }
       @media (max-width: 900px) {
-        .wrap { grid-template-columns: 1fr; }
-        .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
-        .content { padding: 28px 20px 80px; }
+        .wrap {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: static;
+          height: auto;
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+        }
+        .content {
+          padding: 28px 20px 80px;
+        }
       }
 
       /* Brand header */
-      .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 26px;
+      }
       .logo {
-        width: 44px; height: 44px; border-radius: 12px; flex: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        flex: none;
         background: linear-gradient(135deg, var(--brand), var(--brand-2));
-        display: grid; place-items: center; font-weight: 900; color: #fff; font-size: 20px;
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        color: #fff;
+        font-size: 20px;
         box-shadow: 0 8px 24px -6px rgba(245, 106, 22, 0.6);
       }
-      .brand b { font-size: 17px; }
-      .brand span { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
+      .brand b {
+        font-size: 17px;
+      }
+      .brand span {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 500;
+      }
 
       nav.toc a {
-        display: block; padding: 8px 12px; border-radius: 10px; color: var(--muted);
-        font-size: 14px; font-weight: 500; margin: 2px 0;
+        display: block;
+        padding: 8px 12px;
+        border-radius: 10px;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 500;
+        margin: 2px 0;
       }
-      nav.toc a:hover { background: var(--panel); color: var(--ink); text-decoration: none; }
+      nav.toc a:hover {
+        background: var(--panel);
+        color: var(--ink);
+        text-decoration: none;
+      }
       nav.toc .grouptitle {
-        font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-        color: #5d6678; margin: 18px 12px 6px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #5d6678;
+        margin: 18px 12px 6px;
       }
 
       /* Hero */
       .hero {
-        background: linear-gradient(135deg, rgba(245, 106, 22, 0.14), rgba(255, 131, 48, 0.04));
-        border: 1px solid var(--line); border-radius: var(--radius);
-        padding: 34px 32px; margin-bottom: 36px; box-shadow: var(--shadow);
+        background: linear-gradient(
+          135deg,
+          rgba(245, 106, 22, 0.14),
+          rgba(255, 131, 48, 0.04)
+        );
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 34px 32px;
+        margin-bottom: 36px;
+        box-shadow: var(--shadow);
       }
-      .hero h1 { margin: 0 0 8px; font-size: 30px; letter-spacing: -0.02em; }
-      .hero p { margin: 0; color: var(--muted); font-size: 16px; }
+      .hero h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        letter-spacing: -0.02em;
+      }
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+      }
       .pill {
-        display: inline-block; font-size: 12px; font-weight: 700; color: var(--brand-2);
-        background: rgba(245, 106, 22, 0.12); border: 1px solid rgba(245, 106, 22, 0.3);
-        padding: 4px 12px; border-radius: 999px; margin-bottom: 14px;
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--brand-2);
+        background: rgba(245, 106, 22, 0.12);
+        border: 1px solid rgba(245, 106, 22, 0.3);
+        padding: 4px 12px;
+        border-radius: 999px;
+        margin-bottom: 14px;
       }
 
       h2 {
-        font-size: 22px; margin: 48px 0 14px; letter-spacing: -0.01em;
-        padding-bottom: 10px; border-bottom: 1px solid var(--line); scroll-margin-top: 20px;
+        font-size: 22px;
+        margin: 48px 0 14px;
+        letter-spacing: -0.01em;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--line);
+        scroll-margin-top: 20px;
       }
       h2 .num {
-        display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px;
-        background: var(--brand); color: #fff; font-size: 14px; font-weight: 800; margin-right: 10px;
+        display: inline-grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--brand);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 800;
+        margin-right: 10px;
         vertical-align: middle;
       }
-      h3 { font-size: 16px; margin: 26px 0 8px; color: var(--ink); }
-      p, li { color: #cfd4de; }
-      ul, ol { padding-left: 22px; }
-      li { margin: 6px 0; }
+      h3 {
+        font-size: 16px;
+        margin: 26px 0 8px;
+        color: var(--ink);
+      }
+      p,
+      li {
+        color: #cfd4de;
+      }
+      ul,
+      ol {
+        padding-left: 22px;
+      }
+      li {
+        margin: 6px 0;
+      }
 
       /* Cards & callouts */
       .card {
-        background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-        padding: 20px 22px; margin: 16px 0;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 20px 22px;
+        margin: 16px 0;
       }
-      .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-      .note, .warn, .tip {
-        border-radius: 12px; padding: 14px 16px; margin: 16px 0; font-size: 14.5px;
+      .grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      .note,
+      .warn,
+      .tip {
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin: 16px 0;
+        font-size: 14.5px;
         border: 1px solid var(--line);
       }
-      .note { background: rgba(46, 120, 255, 0.08); border-color: rgba(46, 120, 255, 0.3); }
-      .warn { background: rgba(255, 93, 93, 0.08); border-color: rgba(255, 93, 93, 0.3); }
-      .tip  { background: rgba(46, 204, 113, 0.08); border-color: rgba(46, 204, 113, 0.3); }
-      .note b, .warn b, .tip b { color: var(--ink); }
+      .note {
+        background: rgba(46, 120, 255, 0.08);
+        border-color: rgba(46, 120, 255, 0.3);
+      }
+      .warn {
+        background: rgba(255, 93, 93, 0.08);
+        border-color: rgba(255, 93, 93, 0.3);
+      }
+      .tip {
+        background: rgba(46, 204, 113, 0.08);
+        border-color: rgba(46, 204, 113, 0.3);
+      }
+      .note b,
+      .warn b,
+      .tip b {
+        color: var(--ink);
+      }
 
       /* Code blocks with copy button */
-      .codeblock { position: relative; margin: 14px 0; }
+      .codeblock {
+        position: relative;
+        margin: 14px 0;
+      }
       pre {
-        background: var(--code-bg); border: 1px solid var(--line); border-radius: 12px;
-        padding: 16px 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.65; margin: 0;
+        background: var(--code-bg);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 13.5px;
+        line-height: 1.65;
+        margin: 0;
       }
-      pre code { color: #d6deea; }
+      pre code {
+        color: #d6deea;
+      }
       .copy {
-        position: absolute; top: 10px; right: 10px; background: var(--panel-2);
-        border: 1px solid var(--line); color: var(--muted); font-size: 12px; font-weight: 600;
-        padding: 5px 10px; border-radius: 8px; cursor: pointer; transition: 0.15s;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.15s;
       }
-      .copy:hover { color: var(--ink); border-color: var(--brand); }
-      .copy.done { color: var(--green); border-color: var(--green); }
-      .tok-c { color: #5d6678; } /* comment */
-      .tok-k { color: var(--brand-2); } /* keyword */
+      .copy:hover {
+        color: var(--ink);
+        border-color: var(--brand);
+      }
+      .copy.done {
+        color: var(--green);
+        border-color: var(--green);
+      }
+      .tok-c {
+        color: #5d6678;
+      } /* comment */
+      .tok-k {
+        color: var(--brand-2);
+      } /* keyword */
 
       /* Steps */
-      .step { display: flex; gap: 16px; margin: 18px 0; }
-      .step .n {
-        flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--panel-2);
-        border: 1px solid var(--line); display: grid; place-items: center; font-weight: 800; color: var(--brand-2);
+      .step {
+        display: flex;
+        gap: 16px;
+        margin: 18px 0;
       }
-      .step .b { flex: 1; }
-      .step .b h3 { margin-top: 4px; }
+      .step .n {
+        flex: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        color: var(--brand-2);
+      }
+      .step .b {
+        flex: 1;
+      }
+      .step .b h3 {
+        margin-top: 4px;
+      }
 
       kbd {
-        background: var(--panel-2); border: 1px solid var(--line); border-bottom-width: 2px;
-        border-radius: 6px; padding: 1px 7px; font-size: 12.5px; color: var(--ink);
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        border-bottom-width: 2px;
+        border-radius: 6px;
+        padding: 1px 7px;
+        font-size: 12.5px;
+        color: var(--ink);
       }
-      table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
-      th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
-      th { color: var(--muted); font-weight: 600; }
-      td code { background: var(--code-bg); padding: 2px 6px; border-radius: 6px; }
-      .check { color: var(--green); font-weight: 700; }
-      footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 14px 0;
+        font-size: 14px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        color: var(--muted);
+        font-weight: 600;
+      }
+      td code {
+        background: var(--code-bg);
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+      .check {
+        color: var(--green);
+        font-weight: 700;
+      }
+      footer {
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+      }
       .progress {
-        position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--brand), var(--brand-2));
-        width: 0; z-index: 50;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--brand), var(--brand-2));
+        width: 0;
+        z-index: 50;
       }
     </style>
   </head>
@@ -197,42 +427,95 @@
         <section id="what">
           <h2><span class="num">i</span>What you'll build</h2>
           <p>
-            By the end of this guide your sandwich-ordering website will be live on a
-            real web address, backed by a real database, able to send login codes by
-            SMS — all without paying anything. Here is the big picture:
+            By the end of this guide your sandwich-ordering website will be live
+            on a real web address, backed by a real database, able to send login
+            codes by SMS — all without paying anything. Here is the big picture:
           </p>
           <div class="grid">
-            <div class="card"><b>Vercel</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px">Runs your website &amp; gives it a web address.</p></div>
-            <div class="card"><b>Neon</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px">Free PostgreSQL database that stores users, orders, etc.</p></div>
-            <div class="card"><b>Kavenegar</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px">Sends the 6-digit login codes by SMS.</p></div>
-            <div class="card"><b>GitHub</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px">Stores your code; Vercel deploys from it.</p></div>
+            <div class="card">
+              <b>Vercel</b>
+              <p style="margin: 6px 0 0; color: var(--muted); font-size: 14px">
+                Runs your website &amp; gives it a web address.
+              </p>
+            </div>
+            <div class="card">
+              <b>Neon</b>
+              <p style="margin: 6px 0 0; color: var(--muted); font-size: 14px">
+                Free PostgreSQL database that stores users, orders, etc.
+              </p>
+            </div>
+            <div class="card">
+              <b>Kavenegar</b>
+              <p style="margin: 6px 0 0; color: var(--muted); font-size: 14px">
+                Sends the 6-digit login codes by SMS.
+              </p>
+            </div>
+            <div class="card">
+              <b>GitHub</b>
+              <p style="margin: 6px 0 0; color: var(--muted); font-size: 14px">
+                Stores your code; Vercel deploys from it.
+              </p>
+            </div>
           </div>
           <div class="note">
-            <b>How long?</b> About 30–45 minutes the first time. You only do steps 1–7 once.
+            <b>How long?</b> About 30–45 minutes the first time. You only do
+            steps 1–7 once.
           </div>
         </section>
 
         <section id="tools">
           <h2><span class="num">ii</span>Tools you'll need (install once)</h2>
           <ol>
-            <li><b>Node.js</b> (version 18 or newer) — <a href="https://nodejs.org" target="_blank" rel="noreferrer">nodejs.org</a>. Pick the "LTS" button.</li>
-            <li><b>Git</b> — <a href="https://git-scm.com/downloads" target="_blank" rel="noreferrer">git-scm.com/downloads</a>.</li>
-            <li>A free <b>GitHub</b> account — <a href="https://github.com/signup" target="_blank" rel="noreferrer">github.com/signup</a>.</li>
-            <li>A code editor like <b>VS Code</b> (you likely already have it).</li>
+            <li>
+              <b>Node.js</b> (version 18 or newer) —
+              <a href="https://nodejs.org" target="_blank" rel="noreferrer"
+                >nodejs.org</a
+              >. Pick the "LTS" button.
+            </li>
+            <li>
+              <b>Git</b> —
+              <a
+                href="https://git-scm.com/downloads"
+                target="_blank"
+                rel="noreferrer"
+                >git-scm.com/downloads</a
+              >.
+            </li>
+            <li>
+              A free <b>GitHub</b> account —
+              <a
+                href="https://github.com/signup"
+                target="_blank"
+                rel="noreferrer"
+                >github.com/signup</a
+              >.
+            </li>
+            <li>
+              A code editor like <b>VS Code</b> (you likely already have it).
+            </li>
           </ol>
           <h3>Check they installed correctly</h3>
-          <p>Open a terminal (on Windows: search "Git Bash" or use VS Code's terminal) and run:</p>
+          <p>
+            Open a terminal (on Windows: search "Git Bash" or use VS Code's
+            terminal) and run:
+          </p>
           <div class="codeblock">
             <button class="copy">Copy</button>
             <pre><code>node -v
 git --version</code></pre>
           </div>
-          <p>If each prints a version number (e.g. <code>v20.11.0</code>), you're ready.</p>
+          <p>
+            If each prints a version number (e.g. <code>v20.11.0</code>), you're
+            ready.
+          </p>
         </section>
 
         <section id="local">
           <h2><span class="num">0</span>Run it on your computer first</h2>
-          <p>Always get it working locally before going live. In the project folder, run:</p>
+          <p>
+            Always get it working locally before going live. In the project
+            folder, run:
+          </p>
           <div class="codeblock">
             <button class="copy">Copy</button>
             <pre><code><span class="tok-c"># install all the project's building blocks</span>
@@ -242,13 +525,14 @@ npm install
 cp .env.example .env</code></pre>
           </div>
           <div class="tip">
-            <b>Good news:</b> the project ships with <code>OTP_DEV_MODE="1"</code>, so during
-            local testing the login code is <b>printed in your terminal</b> instead of needing real SMS.
+            <b>Good news:</b> the project ships with
+            <code>OTP_DEV_MODE="1"</code>, so during local testing the login
+            code is <b>printed in your terminal</b> instead of needing real SMS.
           </div>
           <p>
-            You need a database even locally. The easiest path is to skip local Postgres and
-            point <code>.env</code> at your free Neon database (created in step 1). Once
-            <code>DATABASE_URL</code> is set, run:
+            You need a database even locally. The easiest path is to skip local
+            Postgres and point <code>.env</code> at your free Neon database
+            (created in step 1). Once <code>DATABASE_URL</code> is set, run:
           </p>
           <div class="codeblock">
             <button class="copy">Copy</button>
@@ -256,145 +540,413 @@ cp .env.example .env</code></pre>
 npm run db:seed     <span class="tok-c"># add the menu + an admin account</span>
 npm run dev         <span class="tok-c"># start the site</span></code></pre>
           </div>
-          <p>Open <a href="http://localhost:3000" target="_blank" rel="noreferrer">http://localhost:3000</a>. 🎉</p>
+          <p>
+            Open
+            <a href="http://localhost:3000" target="_blank" rel="noreferrer"
+              >http://localhost:3000</a
+            >. 🎉
+          </p>
         </section>
 
         <section id="db">
           <h2><span class="num">1</span>Create a free database (Neon)</h2>
-          <div class="step"><div class="n">1</div><div class="b">
-            <h3>Sign up</h3>
-            <p>Go to <a href="https://neon.tech" target="_blank" rel="noreferrer">neon.tech</a> and sign in with GitHub. It's free.</p>
-          </div></div>
-          <div class="step"><div class="n">2</div><div class="b">
-            <h3>Create a project</h3>
-            <p>Click <b>New Project</b>. Pick a region close to your users (e.g. Frankfurt for Iran/Europe). Name it <code>chomp</code>.</p>
-          </div></div>
-          <div class="step"><div class="n">3</div><div class="b">
-            <h3>Copy the connection string</h3>
-            <p>Neon shows a <b>Connection string</b> that starts with <code>postgresql://</code>. Click <b>Copy</b>. It looks like:</p>
-            <div class="codeblock"><button class="copy">Copy</button><pre><code>postgresql://user:password@ep-cool-name.eu-central-1.aws.neon.tech/neondb?sslmode=require</code></pre></div>
-            <p>Paste it into your <code>.env</code> file as the value of <code>DATABASE_URL</code> (keep the quotes).</p>
-          </div></div>
-          <div class="warn"><b>Keep it secret.</b> This string is a password to your database. Never share it or commit it to GitHub. (Our <code>.gitignore</code> already protects <code>.env</code>.)</div>
+          <div class="step">
+            <div class="n">1</div>
+            <div class="b">
+              <h3>Sign up</h3>
+              <p>
+                Go to
+                <a href="https://neon.tech" target="_blank" rel="noreferrer"
+                  >neon.tech</a
+                >
+                and sign in with GitHub. It's free.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">2</div>
+            <div class="b">
+              <h3>Create a project</h3>
+              <p>
+                Click <b>New Project</b>. Pick a region close to your users
+                (e.g. Frankfurt for Iran/Europe). Name it <code>chomp</code>.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">3</div>
+            <div class="b">
+              <h3>Copy the connection string</h3>
+              <p>
+                Neon shows a <b>Connection string</b> that starts with
+                <code>postgresql://</code>. Click <b>Copy</b>. It looks like:
+              </p>
+              <div class="codeblock">
+                <button class="copy">Copy</button>
+                <pre><code>postgresql://user:password@ep-cool-name.eu-central-1.aws.neon.tech/neondb?sslmode=require</code></pre>
+              </div>
+              <p>
+                Paste it into your <code>.env</code> file as the value of
+                <code>DATABASE_URL</code> (keep the quotes).
+              </p>
+            </div>
+          </div>
+          <div class="warn">
+            <b>Keep it secret.</b> This string is a password to your database.
+            Never share it or commit it to GitHub. (Our
+            <code>.gitignore</code> already protects <code>.env</code>.)
+          </div>
         </section>
 
         <section id="sms">
           <h2><span class="num">2</span>Set up SMS login codes (Kavenegar)</h2>
-          <p>This powers the "send me a code" login. You can do this now or later — until you add a key, codes print to the server log.</p>
-          <div class="step"><div class="n">1</div><div class="b"><h3>Make an account</h3><p>Sign up at <a href="https://panel.kavenegar.com" target="_blank" rel="noreferrer">panel.kavenegar.com</a>.</p></div></div>
-          <div class="step"><div class="n">2</div><div class="b"><h3>Get your API key</h3><p>In the panel, find your <b>API Key</b> and copy it. Put it in <code>.env</code> as <code>KAVENEGAR_API_KEY</code>.</p></div></div>
-          <div class="step"><div class="n">3</div><div class="b"><h3>Create an OTP template</h3><p>Create a <b>Verify Lookup</b> template named <code>chomp-otp</code> with a <code>%token</code> placeholder, e.g. <em>"Your Chomp code is %token"</em>. Put the name in <code>KAVENEGAR_OTP_TEMPLATE</code>.</p></div></div>
-          <div class="tip">When you're ready to send real SMS, set <code>OTP_DEV_MODE="0"</code>.</div>
+          <p>
+            This powers the "send me a code" login. You can do this now or later
+            — until you add a key, codes print to the server log.
+          </p>
+          <div class="step">
+            <div class="n">1</div>
+            <div class="b">
+              <h3>Make an account</h3>
+              <p>
+                Sign up at
+                <a
+                  href="https://panel.kavenegar.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  >panel.kavenegar.com</a
+                >.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">2</div>
+            <div class="b">
+              <h3>Get your API key</h3>
+              <p>
+                In the panel, find your <b>API Key</b> and copy it. Put it in
+                <code>.env</code> as <code>KAVENEGAR_API_KEY</code>.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">3</div>
+            <div class="b">
+              <h3>Create an OTP template</h3>
+              <p>
+                Create a <b>Verify Lookup</b> template named
+                <code>chomp-otp</code> with a <code>%token</code> placeholder,
+                e.g. <em>"Your Chomp code is %token"</em>. Put the name in
+                <code>KAVENEGAR_OTP_TEMPLATE</code>.
+              </p>
+            </div>
+          </div>
+          <div class="tip">
+            When you're ready to send real SMS, set
+            <code>OTP_DEV_MODE="0"</code>.
+          </div>
         </section>
 
         <section id="github">
           <h2><span class="num">3</span>Put your code on GitHub</h2>
-          <p>Vercel deploys straight from GitHub. If your project isn't on GitHub yet:</p>
-          <div class="codeblock"><button class="copy">Copy</button><pre><code>git init
+          <p>
+            Vercel deploys straight from GitHub. If your project isn't on GitHub
+            yet:
+          </p>
+          <div class="codeblock">
+            <button class="copy">Copy</button>
+            <pre><code>git init
 git add .
 git commit -m "Chomp Sandwich"
 <span class="tok-c"># create an EMPTY repo at github.com/new, then:</span>
 git branch -M main
 git remote add origin https://github.com/YOUR_NAME/chomp.git
-git push -u origin main</code></pre></div>
-          <div class="warn"><b>Before pushing</b>, confirm <code>.env</code> is NOT included. Run <code>git status</code> — you should not see <code>.env</code> listed. (It's already ignored.)</div>
+git push -u origin main</code></pre>
+          </div>
+          <div class="warn">
+            <b>Before pushing</b>, confirm <code>.env</code> is NOT included.
+            Run <code>git status</code> — you should not see
+            <code>.env</code> listed. (It's already ignored.)
+          </div>
         </section>
 
         <section id="vercel">
           <h2><span class="num">4</span>Deploy to Vercel</h2>
-          <div class="step"><div class="n">1</div><div class="b"><h3>Sign in</h3><p>Go to <a href="https://vercel.com" target="_blank" rel="noreferrer">vercel.com</a> and log in with GitHub.</p></div></div>
-          <div class="step"><div class="n">2</div><div class="b"><h3>Import the project</h3><p>Click <b>Add New → Project</b>, choose your <code>chomp</code> repository, and click <b>Import</b>.</p></div></div>
-          <div class="step"><div class="n">3</div><div class="b"><h3>Don't click Deploy yet</h3><p>First open the <b>Environment Variables</b> section (next step). Vercel auto-detects Next.js — no build settings to change.</p></div></div>
+          <div class="step">
+            <div class="n">1</div>
+            <div class="b">
+              <h3>Sign in</h3>
+              <p>
+                Go to
+                <a href="https://vercel.com" target="_blank" rel="noreferrer"
+                  >vercel.com</a
+                >
+                and log in with GitHub.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">2</div>
+            <div class="b">
+              <h3>Import the project</h3>
+              <p>
+                Click <b>Add New → Project</b>, choose your
+                <code>chomp</code> repository, and click <b>Import</b>.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">3</div>
+            <div class="b">
+              <h3>Don't click Deploy yet</h3>
+              <p>
+                First open the <b>Environment Variables</b> section (next step).
+                Vercel auto-detects Next.js — no build settings to change.
+              </p>
+            </div>
+          </div>
         </section>
 
         <section id="env">
           <h2><span class="num">5</span>Add your environment variables</h2>
-          <p>In Vercel's <b>Environment Variables</b> box, add each of these (Name + Value), then deploy:</p>
+          <p>
+            In Vercel's <b>Environment Variables</b> box, add each of these
+            (Name + Value), then deploy:
+          </p>
           <table>
-            <tr><th>Name</th><th>What to put</th></tr>
-            <tr><td><code>DATABASE_URL</code></td><td>Your Neon connection string</td></tr>
-            <tr><td><code>AUTH_SECRET</code></td><td>A long random string (generate below)</td></tr>
-            <tr><td><code>AUTH_URL</code></td><td>Your site URL, e.g. <code>https://chomp.vercel.app</code></td></tr>
-            <tr><td><code>KAVENEGAR_API_KEY</code></td><td>From Kavenegar (or leave blank for now)</td></tr>
-            <tr><td><code>KAVENEGAR_OTP_TEMPLATE</code></td><td><code>chomp-otp</code></td></tr>
-            <tr><td><code>OTP_DEV_MODE</code></td><td><code>1</code> to print codes, <code>0</code> for real SMS</td></tr>
-            <tr><td><code>ADMIN_PHONE</code></td><td>Your phone, e.g. <code>09120000000</code></td></tr>
-            <tr><td><code>ADMIN_PASSWORD</code></td><td>A strong admin password</td></tr>
+            <tr>
+              <th>Name</th>
+              <th>What to put</th>
+            </tr>
+            <tr>
+              <td><code>DATABASE_URL</code></td>
+              <td>Your Neon connection string</td>
+            </tr>
+            <tr>
+              <td><code>AUTH_SECRET</code></td>
+              <td>A long random string (generate below)</td>
+            </tr>
+            <tr>
+              <td><code>AUTH_URL</code></td>
+              <td>Your site URL, e.g. <code>https://chomp.vercel.app</code></td>
+            </tr>
+            <tr>
+              <td><code>KAVENEGAR_API_KEY</code></td>
+              <td>From Kavenegar (or leave blank for now)</td>
+            </tr>
+            <tr>
+              <td><code>KAVENEGAR_OTP_TEMPLATE</code></td>
+              <td><code>chomp-otp</code></td>
+            </tr>
+            <tr>
+              <td><code>OTP_DEV_MODE</code></td>
+              <td>
+                <code>1</code> to print codes, <code>0</code> for real SMS
+              </td>
+            </tr>
+            <tr>
+              <td><code>ADMIN_PHONE</code></td>
+              <td>Your phone, e.g. <code>09120000000</code></td>
+            </tr>
+            <tr>
+              <td><code>ADMIN_PASSWORD</code></td>
+              <td>A strong admin password</td>
+            </tr>
           </table>
           <h3>Generate a secure AUTH_SECRET</h3>
-          <div class="codeblock"><button class="copy">Copy</button><pre><code>npx auth secret
+          <div class="codeblock">
+            <button class="copy">Copy</button>
+            <pre><code>npx auth secret
 <span class="tok-c"># or:</span>
-openssl rand -base64 32</code></pre></div>
-          <p>Now click <b>Deploy</b> and wait for the build to finish (~2 minutes). You'll get a live URL.</p>
-          <div class="note"><b>Set AUTH_URL after the first deploy:</b> once you know your real URL, update <code>AUTH_URL</code> to match and redeploy (step 9).</div>
+openssl rand -base64 32</code></pre>
+          </div>
+          <p>
+            Now click <b>Deploy</b> and wait for the build to finish (~2
+            minutes). You'll get a live URL.
+          </p>
+          <div class="note">
+            <b>Set AUTH_URL after the first deploy:</b> once you know your real
+            URL, update <code>AUTH_URL</code> to match and redeploy (step 9).
+          </div>
         </section>
 
         <section id="migrate">
           <h2><span class="num">6</span>Create the database tables</h2>
-          <p>The database is empty until we create the tables. Run this from your computer (it talks to Neon over the internet):</p>
-          <div class="codeblock"><button class="copy">Copy</button><pre><code><span class="tok-c"># make sure .env points at your NEON database, then:</span>
+          <p>
+            The database is empty until we create the tables. Run this from your
+            computer (it talks to Neon over the internet):
+          </p>
+          <div class="codeblock">
+            <button class="copy">Copy</button>
+            <pre><code><span class="tok-c"># make sure .env points at your NEON database, then:</span>
 npm run db:deploy   <span class="tok-c"># applies migrations</span>
 <span class="tok-c"># first time only, if you have no migrations yet:</span>
-npm run db:push     <span class="tok-c"># creates tables directly from the schema</span></code></pre></div>
-          <div class="tip"><b>What's the difference?</b> <code>db:push</code> is the quick way for your first launch. <code>db:migrate</code>/<code>db:deploy</code> keep a versioned history — better once you have real data.</div>
+npm run db:push     <span class="tok-c"># creates tables directly from the schema</span></code></pre>
+          </div>
+          <div class="tip">
+            <b>What's the difference?</b> <code>db:push</code> is the quick way
+            for your first launch. <code>db:migrate</code>/<code
+              >db:deploy</code
+            >
+            keep a versioned history — better once you have real data.
+          </div>
         </section>
 
         <section id="seed">
-          <h2><span class="num">7</span>Add the menu &amp; your admin account</h2>
-          <div class="codeblock"><button class="copy">Copy</button><pre><code>npm run db:seed</code></pre></div>
-          <p>This fills the menu (sandwiches, ingredients, tags) and creates an <b>admin</b> using the <code>ADMIN_PHONE</code> / <code>ADMIN_PASSWORD</code> you set. Log in with those to reach <code>/admin</code>.</p>
+          <h2>
+            <span class="num">7</span>Add the menu &amp; your admin account
+          </h2>
+          <div class="codeblock">
+            <button class="copy">Copy</button>
+            <pre><code>npm run db:seed</code></pre>
+          </div>
+          <p>
+            This fills the menu (sandwiches, ingredients, tags) and creates an
+            <b>admin</b> using the <code>ADMIN_PHONE</code> /
+            <code>ADMIN_PASSWORD</code> you set. Log in with those to reach
+            <code>/admin</code>.
+          </p>
         </section>
 
         <section id="verify">
           <h2><span class="num">8</span>Test everything works</h2>
           <ul>
-            <li><span class="check">✓</span> Visit your site URL — the menu loads.</li>
-            <li><span class="check">✓</span> Click the account icon → enter a phone → you get the password or code step.</li>
-            <li><span class="check">✓</span> With <code>OTP_DEV_MODE=1</code>, the code appears in Vercel's <b>Logs</b> tab.</li>
-            <li><span class="check">✓</span> Log in as admin → <code>/admin</code> opens. A normal user is redirected away.</li>
-            <li><span class="check">✓</span> Protected pages bounce you to <code>/login</code> when signed out; <code>/menu</code> stays public.</li>
+            <li>
+              <span class="check">✓</span> Visit your site URL — the menu loads.
+            </li>
+            <li>
+              <span class="check">✓</span> Click the account icon → enter a
+              phone → you get the password or code step.
+            </li>
+            <li>
+              <span class="check">✓</span> With <code>OTP_DEV_MODE=1</code>, the
+              code appears in Vercel's <b>Logs</b> tab.
+            </li>
+            <li>
+              <span class="check">✓</span> Log in as admin →
+              <code>/admin</code> opens. A normal user is redirected away.
+            </li>
+            <li>
+              <span class="check">✓</span> Protected pages bounce you to
+              <code>/login</code> when signed out; <code>/menu</code> stays
+              public.
+            </li>
           </ul>
         </section>
 
         <section id="redeploy">
           <h2><span class="num">9</span>Updating your site later</h2>
-          <p>Every time you push to GitHub, Vercel rebuilds and redeploys automatically:</p>
-          <div class="codeblock"><button class="copy">Copy</button><pre><code>git add .
+          <p>
+            Every time you push to GitHub, Vercel rebuilds and redeploys
+            automatically:
+          </p>
+          <div class="codeblock">
+            <button class="copy">Copy</button>
+            <pre><code>git add .
 git commit -m "describe your change"
-git push</code></pre></div>
-          <p>If you changed the database structure (the Prisma schema), also run:</p>
-          <div class="codeblock"><button class="copy">Copy</button><pre><code>npm run db:migrate   <span class="tok-c"># locally, creates a migration</span>
+git push</code></pre>
+          </div>
+          <p>
+            If you changed the database structure (the Prisma schema), also run:
+          </p>
+          <div class="codeblock">
+            <button class="copy">Copy</button>
+            <pre><code>npm run db:migrate   <span class="tok-c"># locally, creates a migration</span>
 git add . &amp;&amp; git commit -m "db changes" &amp;&amp; git push
 <span class="tok-c"># Vercel runs `prisma generate` automatically during build.</span>
 <span class="tok-c"># Apply migrations to prod once:</span>
-npm run db:deploy</code></pre></div>
+npm run db:deploy</code></pre>
+          </div>
         </section>
 
         <section id="trouble">
           <h2><span class="num">!</span>Troubleshooting</h2>
-          <div class="card"><b>"Can't reach database server"</b><p style="margin:6px 0 0;color:var(--muted)">Your <code>DATABASE_URL</code> is wrong or missing <code>?sslmode=require</code>. Re-copy it from Neon.</p></div>
-          <div class="card"><b>Login always fails</b><p style="margin:6px 0 0;color:var(--muted)">Check <code>AUTH_SECRET</code> and <code>AUTH_URL</code> are set in Vercel and that <code>AUTH_URL</code> exactly matches your site URL (no trailing slash).</p></div>
-          <div class="card"><b>No SMS arrives</b><p style="margin:6px 0 0;color:var(--muted)">If <code>OTP_DEV_MODE=1</code> the code only prints to the Logs. For real SMS set it to <code>0</code> and confirm your Kavenegar key + template name.</p></div>
-          <div class="card"><b>Build fails on Vercel</b><p style="margin:6px 0 0;color:var(--muted)">Open the build log. Most often a missing environment variable. Add it and redeploy.</p></div>
-          <div class="card"><b>Admin page redirects me home</b><p style="margin:6px 0 0;color:var(--muted)">That account isn't an admin. Log in with <code>ADMIN_PHONE</code>, or re-run <code>npm run db:seed</code>.</p></div>
+          <div class="card">
+            <b>"Can't reach database server"</b>
+            <p style="margin: 6px 0 0; color: var(--muted)">
+              Your <code>DATABASE_URL</code> is wrong or missing
+              <code>?sslmode=require</code>. Re-copy it from Neon.
+            </p>
+          </div>
+          <div class="card">
+            <b>Login always fails</b>
+            <p style="margin: 6px 0 0; color: var(--muted)">
+              Check <code>AUTH_SECRET</code> and <code>AUTH_URL</code> are set
+              in Vercel and that <code>AUTH_URL</code> exactly matches your site
+              URL (no trailing slash).
+            </p>
+          </div>
+          <div class="card">
+            <b>No SMS arrives</b>
+            <p style="margin: 6px 0 0; color: var(--muted)">
+              If <code>OTP_DEV_MODE=1</code> the code only prints to the Logs.
+              For real SMS set it to <code>0</code> and confirm your Kavenegar
+              key + template name.
+            </p>
+          </div>
+          <div class="card">
+            <b>Build fails on Vercel</b>
+            <p style="margin: 6px 0 0; color: var(--muted)">
+              Open the build log. Most often a missing environment variable. Add
+              it and redeploy.
+            </p>
+          </div>
+          <div class="card">
+            <b>Admin page redirects me home</b>
+            <p style="margin: 6px 0 0; color: var(--muted)">
+              That account isn't an admin. Log in with <code>ADMIN_PHONE</code>,
+              or re-run <code>npm run db:seed</code>.
+            </p>
+          </div>
         </section>
 
         <section id="glossary">
           <h2><span class="num">?</span>Plain-English glossary</h2>
           <table>
-            <tr><th>Term</th><th>Means</th></tr>
-            <tr><td><b>Environment variable</b></td><td>A secret setting (like a password) given to the app without writing it in the code.</td></tr>
-            <tr><td><b>Database</b></td><td>Where your users, orders, and menu are permanently stored.</td></tr>
-            <tr><td><b>Migration</b></td><td>A recorded change to the database structure.</td></tr>
-            <tr><td><b>Seed</b></td><td>Filling an empty database with starter data (the menu + admin).</td></tr>
-            <tr><td><b>OTP</b></td><td>One-Time Password — the 6-digit code sent by SMS to log in.</td></tr>
-            <tr><td><b>Deploy</b></td><td>Publishing your site so the public can visit it.</td></tr>
+            <tr>
+              <th>Term</th>
+              <th>Means</th>
+            </tr>
+            <tr>
+              <td><b>Environment variable</b></td>
+              <td>
+                A secret setting (like a password) given to the app without
+                writing it in the code.
+              </td>
+            </tr>
+            <tr>
+              <td><b>Database</b></td>
+              <td>
+                Where your users, orders, and menu are permanently stored.
+              </td>
+            </tr>
+            <tr>
+              <td><b>Migration</b></td>
+              <td>A recorded change to the database structure.</td>
+            </tr>
+            <tr>
+              <td><b>Seed</b></td>
+              <td>
+                Filling an empty database with starter data (the menu + admin).
+              </td>
+            </tr>
+            <tr>
+              <td><b>OTP</b></td>
+              <td>
+                One-Time Password — the 6-digit code sent by SMS to log in.
+              </td>
+            </tr>
+            <tr>
+              <td><b>Deploy</b></td>
+              <td>Publishing your site so the public can visit it.</td>
+            </tr>
           </table>
         </section>
 
         <footer>
-          Chomp Sandwich · Deployment guide · Generated for first-time deployers.
-          Keep this file with your project at <code>docs/deployment.html</code>.
+          Chomp Sandwich · Deployment guide · Generated for first-time
+          deployers. Keep this file with your project at
+          <code>docs/deployment.html</code>.
         </footer>
       </main>
     </div>
@@ -420,7 +972,8 @@ npm run db:deploy</code></pre></div>
       const bar = document.getElementById("progress");
       window.addEventListener("scroll", () => {
         const h = document.documentElement;
-        const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        const scrolled =
+          (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
         bar.style.width = scrolled + "%";
       });
     </script>

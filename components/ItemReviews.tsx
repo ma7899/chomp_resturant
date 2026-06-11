@@ -20,8 +20,7 @@ export default function ItemReviews({
   const isAuthed = isAdmin;
 
   const reviews = useMemo(
-    () =>
-      all.filter((r) => r.itemType === itemType && r.itemId === itemId),
+    () => all.filter((r) => r.itemType === itemType && r.itemId === itemId),
     [all, itemType, itemId],
   );
 
@@ -101,9 +100,7 @@ export default function ItemReviews({
                   )}
                 </div>
               </div>
-              <p className="text-sm text-ink-700 mt-3 leading-7">
-                {r.comment}
-              </p>
+              <p className="text-sm text-ink-700 mt-3 leading-7">{r.comment}</p>
             </li>
           ))}
         </ul>
@@ -142,7 +139,9 @@ export default function ItemReviews({
                 placeholder="تجربه‌ی خودتان را با ما در میان بگذارید..."
               />
             </label>
-            <button type="submit" className="btn-primary w-full !py-2.5 text-sm">
+            <button
+              type="submit"
+              className="btn-primary w-full !py-2.5 text-sm">
               ثبت نظر
             </button>
             {submitted && (
@@ -191,9 +190,7 @@ function Stars({
             <Icon
               size={readOnly ? 16 : 22}
               className={
-                n <= value
-                  ? "text-yellow-400 fill-yellow-400"
-                  : "text-ink-300"
+                n <= value ? "text-yellow-400 fill-yellow-400" : "text-ink-300"
               }
             />
           </button>

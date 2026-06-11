@@ -8,7 +8,9 @@ import { normalizeIranPhone } from "./phone";
 async function generateReferralCode(): Promise<string> {
   for (let i = 0; i < 6; i++) {
     const code = randomBytes(4).toString("hex").toUpperCase();
-    const exists = await prisma.user.findUnique({ where: { referralCode: code } });
+    const exists = await prisma.user.findUnique({
+      where: { referralCode: code },
+    });
     if (!exists) return code;
   }
   // Extremely unlikely fallback.

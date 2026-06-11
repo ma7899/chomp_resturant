@@ -81,9 +81,12 @@ export default function AdminLayout({
 
         {/* Sidebar (desktop) */}
         <aside className="hidden lg:block">
-          <Sidebar pathname={pathname || ""} onLogout={() => {
-            signOut({ callbackUrl: "/" });
-          }} />
+          <Sidebar
+            pathname={pathname || ""}
+            onLogout={() => {
+              signOut({ callbackUrl: "/" });
+            }}
+          />
         </aside>
 
         {/* Sidebar drawer (mobile) */}
@@ -134,9 +137,7 @@ function Sidebar({
           <Sparkles size={18} />
         </span>
         <div>
-          <div className="font-display font-black tracking-tight">
-            پنل چاپ
-          </div>
+          <div className="font-display font-black tracking-tight">پنل چاپ</div>
           <div className="text-[10px] text-ink-500">مدیریت محتوای رستوران</div>
         </div>
       </div>

@@ -48,7 +48,10 @@ export async function sendOtpSms(phone: string, code: string): Promise<void> {
 }
 
 /** Plain (non-template) SMS — used for transactional notices, not OTP. */
-export async function sendPlainSms(phone: string, message: string): Promise<void> {
+export async function sendPlainSms(
+  phone: string,
+  message: string,
+): Promise<void> {
   const local = normalizeIranPhone(phone);
   if (!local) throw new Error("INVALID_PHONE");
 

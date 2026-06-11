@@ -5,17 +5,17 @@
 
 ## Stack
 
-| Concern        | Choice                                            |
-| -------------- | ------------------------------------------------- |
-| Framework      | Next.js 14 (App Router), React 18, TypeScript     |
-| Database       | PostgreSQL (Neon free tier in prod)               |
-| ORM            | Prisma 5                                          |
-| Auth           | Auth.js (NextAuth v5) — Credentials (password+OTP)|
-| OTP / SMS      | Kavenegar (dev mode prints code to console)       |
-| Validation     | Zod (every API boundary)                          |
-| State (client) | Zustand (cart + catalog cache + auth modal)       |
+| Concern        | Choice                                             |
+| -------------- | -------------------------------------------------- |
+| Framework      | Next.js 14 (App Router), React 18, TypeScript      |
+| Database       | PostgreSQL (Neon free tier in prod)                |
+| ORM            | Prisma 5                                           |
+| Auth           | Auth.js (NextAuth v5) — Credentials (password+OTP) |
+| OTP / SMS      | Kavenegar (dev mode prints code to console)        |
+| Validation     | Zod (every API boundary)                           |
+| State (client) | Zustand (cart + catalog cache + auth modal)        |
 | Styling        | Tailwind CSS                                       |
-| Hosting (free) | Vercel + Neon + (optional) Upstash Redis          |
+| Hosting (free) | Vercel + Neon + (optional) Upstash Redis           |
 
 ## Directory map (backend additions)
 
@@ -97,24 +97,46 @@ the seed source of truth. `prisma/seed.ts` imports those constants so the DB and
 the prototype never drift. Domains are migrated to server APIs one at a time;
 the cart stays client-side and writes through the server only at checkout.
 
+## Customer dashboard (implemented)
+
+Prisma-backed, fully auth-guarded under `/dashboard` (server actions re-derive
+the user from the session — client ids are never trusted):
+
+| Route | Feature | Server layer |
+| --- | --- | --- |
+| `/dashboard` | Overview (orders, spend, favorite, referral, allergies, addresses) | `orders.ts`, `referrals.ts`, `allergies.ts`, `addresses.ts` |
+| `/dashboard/orders` | Order history + reorder/add-to-cart | `lib/server/orders.ts` |
+| `/dashboard/addresses` | Multiple addresses CRUD + default | `lib/server/addresses.ts` |
+| `/dashboard/allergies` | Allergen selection + warnings | `lib/server/allergies.ts` |
+| `/dashboard/referrals` | Invite code/link, conversion stats | `lib/server/referrals.ts` |
+| `/dashboard/saved` | Saved sandwiches (stub — next slice) | — |
+
+Server actions: `app/dashboard/actions.ts` (addresses + allergies),
+`app/checkout/actions.ts` (`placeOrderAction` — recomputes all prices/totals
+server-side from the catalog, then persists the order + items).
+
+Checkout now **dual-writes**: the existing localStorage store (so the current
+admin panel keeps working) **and** the database (source of truth for history,
+ratings, analytics). The admin panel migration to Postgres is a later slice.
+
 ## NPM scripts
 
-| Script            | Purpose                          |
-| ----------------- | -------------------------------- |
-| `npm run dev`     | Dev server                       |
-| `npm run build`   | `prisma generate` + `next build` |
-| `npm run db:migrate` | Create/apply dev migration    |
-| `npm run db:deploy`  | Apply migrations in prod      |
-| `npm run db:seed` | Seed catalog + admin             |
-| `npm run db:studio` | Prisma Studio data browser     |
-| `npm run db:reset` | Drop + re-migrate + seed        |
+| Script               | Purpose                          |
+| -------------------- | -------------------------------- |
+| `npm run dev`        | Dev server                       |
+| `npm run build`      | `prisma generate` + `next build` |
+| `npm run db:migrate` | Create/apply dev migration       |
+| `npm run db:deploy`  | Apply migrations in prod         |
+| `npm run db:seed`    | Seed catalog + admin             |
+| `npm run db:studio`  | Prisma Studio data browser       |
+| `npm run db:reset`   | Drop + re-migrate + seed         |
 
-## Known follow-ups (next phases)
+## Known follow-ups (next slices)
 
-Addresses CRUD, order history, builder→CustomSandwich, ratings, community feed,
-top-sandwich ranking, allergies, referrals dashboard, customer dashboard, admin
-discounts/categories/customers/analytics, combos, reporting + CSV/Excel,
-caching, and the test suite. See the original spec for sequencing.
+Custom-sandwich builder → save/publish (features 2,7,10), community marketplace
++ top-3 ranking (feature 4), post-order ratings (feature 5), admin
+discounts/categories/customers/analytics, combos, referral admin view,
+reporting with date ranges + CSV/Excel, caching, and the test suite.
 
 ## Security notes / audit
 

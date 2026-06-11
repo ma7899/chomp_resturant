@@ -24,9 +24,18 @@ export async function POST(req: Request) {
     );
   }
 
-  const user = await findUserByPhone(parsed.data.phone);
-  return NextResponse.json({
-    exists: !!user,
-    hasPassword: !!user?.passwordHash,
-  });
+  try {
+    const user = await findUserByPhone(parsed.data.phone);
+    return NextResponse.json({
+      exists: !!user,
+      hasPassword: !!user?.passwordHash,
+    });
+  } catch (err) {
+    // Almost always a database connectivity / setup problem.
+    console.error("check-phone DB error:", err);
+    return NextResponse.json(
+      { error: "SERVER_ERROR" },
+      { status: 503 },
+    );
+  }
 }

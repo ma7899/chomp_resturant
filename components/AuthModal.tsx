@@ -106,8 +106,15 @@ export default function AuthModal() {
     setLoading(true);
     try {
       const { res, data } = await api("/api/auth/check-phone", { phone });
-      if (!res.ok) {
+      if (res.status === 422) {
         setError("شماره موبایل نامعتبر است.");
+        return;
+      }
+      if (!res.ok) {
+        // Server / database problem — don't blame the phone number.
+        setError(
+          "ارتباط با سرور برقرار نشد. لطفاً از اتصال پایگاه‌داده مطمئن شوید و دوباره تلاش کنید.",
+        );
         return;
       }
       if (data.exists && data.hasPassword) {
@@ -294,7 +301,8 @@ export default function AuthModal() {
             {step === "phone" && (
               <form onSubmit={submitPhone} className="space-y-4">
                 <p className="text-sm text-ink-500 leading-6">
-                  شماره موبایل خود را وارد کنید تا وارد شوید یا حساب جدید بسازید.
+                  شماره موبایل خود را وارد کنید تا وارد شوید یا حساب جدید
+                  بسازید.
                 </p>
                 <Input
                   ref={firstFieldRef}
@@ -439,7 +447,18 @@ const Input = forwardRef<
     maxLength?: number;
   }
 >(function Input(
-  { icon, value, onChange, type = "text", placeholder, className = "", autoFocus, inputMode, dir, maxLength },
+  {
+    icon,
+    value,
+    onChange,
+    type = "text",
+    placeholder,
+    className = "",
+    autoFocus,
+    inputMode,
+    dir,
+    maxLength,
+  },
   ref,
 ) {
   return (

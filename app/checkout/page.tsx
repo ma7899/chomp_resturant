@@ -6,6 +6,7 @@ import { cartTotal, lineTotal, useCart } from "@/lib/cart";
 import { formatPrice, getSandwich, getTopping } from "@/lib/menu";
 import { useData } from "@/lib/store";
 import { ArrowLeft, Check } from "lucide-react";
+import { placeOrderAction } from "./actions";
 
 export default function CheckoutPage() {
   const { items, clear } = useCart();
@@ -56,8 +57,8 @@ export default function CheckoutPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          // Persist order to the data store so the admin dashboard can
-          // see purchases and the user keeps a fresh, empty cart.
+          // 1) Persist to the local store so the existing admin dashboard
+          //    keeps working during the migration to the DB.
           const orderItems = items.map((it) => {
             const s = getSandwich(it.sandwichSlug);
             const toppings = it.toppingIds
@@ -88,6 +89,21 @@ export default function CheckoutPage() {
               note: form.note || undefined,
               method: form.method as "delivery" | "pickup",
             },
+          });
+          // 2) Persist to the database (source of truth for order history,
+          //    ratings and analytics). Totals are recomputed server-side.
+          void placeOrderAction({
+            items: items.map((it) => ({
+              sandwichSlug: it.sandwichSlug,
+              toppingIds: it.toppingIds,
+              qty: it.qty,
+            })),
+            method: form.method,
+            name: form.name,
+            phone: form.phone,
+            addressText:
+              form.method === "delivery" ? form.address : null,
+            note: form.note || null,
           });
           setSubmitted(true);
           clear();
