@@ -16,6 +16,12 @@ import {
   Wand2,
   Menu as MenuIcon,
   X,
+  Ticket,
+  FolderTree,
+  Users,
+  Boxes,
+  Share2,
+  FileBarChart,
 } from "lucide-react";
 import clsx from "clsx";
 import { useIsAdmin, signOut } from "@/lib/auth/client";
@@ -26,8 +32,14 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/admin", label: "داشبورد", icon: BarChart3 },
   { href: "/admin/sandwiches", label: "ساندویچ‌ها", icon: ChefHat },
   { href: "/admin/toppings", label: "افزودنی‌ها", icon: Layers },
+  { href: "/admin/categories", label: "دسته‌بندی‌ها", icon: FolderTree },
   { href: "/admin/tags", label: "برچسب‌ها", icon: TagIcon },
   { href: "/admin/orders", label: "سفارش‌ها", icon: ClipboardList },
+  { href: "/admin/discounts", label: "تخفیف‌ها", icon: Ticket },
+  { href: "/admin/combos", label: "کمبوها", icon: Boxes },
+  { href: "/admin/customers", label: "مشتریان", icon: Users },
+  { href: "/admin/referrals", label: "دعوت‌ها", icon: Share2 },
+  { href: "/admin/reports", label: "گزارش‌ها", icon: FileBarChart },
   { href: "/admin/reviews", label: "نظرات", icon: MessageSquareText },
   { href: "/admin/taste-form", label: "ذائقه‌سنج", icon: Wand2 },
 ];
