@@ -49,7 +49,8 @@ export default async function AllergiesPage() {
 
       {ingredients.length === 0 ? (
         <div className="rounded-3xl bg-white border border-dashed border-ink-200 p-10 text-center text-ink-400">
-          فهرست مواد هنوز بارگذاری نشده است. (اجرای <code>npm run db:seed</code>)
+          فهرست مواد هنوز بارگذاری نشده است. (اجرای <code>npm run db:seed</code>
+          )
         </div>
       ) : (
         <AllergyManager groups={grouped} initialSelected={selected} />

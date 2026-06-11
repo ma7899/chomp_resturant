@@ -102,14 +102,14 @@ the cart stays client-side and writes through the server only at checkout.
 Prisma-backed, fully auth-guarded under `/dashboard` (server actions re-derive
 the user from the session — client ids are never trusted):
 
-| Route | Feature | Server layer |
-| --- | --- | --- |
-| `/dashboard` | Overview (orders, spend, favorite, referral, allergies, addresses) | `orders.ts`, `referrals.ts`, `allergies.ts`, `addresses.ts` |
-| `/dashboard/orders` | Order history + reorder/add-to-cart | `lib/server/orders.ts` |
-| `/dashboard/addresses` | Multiple addresses CRUD + default | `lib/server/addresses.ts` |
-| `/dashboard/allergies` | Allergen selection + warnings | `lib/server/allergies.ts` |
-| `/dashboard/referrals` | Invite code/link, conversion stats | `lib/server/referrals.ts` |
-| `/dashboard/saved` | Saved sandwiches (stub — next slice) | — |
+| Route                  | Feature                                                            | Server layer                                                |
+| ---------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `/dashboard`           | Overview (orders, spend, favorite, referral, allergies, addresses) | `orders.ts`, `referrals.ts`, `allergies.ts`, `addresses.ts` |
+| `/dashboard/orders`    | Order history + reorder/add-to-cart                                | `lib/server/orders.ts`                                      |
+| `/dashboard/addresses` | Multiple addresses CRUD + default                                  | `lib/server/addresses.ts`                                   |
+| `/dashboard/allergies` | Allergen selection + warnings                                      | `lib/server/allergies.ts`                                   |
+| `/dashboard/referrals` | Invite code/link, conversion stats                                 | `lib/server/referrals.ts`                                   |
+| `/dashboard/saved`     | Saved sandwiches (stub — next slice)                               | —                                                           |
 
 Server actions: `app/dashboard/actions.ts` (addresses + allergies),
 `app/checkout/actions.ts` (`placeOrderAction` — recomputes all prices/totals
@@ -134,9 +134,10 @@ ratings, analytics). The admin panel migration to Postgres is a later slice.
 ## Known follow-ups (next slices)
 
 Custom-sandwich builder → save/publish (features 2,7,10), community marketplace
-+ top-3 ranking (feature 4), post-order ratings (feature 5), admin
-discounts/categories/customers/analytics, combos, referral admin view,
-reporting with date ranges + CSV/Excel, caching, and the test suite.
+
+- top-3 ranking (feature 4), post-order ratings (feature 5), admin
+  discounts/categories/customers/analytics, combos, referral admin view,
+  reporting with date ranges + CSV/Excel, caching, and the test suite.
 
 ## Security notes / audit
 

@@ -25,7 +25,10 @@ export async function getUserAllergies(userId: string) {
 }
 
 /** Replace the user's full allergy set with the provided ingredient ids. */
-export async function setUserAllergies(userId: string, ingredientIds: string[]) {
+export async function setUserAllergies(
+  userId: string,
+  ingredientIds: string[],
+) {
   const unique = Array.from(new Set(ingredientIds));
   await prisma.$transaction([
     prisma.userAllergy.deleteMany({ where: { userId } }),

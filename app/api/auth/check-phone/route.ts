@@ -33,9 +33,6 @@ export async function POST(req: Request) {
   } catch (err) {
     // Almost always a database connectivity / setup problem.
     console.error("check-phone DB error:", err);
-    return NextResponse.json(
-      { error: "SERVER_ERROR" },
-      { status: 503 },
-    );
+    return NextResponse.json({ error: "SERVER_ERROR" }, { status: 503 });
   }
 }

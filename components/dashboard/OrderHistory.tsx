@@ -51,7 +51,9 @@ export default function OrderHistory({ orders }: { orders: OrderView[] }) {
       added++;
     }
     if (added === 0) {
-      alert("این سفارش از ساندویچ‌های سفارشی است و فعلاً قابل سفارش مجدد نیست.");
+      alert(
+        "این سفارش از ساندویچ‌های سفارشی است و فعلاً قابل سفارش مجدد نیست.",
+      );
       return;
     }
     if (goCheckout) router.push("/checkout");

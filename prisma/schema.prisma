@@ -211,6 +211,8 @@ model CustomSandwich {
   name          String
   description   String?
   image         String?
+  // Base ready-sandwich slug this recipe started from (null = from scratch).
+  baseSlug      String?
   basePrice     Int      @default(0)
   isPublic      Boolean  @default(false)
   // Denormalized aggregates kept in sync by the rating/order services (Phase 16).

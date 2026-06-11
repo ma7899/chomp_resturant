@@ -97,12 +97,12 @@ export default function CheckoutPage() {
               sandwichSlug: it.sandwichSlug,
               toppingIds: it.toppingIds,
               qty: it.qty,
+              customSandwichId: it.customSandwichId ?? null,
             })),
             method: form.method,
             name: form.name,
             phone: form.phone,
-            addressText:
-              form.method === "delivery" ? form.address : null,
+            addressText: form.method === "delivery" ? form.address : null,
             note: form.note || null,
           });
           setSubmitted(true);

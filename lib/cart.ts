@@ -11,6 +11,10 @@ export type CartItem = {
   toppingIds: string[];
   note?: string;
   qty: number;
+  // Set when this line is a community / custom sandwich (no menu base).
+  customSandwichId?: string;
+  customName?: string;
+  customPrice?: number;
 };
 
 type CartState = {
@@ -56,6 +60,10 @@ export const useCart = create<CartState>()(
 );
 
 export function lineTotal(item: CartItem) {
+  // Custom / community sandwiches carry their own price.
+  if (item.customPrice != null) {
+    return item.customPrice * item.qty;
+  }
   const s = getSandwich(item.sandwichSlug);
   const base = s?.basePrice ?? 0;
   const extras = item.toppingIds.reduce(

@@ -55,7 +55,9 @@ export default function AllergyManager({
       )}
 
       {groups.map((g) => (
-        <div key={g.kind} className="rounded-3xl bg-white border border-ink-100 p-5">
+        <div
+          key={g.kind}
+          className="rounded-3xl bg-white border border-ink-100 p-5">
           <h2 className="font-bold mb-3">{g.label}</h2>
           <div className="flex flex-wrap gap-2">
             {g.items.map((it) => {

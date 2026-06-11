@@ -26,6 +26,7 @@ import {
   type Topping,
 } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
+import SaveSandwichDialog from "@/components/SaveSandwichDialog";
 
 type StepId = "base" | "protein" | "cheese" | "veggie" | "sauce" | "review";
 
@@ -253,9 +254,19 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
             ادامه <ArrowLeft size={18} />
           </button>
         ) : (
-          <button onClick={submit} className="btn-primary">
-            افزودن به سبد و ادامه <ShoppingBag size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            {sandwich && (
+              <SaveSandwichDialog
+                baseSlug={sandwich.slug}
+                basePrice={total / qty}
+                ingredientIds={toppings}
+                defaultName={sandwich.name}
+              />
+            )}
+            <button onClick={submit} className="btn-primary">
+              افزودن به سبد و ادامه <ShoppingBag size={18} />
+            </button>
+          </div>
         )}
       </div>
     </div>

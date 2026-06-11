@@ -85,7 +85,10 @@ export async function setDefaultAddress(userId: string, id: string) {
   const existing = await prisma.address.findFirst({ where: { id, userId } });
   if (!existing) throw new Error("NOT_FOUND");
   await prisma.$transaction([
-    prisma.address.updateMany({ where: { userId }, data: { isDefault: false } }),
+    prisma.address.updateMany({
+      where: { userId },
+      data: { isDefault: false },
+    }),
     prisma.address.update({ where: { id }, data: { isDefault: true } }),
   ]);
 }

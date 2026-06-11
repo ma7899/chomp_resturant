@@ -2,13 +2,18 @@ import Link from "next/link";
 import { ClipboardList } from "lucide-react";
 import { requireUser } from "@/lib/auth/session";
 import { listUserOrders } from "@/lib/server/orders";
+import { getRateableForUser } from "@/lib/server/ratings";
 import OrderHistory from "@/components/dashboard/OrderHistory";
+import RatePanel from "@/components/dashboard/RatePanel";
 
 export const dynamic = "force-dynamic";
 
 export default async function OrdersPage() {
   const user = await requireUser("/dashboard/orders");
-  const orders = await listUserOrders(user.id);
+  const [orders, rateable] = await Promise.all([
+    listUserOrders(user.id),
+    getRateableForUser(user.id),
+  ]);
 
   return (
     <div className="space-y-5">
@@ -20,6 +25,15 @@ export default async function OrdersPage() {
           تاریخچه‌ی سفارش‌ها، با امکان سفارش مجدد و افزودن به سبد خرید.
         </p>
       </header>
+
+      <RatePanel
+        items={rateable.map((r) => ({
+          orderId: r.orderId,
+          orderNumber: r.orderNumber,
+          sandwichId: r.sandwichId,
+          name: r.name,
+        }))}
+      />
 
       {orders.length === 0 ? (
         <div className="rounded-3xl bg-white border border-dashed border-ink-200 p-10 text-center text-ink-400">

@@ -82,7 +82,8 @@ export default function CartDrawer() {
 
               {items.map((item) => {
                 const s = getSandwich(item.sandwichSlug);
-                if (!s) return null;
+                const title = item.customName ?? s?.name;
+                if (!title) return null;
                 return (
                   <div
                     key={item.id}
@@ -90,8 +91,13 @@ export default function CartDrawer() {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <h3 className="font-display font-bold text-base tracking-tight">
-                          {s.name}
+                          {title}
                         </h3>
+                        {item.customName && (
+                          <span className="chip text-[10px] mt-1">
+                            ساندویچ مشتری
+                          </span>
+                        )}
                         {item.toppingIds.length > 0 && (
                           <p className="text-xs text-ink-500 mt-1 leading-6">
                             افزودنی:{" "}

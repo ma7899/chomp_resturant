@@ -193,9 +193,7 @@ function AddressForm({
       }}
       className="rounded-3xl bg-white border border-ink-100 p-5 md:p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-bold">
-          {initial ? "ویرایش آدرس" : "آدرس جدید"}
-        </h2>
+        <h2 className="font-bold">{initial ? "ویرایش آدرس" : "آدرس جدید"}</h2>
         <button
           type="button"
           onClick={onCancel}

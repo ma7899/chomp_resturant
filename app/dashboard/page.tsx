@@ -81,9 +81,9 @@ export default async function DashboardOverview() {
           desc="ساندویچ دلخواهت رو از صفر بساز و ثبت کن."
         />
         <QuickAction
-          href="/menu"
-          title="ساندویچ‌های منو"
-          desc="ساندویچ‌های امضایی رستوران رو ببین و سفارش بده."
+          href="/community"
+          title="ساندویچ دیگران"
+          desc="ترکیب‌های محبوب مشتری‌ها رو ببین و سفارش بده."
         />
         <QuickAction
           href="/dashboard/orders"

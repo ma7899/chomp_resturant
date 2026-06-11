@@ -10,6 +10,7 @@ import {
   ChefHat,
   ShieldAlert,
   Users,
+  Store,
   LogOut,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -19,6 +20,7 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/dashboard", label: "نمای کلی", icon: LayoutDashboard },
   { href: "/dashboard/orders", label: "سفارش‌های من", icon: ClipboardList },
   { href: "/dashboard/saved", label: "ساندویچ‌های من", icon: ChefHat },
+  { href: "/community", label: "مارکت ساندویچ", icon: Store },
   { href: "/dashboard/addresses", label: "آدرس‌ها", icon: MapPin },
   { href: "/dashboard/allergies", label: "حساسیت‌ها", icon: ShieldAlert },
   { href: "/dashboard/referrals", label: "دعوت دوستان", icon: Users },
