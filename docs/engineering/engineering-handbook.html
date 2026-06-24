@@ -22,6 +22,7 @@
 
       * { box-sizing: border-box; }
       html { scroll-behavior: smooth; }
+      :root { scrollbar-gutter: stable both-edges; }
       body {
         margin: 0;
         background:
@@ -43,7 +44,7 @@
         position: sticky;
         top: 0;
         align-self: start;
-        height: 100vh;
+        height: 100dvh;
         overflow-y: auto;
         border-right: 1px solid var(--line);
         background: rgba(6, 11, 20, 0.7);
@@ -54,6 +55,15 @@
       .main {
         max-width: 1100px;
         padding: 28px 28px 120px;
+      }
+
+      html[dir="rtl"] .layout {
+        grid-template-columns: 1fr 300px;
+      }
+
+      html[dir="rtl"] .side {
+        border-right: none;
+        border-left: 1px solid var(--line);
       }
 
       .brand {
@@ -118,6 +128,12 @@
         background: var(--panel);
       }
 
+      .toc a.active {
+        color: #fff;
+        background: linear-gradient(90deg, rgba(249, 115, 22, 0.35), rgba(251, 146, 60, 0.2));
+        border: 1px solid rgba(249, 115, 22, 0.45);
+      }
+
       .hero {
         border: 1px solid var(--line);
         border-radius: var(--radius);
@@ -154,6 +170,7 @@
         background: rgba(13, 22, 38, 0.8);
         padding: 18px;
         margin: 12px 0;
+        scroll-margin-top: 18px;
       }
 
       .section h3 {
@@ -212,6 +229,14 @@
         font-size: 12px;
       }
 
+      .mermaid {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #0a1322;
+        padding: 12px;
+        overflow-x: auto;
+      }
+
       details {
         border: 1px dashed var(--line);
         border-radius: 10px;
@@ -237,6 +262,41 @@
 
       .tag { font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; color: var(--muted); }
 
+      #toTop {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 100;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--brand), var(--brand-2));
+        color: #111;
+        font-weight: 800;
+        padding: 10px 14px;
+        cursor: pointer;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+        display: none;
+      }
+
+      .side::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      .side::-webkit-scrollbar-thumb,
+      body::-webkit-scrollbar-thumb {
+        background: #415375;
+        border-radius: 999px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+      }
+
+      .side::-webkit-scrollbar-track,
+      body::-webkit-scrollbar-track {
+        background: #141f35;
+      }
+
       @media (max-width: 960px) {
         .layout { grid-template-columns: 1fr; }
         .side {
@@ -244,6 +304,7 @@
           height: auto;
           border-right: none;
           border-bottom: 1px solid var(--line);
+          border-left: none;
         }
         .main { padding: 16px; }
       }
@@ -355,6 +416,36 @@ npm run dev</code></pre>
           <h3 class="lang-en">2) Architecture</h3>
           <h3 class="lang-fa" style="display:none;">2) معماری</h3>
           <pre><code>Browser -> Next.js App Router -> Server Actions / API Routes -> Prisma -> PostgreSQL</code></pre>
+
+          <h4 class="lang-en">System Flow Diagram</h4>
+          <h4 class="lang-fa" style="display:none;">نمودار جریان سیستم</h4>
+          <div class="mermaid">flowchart LR
+        Browser[User Browser] --> App[Next.js App Router]
+        App --> Actions[Server Actions]
+        App --> API[Route Handlers]
+        Actions --> Svc[lib/server]
+        API --> Svc
+        Svc --> Prisma[(Prisma)]
+        Prisma --> DB[(PostgreSQL)]
+        App --> Stores[Zustand Stores]
+          </div>
+
+          <h4 class="lang-en">Checkout Sequence</h4>
+          <h4 class="lang-fa" style="display:none;">توالی Checkout</h4>
+          <div class="mermaid">sequenceDiagram
+        participant C as Client
+        participant A as checkout action
+        participant S as lib/server/orders
+        participant D as PostgreSQL
+        C->>A: submit cart lines
+        A->>A: validate + recompute prices
+        A->>A: allergy and discount checks
+        A->>S: createOrder
+        S->>D: insert order + items
+        D-->>S: persisted order
+        S-->>A: order number
+        A-->>C: success response
+          </div>
           <details>
             <summary class="lang-en">Beginner Diagram</summary>
             <summary class="lang-fa" style="display:none;">نمودار سطح مبتدی</summary>
@@ -483,6 +574,31 @@ npm run dev</code></pre>
               </ul>
             </div>
           </div>
+
+          <h4 class="lang-en">Security Coverage Matrix</h4>
+          <h4 class="lang-fa" style="display:none;">ماتریس پوشش امنیتی</h4>
+          <table>
+            <thead><tr><th>Area</th><th>Status</th><th>Current Control</th><th>Gap</th></tr></thead>
+            <tbody>
+              <tr><td>CSRF</td><td>Partial</td><td>Framework defaults + same-origin flows</td><td>Explicit token strategy not documented for all APIs</td></tr>
+              <tr><td>CORS</td><td>Partial</td><td>No broad public cross-origin API</td><td>No explicit policy middleware for future external APIs</td></tr>
+              <tr><td>XSS</td><td>Good</td><td>React escaping + no raw html rendering in main flows</td><td>Need lint rule for dangerous HTML APIs</td></tr>
+              <tr><td>SQL Injection</td><td>Good</td><td>Prisma parameterized ORM queries</td><td>Policy needed if raw SQL introduced later</td></tr>
+              <tr><td>Secrets Mgmt</td><td>Good</td><td>Environment variables</td><td>Rotation schedule and audit runbook pending</td></tr>
+              <tr><td>Audit Trail</td><td>Partial</td><td>Basic logs from runtime</td><td>Centralized structured audit trail missing</td></tr>
+            </tbody>
+          </table>
+
+          <h4 class="lang-en">API Flow Diagram</h4>
+          <h4 class="lang-fa" style="display:none;">نمودار جریان API</h4>
+          <div class="mermaid">flowchart TD
+  R[Request] --> V[Validate Input Zod]
+  V --> G{Auth/Role Guard}
+  G -- No --> E[401/403]
+  G -- Yes --> L[Service Layer lib/server]
+  L --> P[(Prisma + PostgreSQL)]
+  P --> O[Response JSON/CSV]
+          </div>
         </section>
 
         <section id="frontend" class="section">
@@ -490,6 +606,17 @@ npm run dev</code></pre>
           <h3 class="lang-fa" style="display:none;">12-14) سیستم استایل، مدیریت استیت، مسیریابی</h3>
           <p class="lang-en">Tailwind-driven design system with RTL-friendly typography and responsive layout. Zustand is used for cart/auth modal and legacy admin state. App Router provides nested routes and dynamic route segments.</p>
           <p class="lang-fa" style="display:none;">سیستم طراحی مبتنی بر Tailwind با تایپوگرافی سازگار با RTL و ساختار واکنش‌گرا. Zustand برای سبد/مودال auth و بخشی از استیت قدیمی ادمین استفاده می‌شود. App Router مسیرهای تو در تو و داینامیک را مدیریت می‌کند.</p>
+
+          <table>
+            <thead><tr><th>Topic</th><th>Current Implementation</th><th>Best-Practice Recommendation</th></tr></thead>
+            <tbody>
+              <tr><td>CSS Architecture</td><td>Tailwind utility-first + shared admin primitives</td><td>Add token contract doc for spacing/color/typography naming</td></tr>
+              <tr><td>Theme</td><td>Dark-focused docs UI, app style in Tailwind</td><td>Add system theme strategy and semantic token aliases</td></tr>
+              <tr><td>Responsive</td><td>Mobile-first layouts and adaptive grid</td><td>Add visual regression checklist for breakpoints</td></tr>
+              <tr><td>State Sync</td><td>Zustand local state + server truth for core flows</td><td>Complete admin state migration to DB-backed reads/writes</td></tr>
+              <tr><td>Routing Guards</td><td>middleware + requireUser/requireAdmin</td><td>Add route-policy test matrix in CI</td></tr>
+            </tbody>
+          </table>
         </section>
 
         <section id="devtasks" class="section">
@@ -519,6 +646,42 @@ npm run dev</code></pre>
             <pre><code>npm run build
 npm run db:deploy
 npm start</code></pre>
+          </details>
+
+          <details>
+            <summary class="lang-en">Expanded Workflow (Git/PR/Release)</summary>
+            <summary class="lang-fa" style="display:none;">گردش کار توسعه (Git/PR/Release)</summary>
+            <table>
+              <thead><tr><th>Stage</th><th>Action</th><th>Output</th></tr></thead>
+              <tbody>
+                <tr><td>Branch</td><td>Create short-lived feature branch</td><td>Scoped change-set</td></tr>
+                <tr><td>Develop</td><td>Implement with validation + auth checks</td><td>Secure functional feature</td></tr>
+                <tr><td>Verify</td><td>Run lint/build/manual smoke</td><td>Ready for review</td></tr>
+                <tr><td>PR</td><td>Describe behavior changes, db impact, rollback note</td><td>Traceable review context</td></tr>
+                <tr><td>Release</td><td>Deploy migration-safe sequence</td><td>Stable production rollout</td></tr>
+              </tbody>
+            </table>
+          </details>
+
+          <details>
+            <summary class="lang-en">Deployment and Operations Checklist</summary>
+            <summary class="lang-fa" style="display:none;">چک‌لیست عملیات و دیپلوی</summary>
+            <ul class="lang-en">
+              <li>Build artifact validated</li>
+              <li>Environment variables set for target environment</li>
+              <li>Database migration plan validated and reversible</li>
+              <li>Health checks and synthetic checks pass</li>
+              <li>Rollback target version prepared</li>
+              <li>Post-deploy monitoring window assigned</li>
+            </ul>
+            <ul class="lang-fa" style="display:none;">
+              <li>اعتبارسنجی build artifact</li>
+              <li>تنظیم env vars برای محیط هدف</li>
+              <li>تایید migration plan قابل بازگشت</li>
+              <li>عبور health/synthetic checks</li>
+              <li>نسخه rollback آماده</li>
+              <li>بازه مانیتورینگ پس از دیپلوی مشخص</li>
+            </ul>
           </details>
 
           <div class="callout warn lang-en">Testing framework setup is currently missing. Prioritize unit + integration + E2E onboarding in CI.</div>
@@ -560,6 +723,76 @@ npm start</code></pre>
             <div class="card"><b>Week 1</b><div class="muted">Implement one small feature end-to-end with schema+action+UI.</div></div>
             <div class="card"><b>Month 1</b><div class="muted">Own one domain area and ship production-safe changes.</div></div>
           </div>
+
+          <h4 class="lang-en">Performance Optimization Matrix</h4>
+          <h4 class="lang-fa" style="display:none;">ماتریس بهینه‌سازی عملکرد</h4>
+          <table>
+            <thead><tr><th>Area</th><th>Current State</th><th>Bottleneck Risk</th><th>Optimization</th></tr></thead>
+            <tbody>
+              <tr><td>Rendering</td><td>RSC + dynamic routes for dashboards</td><td>Heavy dynamic pages under load</td><td>Introduce partial caching and segment-level revalidation</td></tr>
+              <tr><td>API</td><td>Validation and service layering present</td><td>Large exports block response</td><td>Async export jobs + streaming responses</td></tr>
+              <tr><td>Database</td><td>Key indexes exist</td><td>Analytical queries grow with data</td><td>Materialized summaries and pagination</td></tr>
+              <tr><td>Bundle</td><td>Next build optimization baseline</td><td>Admin client bundles can grow</td><td>Route-level code splitting and lazy-loading heavy widgets</td></tr>
+            </tbody>
+          </table>
+
+          <h4 class="lang-en">Future Improvements by Priority</h4>
+          <h4 class="lang-fa" style="display:none;">بهبودهای آینده بر اساس اولویت</h4>
+          <table>
+            <thead><tr><th>Priority</th><th>Improvement</th><th>Why It Matters</th></tr></thead>
+            <tbody>
+              <tr><td>Critical</td><td>Automated testing baseline</td><td>Prevents regressions in auth, checkout, and admin operations</td></tr>
+              <tr><td>Critical</td><td>Complete admin DB migration</td><td>Eliminates inconsistent dual source-of-truth behavior</td></tr>
+              <tr><td>High</td><td>Centralized observability</td><td>Speeds incident detection and root-cause analysis</td></tr>
+              <tr><td>High</td><td>Security event audit trail</td><td>Improves compliance, forensics, and risk posture</td></tr>
+              <tr><td>Medium</td><td>Async report export and caching</td><td>Improves scalability and user experience on large datasets</td></tr>
+              <tr><td>Low</td><td>Design system token hardening</td><td>Improves consistency for long-term UI evolution</td></tr>
+            </tbody>
+          </table>
+
+          <h4 class="lang-en">Major End-to-End Flows</h4>
+          <h4 class="lang-fa" style="display:none;">جریان‌های اصلی End-to-End</h4>
+          <div class="mermaid">sequenceDiagram
+  participant U as User
+  participant M as Auth Modal
+  participant O as OTP API
+  participant N as NextAuth
+  U->>M: enter phone
+  M->>O: request OTP
+  O-->>M: code sent
+  U->>M: submit OTP
+  M->>N: signIn credentials(otp)
+  N-->>U: authenticated session
+          </div>
+
+          <div class="mermaid">sequenceDiagram
+  participant U as User
+  participant C as Cart
+  participant A as Checkout Action
+  participant DB as Database
+  U->>C: add/edit items
+  U->>A: submit checkout
+  A->>DB: read prices/discounts/allergies
+  A->>A: recompute and validate
+  A->>DB: write order + order items
+  A-->>U: order confirmation
+          </div>
+
+          <h4 class="lang-en">Onboarding Timeline (Detailed)</h4>
+          <h4 class="lang-fa" style="display:none;">تقویم آنبوردینگ (جزئی)</h4>
+          <table>
+            <thead><tr><th>Timeline</th><th>Focus</th><th>Files to Read First</th></tr></thead>
+            <tbody>
+              <tr><td>Day 1</td><td>Run app and understand auth/routing boundaries</td><td>app/layout.tsx, middleware.ts, lib/auth/*</td></tr>
+              <tr><td>Day 2</td><td>Checkout and order lifecycle</td><td>app/checkout/actions.ts, lib/server/orders.ts</td></tr>
+              <tr><td>Week 1</td><td>Dashboard and admin workflows</td><td>app/dashboard/*, app/admin/*, lib/server/*</td></tr>
+              <tr><td>Week 2</td><td>Data model and migrations</td><td>prisma/schema.prisma, prisma/migrations/*</td></tr>
+              <tr><td>Week 3</td><td>Security/performance hardening</td><td>lib/validation/*, auth and API route handlers</td></tr>
+              <tr><td>Month 1</td><td>Own one production feature end-to-end</td><td>domain-specific modules and actions</td></tr>
+              <tr><td>Month 2</td><td>Ship one infrastructure quality improvement</td><td>CI, logging, deployment docs</td></tr>
+              <tr><td>Month 3</td><td>Lead migration or architecture refinement</td><td>admin migration and ADR sections</td></tr>
+            </tbody>
+          </table>
         </section>
 
         <section id="governance" class="section">
@@ -683,15 +916,45 @@ npm run db:studio
 
 # emergency local reset (non-production)
 npm run db:reset</code></pre>
+
+          <details>
+            <summary class="lang-en">Migration Best Practices</summary>
+            <summary class="lang-fa" style="display:none;">بهترین‌رویه‌های Migration</summary>
+            <ul class="lang-en">
+              <li>Prefer additive changes first; remove columns only after a stable release window.</li>
+              <li>Run backfill in idempotent batches with checkpoints.</li>
+              <li>Gate risky behavior changes behind feature flags when possible.</li>
+              <li>Attach rollback instructions to every production migration PR.</li>
+            </ul>
+            <ul class="lang-fa" style="display:none;">
+              <li>ابتدا تغییرات افزودنی را انجام دهید و حذف ستون را به نسخه بعدی موکول کنید.</li>
+              <li>backfill را به‌صورت batch و idempotent با checkpoint اجرا کنید.</li>
+              <li>تغییرات پرریسک را در صورت امکان پشت feature flag قرار دهید.</li>
+              <li>برای هر migration پروداکشن، راهنمای rollback را در PR ثبت کنید.</li>
+            </ul>
+          </details>
         </section>
       </main>
     </div>
+
+    <button id="toTop" aria-label="Back to top">Top</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 
     <script>
       const langEn = document.getElementById("langEn");
       const langFa = document.getElementById("langFa");
       const modeBeginner = document.getElementById("modeBeginner");
       const modeExpert = document.getElementById("modeExpert");
+      const toTop = document.getElementById("toTop");
+      const tocLinks = Array.from(document.querySelectorAll(".toc a"));
+      const sections = tocLinks
+        .map((a) => document.querySelector(a.getAttribute("href")))
+        .filter(Boolean);
+
+      if (window.mermaid) {
+        mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "dark" });
+      }
 
       function setLanguage(lang) {
         const en = document.querySelectorAll(".lang-en");
@@ -733,6 +996,29 @@ npm run db:reset</code></pre>
       langFa.addEventListener("click", () => setLanguage("fa"));
       modeBeginner.addEventListener("click", () => setMode("beginner"));
       modeExpert.addEventListener("click", () => setMode("expert"));
+
+      toTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      window.addEventListener("scroll", () => {
+        toTop.style.display = window.scrollY > 500 ? "block" : "none";
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const id = `#${entry.target.id}`;
+            tocLinks.forEach((link) => {
+              link.classList.toggle("active", link.getAttribute("href") === id);
+            });
+          });
+        },
+        { rootMargin: "-40% 0px -50% 0px", threshold: 0.01 }
+      );
+
+      sections.forEach((s) => observer.observe(s));
 
       setLanguage("en");
       setMode("beginner");
