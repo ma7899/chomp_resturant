@@ -54,7 +54,9 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
   // Load the catalog rows we need in batched queries (no N+1).
   const slugs = Array.from(
     new Set(
-      input.items.filter((i) => !i.customSandwichId).map((i) => i.sandwichSlug),
+      input.items
+        .filter((i) => !i.customSandwichId && i.sandwichSlug !== "custom")
+        .map((i) => i.sandwichSlug),
     ),
   );
   const customIds = Array.from(
@@ -128,6 +130,30 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
         sandwichSlug: c.baseSlug ?? null,
         customSandwichId: c.id,
         name: c.name,
+        toppingIds: lineToppings.map((t) => t.id),
+        toppingNames: lineToppings.map((t) => t.name),
+        qty: line.qty,
+        unitPrice,
+        lineTotal,
+      });
+      continue;
+    }
+
+    // ── No-base custom line (builder with "No Base Sandwich") ──
+    if (line.sandwichSlug === "custom") {
+      const lineToppings = line.toppingIds
+        .map((id) => toppingById.get(id))
+        .filter((t): t is NonNullable<typeof t> => !!t);
+      lineToppings.forEach((t) => cartIngredientIds.add(t.id));
+
+      const unitPrice = lineToppings.reduce((sum, t) => sum + t.price, 0);
+      const lineTotal = unitPrice * line.qty;
+      subtotal += lineTotal;
+
+      orderItems.push({
+        sandwichSlug: null,
+        customSandwichId: null,
+        name: "ساندویچ سفارشی",
         toppingIds: lineToppings.map((t) => t.id),
         toppingNames: lineToppings.map((t) => t.name),
         qty: line.qty,
