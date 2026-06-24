@@ -1,14 +1,19 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Star, Loader2, Check } from "lucide-react";
-import { rateSandwichAction } from "@/app/community/actions";
+import { Star, Loader2, Check, Trash2, Pencil } from "lucide-react";
+import {
+  deleteSandwichRatingAction,
+  rateSandwichAction,
+} from "@/app/community/actions";
 
 type Rateable = {
   orderId: string;
   orderNumber: number;
   sandwichId: string;
   name: string;
+  currentRating: number | null;
+  currentReview: string | null;
 };
 
 export default function RatePanel({ items }: { items: Rateable[] }) {
@@ -45,11 +50,12 @@ export default function RatePanel({ items }: { items: Rateable[] }) {
 }
 
 function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(item.currentRating ?? 0);
   const [hover, setHover] = useState(0);
-  const [review, setReview] = useState("");
+  const [review, setReview] = useState(item.currentReview ?? "");
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [editing, setEditing] = useState(item.currentRating == null);
   const [pending, startTransition] = useTransition();
 
   function submit() {
@@ -67,10 +73,23 @@ function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
       });
       if (r.ok) {
         setSaved(true);
-        setTimeout(onDone, 900);
+        setEditing(false);
+        setTimeout(() => setSaved(false), 1200);
       } else {
         setError(r.error);
       }
+    });
+  }
+
+  function remove() {
+    setError(null);
+    startTransition(async () => {
+      const r = await deleteSandwichRatingAction(item.sandwichId);
+      if (!r.ok) {
+        setError(r.error);
+        return;
+      }
+      onDone();
     });
   }
 
@@ -88,6 +107,32 @@ function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
         </div>
       ) : (
         <>
+          {!editing && item.currentRating != null && (
+            <div className="mt-2 flex items-center justify-between">
+              <div className="inline-flex items-center gap-1 text-sm text-ink-600">
+                <Star size={16} className="fill-amber-400 text-amber-400" />
+                امتیاز شما: {item.currentRating.toLocaleString("fa-IR")}
+              </div>
+              <div className="inline-flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setEditing(true)}
+                  className="btn-ghost !py-1.5 !px-2 text-xs">
+                  <Pencil size={14} /> ویرایش
+                </button>
+                <button
+                  type="button"
+                  onClick={remove}
+                  disabled={pending}
+                  className="btn-ghost !py-1.5 !px-2 text-xs text-red-600 hover:text-red-700">
+                  <Trash2 size={14} /> حذف
+                </button>
+              </div>
+            </div>
+          )}
+
+          {editing && (
+            <>
           <div className="flex items-center gap-1 mt-2">
             {[1, 2, 3, 4, 5].map((n) => (
               <button
@@ -116,16 +161,20 @@ function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
             className="mt-3 w-full rounded-xl border border-ink-100 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-100 transition"
           />
           {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
-          <button
-            onClick={submit}
-            disabled={pending}
-            className="btn-primary !py-2 !px-4 text-sm mt-2">
-            {pending ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              "ثبت امتیاز"
-            )}
-          </button>
+              <button
+                onClick={submit}
+                disabled={pending}
+                className="btn-primary !py-2 !px-4 text-sm mt-2">
+                {pending ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : item.currentRating == null ? (
+                  "ثبت امتیاز"
+                ) : (
+                  "ذخیره تغییرات"
+                )}
+              </button>
+            </>
+          )}
         </>
       )}
     </div>

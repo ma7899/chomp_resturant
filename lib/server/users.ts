@@ -1,5 +1,4 @@
 import "server-only";
-import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
 import { prisma } from "@/lib/db";
 import { normalizeIranPhone } from "./phone";
@@ -26,7 +25,6 @@ export async function findUserByPhone(rawPhone: string) {
 export type CreateUserInput = {
   phone: string;
   name?: string;
-  password?: string;
   phoneVerified?: boolean;
   referredByCode?: string;
 };
@@ -40,9 +38,6 @@ export async function createUser(input: CreateUserInput) {
   if (!phone) throw new Error("INVALID_PHONE");
 
   const referralCode = await generateReferralCode();
-  const passwordHash = input.password
-    ? await bcrypt.hash(input.password, 10)
-    : null;
 
   let inviter = null;
   if (input.referredByCode) {
@@ -56,7 +51,6 @@ export async function createUser(input: CreateUserInput) {
       data: {
         phone,
         name: input.name ?? null,
-        passwordHash,
         phoneVerified: input.phoneVerified ?? false,
         referralCode,
         invitedById: inviter?.id ?? null,
@@ -75,18 +69,6 @@ export async function createUser(input: CreateUserInput) {
 
     return user;
   });
-}
-
-export async function verifyPassword(rawPhone: string, password: string) {
-  const user = await findUserByPhone(rawPhone);
-  if (!user || !user.passwordHash) return null;
-  const ok = await bcrypt.compare(password, user.passwordHash);
-  return ok ? user : null;
-}
-
-export async function setUserPassword(userId: string, password: string) {
-  const passwordHash = await bcrypt.hash(password, 10);
-  return prisma.user.update({ where: { id: userId }, data: { passwordHash } });
 }
 
 export async function markPhoneVerified(userId: string) {

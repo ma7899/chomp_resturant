@@ -32,6 +32,8 @@ export default async function OrdersPage() {
           orderNumber: r.orderNumber,
           sandwichId: r.sandwichId,
           name: r.name,
+          currentRating: r.currentRating,
+          currentReview: r.currentReview,
         }))}
       />
 

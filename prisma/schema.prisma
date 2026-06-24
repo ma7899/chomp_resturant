@@ -258,7 +258,8 @@ model SandwichRating {
   review     String?
   createdAt  DateTime       @default(now())
 
-  @@unique([userId, orderId, sandwichId])
+  @@unique([userId, sandwichId])
+  @@index([orderId])
   @@index([sandwichId])
 }
 

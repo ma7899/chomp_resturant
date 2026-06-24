@@ -1,7 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { getSandwich, getTopping } from "./menu";
 import { safeUUID } from "./uuid";
 
@@ -29,35 +28,27 @@ type CartState = {
   toggle: () => void;
 };
 
-export const useCart = create<CartState>()(
-  persist(
-    (set) => ({
-      items: [],
-      isOpen: false,
-      addItem: (item) =>
-        set((s) => ({
-          items: [
-            ...s.items,
-            { ...item, id: safeUUID(), qty: Math.max(1, item.qty) },
-          ],
-          isOpen: true,
-        })),
-      removeItem: (id) =>
-        set((s) => ({ items: s.items.filter((i) => i.id !== id) })),
-      updateQty: (id, qty) =>
-        set((s) => ({
-          items: s.items.map((i) =>
-            i.id === id ? { ...i, qty: Math.max(1, qty) } : i,
-          ),
-        })),
-      clear: () => set({ items: [] }),
-      open: () => set({ isOpen: true }),
-      close: () => set({ isOpen: false }),
-      toggle: () => set((s) => ({ isOpen: !s.isOpen })),
-    }),
-    { name: "chomp-cart" },
-  ),
-);
+export const useCart = create<CartState>()((set) => ({
+  items: [],
+  isOpen: false,
+  addItem: (item) =>
+    set((s) => ({
+      items: [...s.items, { ...item, id: safeUUID(), qty: Math.max(1, item.qty) }],
+      isOpen: true,
+    })),
+  removeItem: (id) =>
+    set((s) => ({ items: s.items.filter((i) => i.id !== id) })),
+  updateQty: (id, qty) =>
+    set((s) => ({
+      items: s.items.map((i) =>
+        i.id === id ? { ...i, qty: Math.max(1, qty) } : i,
+      ),
+    })),
+  clear: () => set({ items: [] }),
+  open: () => set({ isOpen: true }),
+  close: () => set({ isOpen: false }),
+  toggle: () => set((s) => ({ isOpen: !s.isOpen })),
+}));
 
 export function lineTotal(item: CartItem) {
   // Custom / community sandwiches carry their own price.

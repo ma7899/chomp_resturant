@@ -62,7 +62,7 @@ export default function ItemReviews({
               : "هنوز نظری ثبت نشده. اولین نفر باشید!"}
           </p>
         </div>
-        {reviews.length > 0 && <Stars value={Math.round(avg)} readOnly />}
+        {reviews.length > 0 && <Stars value={3.5} readOnly />}
       </header>
 
       <div className="grid lg:grid-cols-[1fr_360px] gap-8">

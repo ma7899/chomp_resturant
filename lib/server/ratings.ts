@@ -6,28 +6,31 @@ import { prisma } from "@/lib/db";
  *
  * Rules enforced server-side:
  *  - Only users who actually ordered the sandwich can rate it.
- *  - One rating per (user, order, sandwich) — DB unique constraint blocks dupes.
+ *  - One rating per (user, sandwich).
  *  - Denormalized averageRating / totalRatings on CustomSandwich are recomputed
  *    inside the same transaction so the marketplace stays consistent.
  */
 
 /**
- * Returns custom sandwiches the user has ordered that they have NOT yet rated,
- * paired with the order they can rate against. Drives the "rate your order" UI.
+ * Returns ordered community sandwiches with the user's existing rating (if any),
+ * so the orders page can support create/edit/delete in one place.
  */
 export async function getRateableForUser(userId: string) {
-  // Orders by the user that reference a custom sandwich line.
   const orders = await prisma.order.findMany({
-    where: { userId },
+    where: {
+      userId,
+      status: { not: "CANCELLED" },
+      items: { some: { customSandwichId: { not: null } } },
+    },
     orderBy: { createdAt: "desc" },
     include: { items: true },
   });
 
   const existing = await prisma.sandwichRating.findMany({
     where: { userId },
-    select: { orderId: true, sandwichId: true },
+    select: { sandwichId: true, rating: true, review: true },
   });
-  const rated = new Set(existing.map((r) => `${r.orderId}:${r.sandwichId}`));
+  const existingBySandwich = new Map(existing.map((r) => [r.sandwichId, r]));
 
   const out: {
     orderId: string;
@@ -35,19 +38,25 @@ export async function getRateableForUser(userId: string) {
     sandwichId: string;
     name: string;
     date: string;
+    currentRating: number | null;
+    currentReview: string | null;
   }[] = [];
+  const seen = new Set<string>();
 
   for (const o of orders) {
     for (const it of o.items) {
       if (!it.customSandwichId) continue;
-      const key = `${o.id}:${it.customSandwichId}`;
-      if (rated.has(key)) continue;
+      if (seen.has(it.customSandwichId)) continue;
+      seen.add(it.customSandwichId);
+      const current = existingBySandwich.get(it.customSandwichId);
       out.push({
         orderId: o.id,
         orderNumber: o.number,
         sandwichId: it.customSandwichId,
         name: it.name,
         date: o.createdAt.toISOString(),
+        currentRating: current?.rating ?? null,
+        currentReview: current?.review ?? null,
       });
     }
   }
@@ -94,11 +103,22 @@ export async function rateCustomSandwich(
 
   try {
     await prisma.$transaction(async (tx) => {
-      await tx.sandwichRating.create({
-        data: {
+      await tx.sandwichRating.upsert({
+        where: {
+          userId_sandwichId: {
+            userId: input.userId,
+            sandwichId: input.sandwichId,
+          },
+        },
+        create: {
           userId: input.userId,
           orderId: input.orderId,
           sandwichId: input.sandwichId,
+          rating: input.rating,
+          review: input.review ?? null,
+        },
+        update: {
+          orderId: input.orderId,
           rating: input.rating,
           review: input.review ?? null,
         },
@@ -119,17 +139,43 @@ export async function rateCustomSandwich(
       });
     });
     return { ok: true };
-  } catch (e) {
-    // Unique constraint → already rated.
-    if (
-      typeof e === "object" &&
-      e !== null &&
-      "code" in e &&
-      (e as { code?: string }).code === "P2002"
-    ) {
-      return { ok: false, error: "قبلاً به این سفارش امتیاز داده‌اید." };
-    }
+  } catch {
     return { ok: false, error: "ثبت امتیاز با خطا مواجه شد." };
+  }
+}
+
+export async function deleteCustomSandwichRating(
+  userId: string,
+  sandwichId: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.sandwichRating.delete({
+        where: {
+          userId_sandwichId: {
+            userId,
+            sandwichId,
+          },
+        },
+      });
+
+      const agg = await tx.sandwichRating.aggregate({
+        where: { sandwichId },
+        _avg: { rating: true },
+        _count: { rating: true },
+      });
+
+      await tx.customSandwich.update({
+        where: { id: sandwichId },
+        data: {
+          averageRating: agg._avg.rating ?? 0,
+          totalRatings: agg._count.rating,
+        },
+      });
+    });
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "حذف امتیاز با خطا مواجه شد." };
   }
 }
 

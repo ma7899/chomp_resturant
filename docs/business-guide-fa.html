@@ -1,0 +1,2033 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="راهنمای کامل کسب‌وکار وب‌سایت ساندویچ چامپ — جریان‌های کاربری، نقش‌ها، امکانات و واژگان تخصصی"
+    />
+    <title>راهنمای کسب‌وکار — وب‌سایت ساندویچ چامپ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #faf8f5;
+        --bg-2: #f3efe8;
+        --panel: #ffffff;
+        --panel-2: #fff9f4;
+        --ink: #1a1a1f;
+        --ink-2: #3d3d48;
+        --muted: #6b7280;
+        --brand: #e85d04;
+        --brand-2: #f48c06;
+        --brand-soft: rgba(232, 93, 4, 0.1);
+        --green: #059669;
+        --green-soft: rgba(5, 150, 105, 0.1);
+        --blue: #2563eb;
+        --blue-soft: rgba(37, 99, 235, 0.08);
+        --amber: #d97706;
+        --amber-soft: rgba(217, 119, 6, 0.1);
+        --red: #dc2626;
+        --red-soft: rgba(220, 38, 38, 0.08);
+        --line: #e8e2d9;
+        --line-2: #d4cdc2;
+        --code-bg: #1e1e24;
+        --shadow: 0 4px 24px -4px rgba(26, 26, 31, 0.08);
+        --shadow-lg: 0 20px 60px -20px rgba(26, 26, 31, 0.15);
+        --radius: 16px;
+        --radius-sm: 10px;
+        --sidebar-w: 300px;
+        --content-max: 880px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 24px;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Vazirmatn", Tahoma, sans-serif;
+        font-size: 15px;
+        line-height: 1.85;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: var(--brand);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      a:hover {
+        color: var(--brand-2);
+        text-decoration: underline;
+      }
+
+      code,
+      .mono {
+        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+        font-size: 0.88em;
+        direction: ltr;
+        unicode-bidi: embed;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        right: 16px;
+        background: var(--brand);
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: var(--radius-sm);
+        z-index: 9999;
+        font-weight: 700;
+      }
+      .skip-link:focus {
+        top: 16px;
+      }
+
+      /* ── Layout ── */
+      .app {
+        display: grid;
+        grid-template-columns: var(--sidebar-w) 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        background: var(--panel);
+        border-left: 1px solid var(--line);
+        padding: 24px 18px 40px;
+        scrollbar-width: thin;
+      }
+
+      .main {
+        min-width: 0;
+      }
+
+      .content {
+        max-width: calc(var(--content-max) + 80px);
+        padding: 40px 40px 120px;
+        margin: 0 auto;
+      }
+
+      @media (max-width: 960px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: static;
+          height: auto;
+          border-left: none;
+          border-bottom: 1px solid var(--line);
+          max-height: none;
+        }
+        .content {
+          padding: 28px 20px 80px;
+        }
+      }
+
+      /* ── Sidebar brand ── */
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-weight: 900;
+        font-size: 22px;
+        flex-shrink: 0;
+        box-shadow: 0 8px 20px -6px rgba(232, 93, 4, 0.45);
+      }
+      .brand-text b {
+        display: block;
+        font-size: 16px;
+        font-weight: 800;
+      }
+      .brand-text span {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      /* ── TOC ── */
+      .toc-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        margin: 0 10px 10px;
+        text-transform: uppercase;
+      }
+      nav.toc a {
+        display: block;
+        padding: 7px 12px;
+        border-radius: var(--radius-sm);
+        color: var(--ink-2);
+        font-size: 13.5px;
+        font-weight: 500;
+        text-decoration: none;
+        margin: 1px 0;
+        transition: background 0.15s, color 0.15s;
+      }
+      nav.toc a:hover {
+        background: var(--brand-soft);
+        color: var(--brand);
+      }
+      nav.toc a.active {
+        background: var(--brand-soft);
+        color: var(--brand);
+        font-weight: 700;
+      }
+      nav.toc .group {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        margin: 16px 12px 6px;
+        letter-spacing: 0.02em;
+      }
+
+      .sidebar-meta {
+        margin-top: 24px;
+        padding: 14px;
+        background: var(--bg-2);
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .sidebar-meta strong {
+        color: var(--ink);
+      }
+
+      /* ── Top bar (mobile hint) ── */
+      .topbar {
+        display: none;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        padding: 14px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      @media (max-width: 960px) {
+        .topbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+      .topbar-title {
+        font-weight: 800;
+        font-size: 15px;
+      }
+      .menu-btn {
+        background: var(--brand-soft);
+        border: none;
+        color: var(--brand);
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      /* ── Hero ── */
+      .hero {
+        background: linear-gradient(135deg, #fff 0%, var(--panel-2) 100%);
+        border: 1px solid var(--line);
+        border-radius: calc(var(--radius) + 4px);
+        padding: 40px 36px;
+        margin-bottom: 36px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        left: -60px;
+        top: -60px;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, var(--brand-soft) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--brand-soft);
+        color: var(--brand);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 999px;
+        margin-bottom: 16px;
+      }
+      .hero h1 {
+        margin: 0 0 14px;
+        font-size: clamp(1.6rem, 4vw, 2.2rem);
+        font-weight: 900;
+        line-height: 1.35;
+        letter-spacing: -0.02em;
+      }
+      .hero-lead {
+        margin: 0;
+        color: var(--ink-2);
+        font-size: 16px;
+        max-width: 620px;
+        line-height: 1.9;
+      }
+      .hero-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+      .stat-pill {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+      .stat-pill strong {
+        display: block;
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--brand);
+      }
+
+      /* ── Sections ── */
+      section {
+        margin-bottom: 48px;
+        scroll-margin-top: 20px;
+      }
+      section > h2 {
+        font-size: 1.55rem;
+        font-weight: 900;
+        margin: 0 0 8px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--brand);
+        display: inline-block;
+      }
+      section > .section-desc {
+        color: var(--muted);
+        margin: 12px 0 24px;
+        max-width: 680px;
+      }
+      h3 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin: 28px 0 12px;
+        color: var(--ink);
+      }
+      h4 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin: 20px 0 8px;
+        color: var(--ink-2);
+      }
+      p {
+        margin: 0 0 14px;
+        color: var(--ink-2);
+      }
+      ul,
+      ol {
+        margin: 0 0 16px;
+        padding-right: 22px;
+        color: var(--ink-2);
+      }
+      li {
+        margin-bottom: 6px;
+      }
+      li::marker {
+        color: var(--brand);
+      }
+
+      /* ── Cards ── */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+        margin: 20px 0;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+      .card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+      .card-icon.orange {
+        background: var(--brand-soft);
+      }
+      .card-icon.green {
+        background: var(--green-soft);
+      }
+      .card-icon.blue {
+        background: var(--blue-soft);
+      }
+      .card-icon.amber {
+        background: var(--amber-soft);
+      }
+      .card h4 {
+        margin: 0 0 8px;
+        font-size: 15px;
+      }
+      .card p {
+        margin: 0;
+        font-size: 13.5px;
+        line-height: 1.75;
+      }
+      .card .route {
+        margin-top: 12px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .card .route code {
+        background: var(--bg-2);
+        padding: 2px 8px;
+        border-radius: 6px;
+      }
+
+      /* ── Callouts ── */
+      .callout {
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        margin: 20px 0;
+        border-right: 4px solid;
+        font-size: 14px;
+      }
+      .callout.info {
+        background: var(--blue-soft);
+        border-color: var(--blue);
+      }
+      .callout.success {
+        background: var(--green-soft);
+        border-color: var(--green);
+      }
+      .callout.warning {
+        background: var(--amber-soft);
+        border-color: var(--amber);
+      }
+      .callout.danger {
+        background: var(--red-soft);
+        border-color: var(--red);
+      }
+      .callout strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--ink);
+      }
+
+      /* ── Tables ── */
+      .table-wrap {
+        overflow-x: auto;
+        margin: 20px 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+      }
+      th,
+      td {
+        padding: 12px 16px;
+        text-align: right;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        background: var(--bg-2);
+        font-weight: 700;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: var(--panel-2);
+      }
+      td code {
+        background: var(--bg-2);
+        padding: 2px 7px;
+        border-radius: 5px;
+        font-size: 12px;
+      }
+
+      /* ── Status badges ── */
+      .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .badge.new {
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+      .badge.prep {
+        background: var(--amber-soft);
+        color: var(--amber);
+      }
+      .badge.done {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+      .badge.cancel {
+        background: var(--red-soft);
+        color: var(--red);
+      }
+      .badge.public {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+      .badge.private {
+        background: var(--bg-2);
+        color: var(--muted);
+      }
+      .badge.admin {
+        background: var(--brand-soft);
+        color: var(--brand);
+      }
+
+      /* ── Flow diagrams ── */
+      .flow {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin: 24px 0;
+      }
+      .flow-step {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+      }
+      .flow-marker {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        width: 36px;
+      }
+      .flow-num {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+        color: #fff;
+        font-weight: 800;
+        font-size: 14px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+      }
+      .flow-line {
+        width: 2px;
+        flex: 1;
+        min-height: 24px;
+        background: var(--line-2);
+        margin: 4px 0;
+      }
+      .flow-step:last-child .flow-line {
+        display: none;
+      }
+      .flow-body {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        flex: 1;
+        margin-bottom: 12px;
+        box-shadow: var(--shadow);
+      }
+      .flow-body h4 {
+        margin: 0 0 6px;
+        font-size: 15px;
+      }
+      .flow-body p {
+        margin: 0;
+        font-size: 13.5px;
+      }
+      .flow-body .path {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* ── Horizontal flow (decision) ── */
+      .flow-h {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin: 20px 0;
+        padding: 20px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow-x: auto;
+      }
+      .flow-box {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .flow-box.highlight {
+        background: var(--brand-soft);
+        border-color: var(--brand);
+        color: var(--brand);
+      }
+      .flow-arrow {
+        color: var(--muted);
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      /* ── Sitemap tree ── */
+      .sitemap {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin: 20px 0;
+        box-shadow: var(--shadow);
+      }
+      .sitemap-group {
+        margin-bottom: 20px;
+      }
+      .sitemap-group:last-child {
+        margin-bottom: 0;
+      }
+      .sitemap-group > .label {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--brand);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .sitemap-group > .label::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--brand);
+      }
+      .sitemap-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-right: 16px;
+      }
+      .sitemap-item {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+      .sitemap-item span {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+        direction: ltr;
+        text-align: right;
+      }
+
+      /* ── Role comparison ── */
+      .role-compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin: 20px 0;
+      }
+      @media (max-width: 640px) {
+        .role-compare {
+          grid-template-columns: 1fr;
+        }
+      }
+      .role-card {
+        border-radius: var(--radius);
+        padding: 24px;
+        border: 2px solid var(--line);
+      }
+      .role-card.customer {
+        background: linear-gradient(180deg, var(--blue-soft) 0%, var(--panel) 40%);
+        border-color: rgba(37, 99, 235, 0.2);
+      }
+      .role-card.admin {
+        background: linear-gradient(180deg, var(--brand-soft) 0%, var(--panel) 40%);
+        border-color: rgba(232, 93, 4, 0.25);
+      }
+      .role-card .role-title {
+        font-size: 18px;
+        font-weight: 900;
+        margin-bottom: 4px;
+      }
+      .role-card .role-code {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 16px;
+      }
+
+      /* ── Build steps visual ── */
+      .steps-bar {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 6px;
+        margin: 24px 0;
+      }
+      @media (max-width: 640px) {
+        .steps-bar {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .step-chip {
+        text-align: center;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        padding: 12px 6px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .step-chip .num {
+        display: block;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--brand);
+        color: #fff;
+        font-weight: 800;
+        font-size: 13px;
+        line-height: 28px;
+        margin: 0 auto 8px;
+      }
+
+      /* ── Glossary ── */
+      .glossary-grid {
+        display: grid;
+        gap: 10px;
+      }
+      .glossary-row {
+        display: grid;
+        grid-template-columns: 160px 1fr 1fr;
+        gap: 12px;
+        padding: 12px 16px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        align-items: start;
+      }
+      @media (max-width: 640px) {
+        .glossary-row {
+          grid-template-columns: 1fr;
+        }
+      }
+      .glossary-row .term {
+        font-weight: 800;
+        color: var(--brand);
+      }
+      .glossary-row .en {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* ── Footer ── */
+      .doc-footer {
+        margin-top: 60px;
+        padding-top: 24px;
+        border-top: 1px solid var(--line);
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* ── Print ── */
+      @media print {
+        .sidebar,
+        .topbar,
+        .skip-link {
+          display: none !important;
+        }
+        .app {
+          display: block;
+        }
+        .content {
+          max-width: 100%;
+          padding: 0;
+        }
+        .hero,
+        .card,
+        .flow-body {
+          box-shadow: none;
+          break-inside: avoid;
+        }
+        a {
+          color: var(--ink);
+          text-decoration: none;
+        }
+        section {
+          break-inside: avoid-page;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
+
+    <div class="app">
+      <!-- ── Sidebar ── -->
+      <aside class="sidebar" id="sidebar" aria-label="فهرست مطالب">
+        <div class="brand">
+          <div class="brand-logo" aria-hidden="true">چ</div>
+          <div class="brand-text">
+            <b>ساندویچ چامپ</b>
+            <span>راهنمای کسب‌وکار وب‌سایت</span>
+          </div>
+        </div>
+
+        <div class="toc-label">فهرست مطالب</div>
+        <nav class="toc" id="toc">
+          <div class="group">معرفی</div>
+          <a href="#intro">خلاصه اجرایی</a>
+          <a href="#brand">معرفی برند</a>
+          <a href="#roles">نقش‌های کاربری</a>
+          <a href="#sitemap">نقشه صفحات</a>
+
+          <div class="group">مسیر مشتری</div>
+          <a href="#public-pages">صفحات عمومی</a>
+          <a href="#order-flow">جریان سفارش</a>
+          <a href="#build-flow">ساخت ساندویچ</a>
+          <a href="#cart-checkout">سبد و ثبت سفارش</a>
+          <a href="#auth">ورود و ثبت‌نام</a>
+
+          <div class="group">حساب کاربری</div>
+          <a href="#dashboard">داشبورد مشتری</a>
+          <a href="#community">مارکت ساندویچ</a>
+          <a href="#taste">ذائقه‌سنج</a>
+          <a href="#referrals">برنامه دعوت</a>
+
+          <div class="group">مدیریت</div>
+          <a href="#admin">پنل مدیریت</a>
+          <a href="#order-status">چرخه وضعیت سفارش</a>
+          <a href="#pricing">قیمت‌گذاری</a>
+
+          <div class="group">مرجع</div>
+          <a href="#limitations">محدودیت‌ها</a>
+          <a href="#glossary">واژه‌نامه</a>
+          <a href="#contact">تماس و پشتیبانی</a>
+        </nav>
+
+        <div class="sidebar-meta">
+          <strong>نسخه سند:</strong> ۱.۰<br />
+          <strong>تاریخ:</strong> خرداد ۱۴۰۵<br />
+          <strong>مخاطب:</strong> مدیران، تیم فروش، پشتیبانی
+        </div>
+      </aside>
+
+      <!-- ── Main ── -->
+      <div class="main">
+        <div class="topbar">
+          <span class="topbar-title">راهنمای چامپ</span>
+          <button class="menu-btn" type="button" onclick="document.getElementById('sidebar').scrollIntoView({behavior:'smooth'})">
+            فهرست
+          </button>
+        </div>
+
+        <main class="content" id="main-content">
+          <!-- Hero -->
+          <header class="hero">
+            <div class="hero-badge">📋 سند کسب‌وکار — فارسی</div>
+            <h1>راهنمای جامع وب‌سایت ساندویچ چامپ</h1>
+            <p class="hero-lead">
+              این سند برای تیم کسب‌وکار، پشتیبانی مشتری و مدیریت رستوران تهیه شده
+              است. تمام صفحات، جریان‌های کاربری، نقش‌ها، اصطلاحات و محدودیت‌های
+              فعلی سیستم را به‌صورت ساختاریافته توضیح می‌دهد.
+            </p>
+            <div class="hero-stats">
+              <div class="stat-pill">
+                <strong>۲</strong>
+                نقش کاربری
+              </div>
+              <div class="stat-pill">
+                <strong>۲۰+</strong>
+                صفحه و مسیر
+              </div>
+              <div class="stat-pill">
+                <strong>۶</strong>
+                مرحله ساخت ساندویچ
+              </div>
+              <div class="stat-pill">
+                <strong>RTL</strong>
+                رابط فارسی
+              </div>
+            </div>
+          </header>
+
+          <!-- 1. Executive Summary -->
+          <section id="intro">
+            <h2>خلاصه اجرایی</h2>
+            <p class="section-desc">
+              نمای کلی از آنچه این وب‌سایت انجام می‌دهد و برای چه کسب‌وکاری طراحی
+              شده است.
+            </p>
+
+            <div class="callout info">
+              <strong>این سایت چیست؟</strong>
+              وب‌سایت <strong>ساندویچ چامپ</strong> یک پلتفرم سفارش آنلاین
+              <em>تک‌برند</em> است — نه یک مارکت‌پلیس چند رستورانه. مشتریان
+              می‌توانند ساندویچ‌های امضایی منو را ببینند، ساندویچ سفارشی
+              بسازند، سفارش ثبت کنند و حساب کاربری خود را مدیریت کنند.
+            </div>
+
+            <div class="card-grid">
+              <div class="card">
+                <div class="card-icon orange">🥪</div>
+                <h4>محصول اصلی</h4>
+                <p>
+                  «ساندویچ میکس» — ساندویچی که مشتری مرحله‌به‌مرحله با انتخاب
+                  پایه، پروتئین، پنیر، سبزیجات و سس می‌سازد.
+                </p>
+              </div>
+              <div class="card">
+                <div class="card-icon green">📱</div>
+                <h4>سفارش آنلاین</h4>
+                <p>
+                  ثبت سفارش با تحویل درب منزل (+۵۰ تومان) یا تحویل حضوری. پس از
+                  ثبت، تیم رستوران با مشتری تماس می‌گیرد.
+                </p>
+              </div>
+              <div class="card">
+                <div class="card-icon blue">👥</div>
+                <h4>جامعه کاربران</h4>
+                <p>
+                  مارکت ساندویچ — کاربران دستور سفارشی خود را منتشر می‌کنند و
+                  دیگران می‌توانند سفارش دهند و امتیاز بدهند.
+                </p>
+              </div>
+              <div class="card">
+                <div class="card-icon amber">⚙️</div>
+                <h4>پنل مدیریت</h4>
+                <p>
+                  مدیران منو، سفارش‌ها، تخفیف‌ها، گزارش‌ها، نظرات و مشتریان را
+                  از مسیر <code>/admin</code> کنترل می‌کنند.
+                </p>
+              </div>
+            </div>
+
+            <div class="callout warning">
+              <strong>توجه مهم برای تیم کسب‌وکار</strong>
+              در حال حاضر <strong>پرداخت آنلاین</strong> و
+              <strong>رزرو میز</strong> در سیستم وجود ندارد. فرآیند پرداخت
+              تلفنی/حضوری پس از تماس با مشتری انجام می‌شود.
+            </div>
+          </section>
+
+          <!-- 2. Brand -->
+          <section id="brand">
+            <h2>معرفی برند</h2>
+            <p class="section-desc">
+              اطلاعات برند، ارزش‌ها و راه‌های ارتباطی که در وب‌سایت نمایش داده
+              می‌شوند.
+            </p>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>مورد</th>
+                    <th>مقدار</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>نام برند (فارسی)</td>
+                    <td><strong>چامپ</strong> — در برخی بخش‌های UI «چاپ» نیز دیده می‌شود</td>
+                  </tr>
+                  <tr>
+                    <td>نام انگلیسی</td>
+                    <td>Chomp Sandwich</td>
+                  </tr>
+                  <tr>
+                    <td>شعار</td>
+                    <td>ساندویچ میکس با ذائقه‌ی شما</td>
+                  </tr>
+                  <tr>
+                    <td>مکان</td>
+                    <td>اصفهان، شیخ صدوق جنوبی، میدان برج، ساندویچ چامپ</td>
+                  </tr>
+                  <tr>
+                    <td>تلفن</td>
+                    <td dir="ltr" style="text-align: right">۰۹۱۳۴۶۶۷۹۵۹</td>
+                  </tr>
+                  <tr>
+                    <td>ساعت کاری</td>
+                    <td>هر روز ۱۷:۰۰ تا ۲۳:۳۰</td>
+                  </tr>
+                  <tr>
+                    <td>زبان رابط</td>
+                    <td>فارسی — راست‌به‌چپ (RTL)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>ارزش‌های برند (صفحه درباره ما)</h3>
+            <div class="card-grid">
+              <div class="card">
+                <h4>🌿 تازه، هر روز</h4>
+                <p>نان و مواد اولیه روزانه آماده می‌شوند.</p>
+              </div>
+              <div class="card">
+                <h4>❄️ بدون فریزر</h4>
+                <p>هیچ ماده‌ای از فریزر استفاده نمی‌شود.</p>
+              </div>
+              <div class="card">
+                <h4>🔍 شفافیت کامل</h4>
+                <p>مشتری همه مواد را می‌بیند و خود انتخاب می‌کند.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. Roles -->
+          <section id="roles">
+            <h2>نقش‌های کاربری</h2>
+            <p class="section-desc">
+              سیستم فقط دو نقش دارد. نقش «صاحب کسب‌وکار» یا «فروشنده» جداگانه
+              تعریف نشده — مدیر رستوران همان نقش ADMIN است.
+            </p>
+
+            <div class="role-compare">
+              <div class="role-card customer">
+                <div class="role-title">مشتری</div>
+                <div class="role-code">CUSTOMER — پیش‌فرض پس از ثبت‌نام</div>
+                <ul>
+                  <li>مشاهده منو و صفحات عمومی</li>
+                  <li>ساخت ساندویچ و ثبت سفارش</li>
+                  <li>داشبورد شخصی (آدرس، حساسیت، تاریخچه)</li>
+                  <li>مارکت ساندویچ و ذائقه‌سنج</li>
+                  <li>دعوت دوستان و استفاده از کد تخفیف</li>
+                </ul>
+              </div>
+              <div class="role-card admin">
+                <div class="role-title">مدیر</div>
+                <div class="role-code">ADMIN — پرسنل / مالک رستوران</div>
+                <ul>
+                  <li>دسترسی کامل به <code>/admin</code></li>
+                  <li>مدیریت منو، سفارش‌ها و مشتریان</li>
+                  <li>تخفیف‌ها، گزارش‌ها و نظرات</li>
+                  <li>تنظیم ذائقه‌سنج</li>
+                  <li>همچنین می‌تواند به‌عنوان مشتری هم سفارش دهد</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="callout info">
+              <strong>احراز هویت</strong>
+              ورود با <strong>شماره موبایل</strong> (فرمت ایران) انجام می‌شود.
+              روش‌ها: رمز عبور (اختیاری) یا کد یکبارمصرف (OTP) از طریق پیامک
+              (سرویس کاوه‌نگار). پس از ورود، نشست شامل شناسه، نقش و شماره
+              تلفن است.
+            </div>
+          </section>
+
+          <!-- 4. Sitemap -->
+          <section id="sitemap">
+            <h2>نقشه صفحات</h2>
+            <p class="section-desc">
+              تمام مسیرهای مهم وب‌سایت به‌تفکیک سطح دسترسی.
+            </p>
+
+            <div class="sitemap">
+              <div class="sitemap-group">
+                <div class="label">صفحات عمومی — بدون ورود</div>
+                <div class="sitemap-items">
+                  <div class="sitemap-item">خانه<span>/</span></div>
+                  <div class="sitemap-item">منو<span>/menu</span></div>
+                  <div class="sitemap-item">جزئیات ساندویچ<span>/menu/[slug]</span></div>
+                  <div class="sitemap-item">درباره ما<span>/about</span></div>
+                  <div class="sitemap-item">تماس<span>/contact</span></div>
+                  <div class="sitemap-item">ورود<span>/login</span></div>
+                </div>
+              </div>
+              <div class="sitemap-group">
+                <div class="label">صفحات مشتری — نیاز به ورود</div>
+                <div class="sitemap-items">
+                  <div class="sitemap-item">ساخت ساندویچ<span>/build</span></div>
+                  <div class="sitemap-item">ثبت سفارش<span>/checkout</span></div>
+                  <div class="sitemap-item">ذائقه‌سنج<span>/taste</span></div>
+                  <div class="sitemap-item">مارکت<span>/community</span></div>
+                  <div class="sitemap-item">داشبورد<span>/dashboard</span></div>
+                  <div class="sitemap-item">سفارش‌ها<span>/dashboard/orders</span></div>
+                  <div class="sitemap-item">ساندویچ‌های من<span>/dashboard/saved</span></div>
+                  <div class="sitemap-item">آدرس‌ها<span>/dashboard/addresses</span></div>
+                  <div class="sitemap-item">حساسیت‌ها<span>/dashboard/allergies</span></div>
+                  <div class="sitemap-item">دعوت<span>/dashboard/referrals</span></div>
+                </div>
+              </div>
+              <div class="sitemap-group">
+                <div class="label">پنل مدیریت — فقط ADMIN</div>
+                <div class="sitemap-items">
+                  <div class="sitemap-item">داشبورد<span>/admin</span></div>
+                  <div class="sitemap-item">ساندویچ‌ها<span>/admin/sandwiches</span></div>
+                  <div class="sitemap-item">افزودنی‌ها<span>/admin/toppings</span></div>
+                  <div class="sitemap-item">دسته‌بندی‌ها<span>/admin/categories</span></div>
+                  <div class="sitemap-item">برچسب‌ها<span>/admin/tags</span></div>
+                  <div class="sitemap-item">سفارش‌ها<span>/admin/orders</span></div>
+                  <div class="sitemap-item">تخفیف‌ها<span>/admin/discounts</span></div>
+                  <div class="sitemap-item">کمبوها<span>/admin/combos</span></div>
+                  <div class="sitemap-item">مشتریان<span>/admin/customers</span></div>
+                  <div class="sitemap-item">دعوت‌ها<span>/admin/referrals</span></div>
+                  <div class="sitemap-item">گزارش‌ها<span>/admin/reports</span></div>
+                  <div class="sitemap-item">نظرات<span>/admin/reviews</span></div>
+                  <div class="sitemap-item">ذائقه‌سنج<span>/admin/taste-form</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. Public pages -->
+          <section id="public-pages">
+            <h2>صفحات عمومی</h2>
+            <p class="section-desc">
+              صفحاتی که هر بازدیدکننده — حتی بدون حساب — می‌تواند ببیند.
+            </p>
+
+            <div class="card-grid">
+              <div class="card">
+                <div class="card-icon orange">🏠</div>
+                <h4>صفحه خانه</h4>
+                <p>
+                  معرفی برند، ساندویچ‌های ویژه، دکمه‌های «شروع ساخت» و «مشاهده
+                  منو». نقطه ورود اصلی بازاریابی.
+                </p>
+                <div class="route"><code>/</code></div>
+              </div>
+              <div class="card">
+                <div class="card-icon green">📋</div>
+                <h4>منو</h4>
+                <p>
+                  لیست ساندویچ‌های امضایی + دسته‌بندی افزودنی‌ها (پروتئین، پنیر،
+                  سبزی، سس). هر ساندویچ لینک جزئیات دارد.
+                </p>
+                <div class="route"><code>/menu</code></div>
+              </div>
+              <div class="card">
+                <div class="card-icon blue">🔎</div>
+                <h4>جزئیات ساندویچ</h4>
+                <p>
+                  تصویر، قیمت پایه، مواد، برچسب‌های طعم، نظرات کاربران و دکمه
+                  «سفارشی‌سازی» یا افزودن به سبد.
+                </p>
+                <div class="route"><code>/menu/[slug]</code></div>
+              </div>
+              <div class="card">
+                <div class="card-icon amber">📞</div>
+                <h4>تماس با ما</h4>
+                <p>تلفن، آدرس فیزیکی و ساعت کاری — برای سفارش تلفنی و پشتیبانی.</p>
+                <div class="route"><code>/contact</code></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. Order flow -->
+          <section id="order-flow">
+            <h2>جریان کلی سفارش</h2>
+            <p class="section-desc">
+              مسیر استاندارد یک مشتری از کشف محصول تا ثبت سفارش — برای آموزش
+              تیم پشتیبانی و فروش.
+            </p>
+
+            <div class="flow">
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۱</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>کشف و انتخاب</h4>
+                  <p>
+                    مشتری از خانه یا منو وارد می‌شود. می‌تواند ساندویچ امضایی
+                    انتخاب کند، از ذائقه‌سنج پیشنهاد بگیرد، یا از مارکت
+                    ساندویچ سفارش دهد.
+                  </p>
+                  <div class="path">مسیرها: / &nbsp;|&nbsp; /menu &nbsp;|&nbsp; /taste &nbsp;|&nbsp; /community</div>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۲</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>سفارشی‌سازی (اختیاری)</h4>
+                  <p>
+                    در صفحه ساخت، پایه و افزودنی‌ها انتخاب می‌شوند. مشتری
+                    می‌تواند دستور را ذخیره کند (عمومی/خصوصی).
+                  </p>
+                  <div class="path">مسیر: /build — نیاز به ورود</div>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۳</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>افزودن به سبد</h4>
+                  <p>
+                    سبد خرید در مرورگر ذخیره می‌شود (حتی پس از بستن تب). از
+                    آیکون سبد در هدر قابل دسترسی است.
+                  </p>
+                  <div class="path">کامپوننت: CartDrawer — کش محلی</div>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۴</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>ثبت سفارش</h4>
+                  <p>
+                    فرم checkout: نام، تلفن، روش تحویل (ارسال/حضوری)، آدرس،
+                    یادداشت. پس از ثبت پیام «به‌زودی تماس می‌گیریم» نمایش
+                    داده می‌شود.
+                  </p>
+                  <div class="path">مسیر: /checkout</div>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۵</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>پیگیری و تکمیل</h4>
+                  <p>
+                    تیم رستوران با مشتری تماس می‌گیرد. مدیر وضعیت را در پنل
+                    به‌روز می‌کند. پس از تحویل، مشتری می‌تواند امتیاز بدهد.
+                  </p>
+                  <div class="path">مسیر مشتری: /dashboard/orders &nbsp;|&nbsp; مدیر: /admin/orders</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flow-h" aria-label="نمودار تصمیم روش تحویل">
+              <span class="flow-box">سبد پر</span>
+              <span class="flow-arrow">←</span>
+              <span class="flow-box highlight">checkout</span>
+              <span class="flow-arrow">←</span>
+              <span class="flow-box">ارسال (+۵۰ ت)</span>
+              <span class="flow-arrow">/</span>
+              <span class="flow-box">تحویل حضوری (رایگان)</span>
+              <span class="flow-arrow">←</span>
+              <span class="flow-box highlight">ثبت در DB</span>
+              <span class="flow-arrow">←</span>
+              <span class="flow-box">تماس تلفنی</span>
+            </div>
+          </section>
+
+          <!-- 7. Build flow -->
+          <section id="build-flow">
+            <h2>ساخت ساندویچ — ۶ مرحله</h2>
+            <p class="section-desc">
+              هسته تجربه محصول. مشابه مدل Subway — مرحله‌به‌مرحله و شفاف.
+            </p>
+
+            <div class="steps-bar" role="list" aria-label="مراحل ساخت">
+              <div class="step-chip" role="listitem"><span class="num">۱</span>پایه</div>
+              <div class="step-chip" role="listitem"><span class="num">۲</span>پروتئین</div>
+              <div class="step-chip" role="listitem"><span class="num">۳</span>پنیر</div>
+              <div class="step-chip" role="listitem"><span class="num">۴</span>سبزیجات</div>
+              <div class="step-chip" role="listitem"><span class="num">۵</span>سس</div>
+              <div class="step-chip" role="listitem"><span class="num">۶</span>بررسی</div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>مرحله</th>
+                    <th>عنوان</th>
+                    <th>توضیح</th>
+                    <th>الزامی؟</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>۱</td>
+                    <td>پایه</td>
+                    <td>انتخاب ساندویچ امضایی به‌عنوان پایه (مثلاً رست بیف، مرغ)</td>
+                    <td><span class="badge cancel">بله</span></td>
+                  </tr>
+                  <tr>
+                    <td>۲</td>
+                    <td>پروتئین اضافه</td>
+                    <td>افزودن پروتئین بیشتر — هر مورد قیمت جدا دارد</td>
+                    <td><span class="badge public">خیر</span></td>
+                  </tr>
+                  <tr>
+                    <td>۳</td>
+                    <td>پنیر</td>
+                    <td>انتخاب یک یا چند نوع پنیر</td>
+                    <td><span class="badge public">خیر</span></td>
+                  </tr>
+                  <tr>
+                    <td>۴</td>
+                    <td>سبزیجات</td>
+                    <td>سبزی، خیار، فلفل و… — بدون محدودیت تعداد</td>
+                    <td><span class="badge public">خیر</span></td>
+                  </tr>
+                  <tr>
+                    <td>۵</td>
+                    <td>سس‌ها</td>
+                    <td>سس‌های مورد علاقه</td>
+                    <td><span class="badge public">خیر</span></td>
+                  </tr>
+                  <tr>
+                    <td>۶</td>
+                    <td>بررسی نهایی</td>
+                    <td>خلاصه، تعداد، قیمت کل، افزودن به سبد یا ذخیره دستور</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>ورود از منو</h3>
+            <p>
+              اگر مشتری از صفحه یک ساندویچ روی «سفارشی‌سازی» بزند، به
+              <code>/build?sandwich=slug</code> هدایت می‌شود و مرحله پایه از
+              قبل انتخاب شده است.
+            </p>
+
+            <h3>ذخیره دستور سفارشی</h3>
+            <p>
+              در مرحله بررسی، دکمه «ذخیره» باز می‌شود. مشتری نام، توضیح و
+              حالت <span class="badge public">عمومی</span> یا
+              <span class="badge private">خصوصی</span> را انتخاب می‌کند.
+              دستورهای عمومی در مارکت ساندویچ نمایش داده می‌شوند.
+            </p>
+
+            <div class="callout success">
+              <strong>هشدار حساسیت</strong>
+              اگر مشتری در داشبورد حساسیت غذایی ثبت کرده باشد، هنگام ساخت
+              ساندویچ درباره مواد حساسیت‌زا هشدار نمایش داده می‌شود.
+            </div>
+          </section>
+
+          <!-- 8. Cart & Checkout -->
+          <section id="cart-checkout">
+            <h2>سبد خرید و ثبت سفارش</h2>
+            <p class="section-desc">
+              جزئیات فرم checkout و آنچه پس از ثبت برای مشتری و تیم اتفاق
+              می‌افتد.
+            </p>
+
+            <h3>سبد خرید</h3>
+            <ul>
+              <li>در مرورگر مشتری ذخیره می‌شود (localStorage)</li>
+              <li>هر آیتم: ساندویچ پایه + لیست افزودنی‌ها + تعداد</li>
+              <li>قیمت خط = (قیمت پایه + جمع افزودنی‌ها) × تعداد</li>
+              <li>می‌تواند شامل ساندویچ سفارشی از مارکت باشد</li>
+            </ul>
+
+            <h3>فرم ثبت سفارش</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>فیلد</th>
+                    <th>توضیح</th>
+                    <th>الزامی</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>نام</td>
+                    <td>نام گیرنده سفارش</td>
+                    <td>بله</td>
+                  </tr>
+                  <tr>
+                    <td>شماره تماس</td>
+                    <td>برای پیگیری و تماس تیم</td>
+                    <td>بله</td>
+                  </tr>
+                  <tr>
+                    <td>روش تحویل</td>
+                    <td>
+                      <strong>ارسال به آدرس</strong> — هزینه ۵۰ تومان &nbsp;|&nbsp;
+                      <strong>تحویل حضوری</strong> — رایگان
+                    </td>
+                    <td>بله</td>
+                  </tr>
+                  <tr>
+                    <td>آدرس</td>
+                    <td>فقط برای روش ارسال</td>
+                    <td>در صورت ارسال</td>
+                  </tr>
+                  <tr>
+                    <td>یادداشت</td>
+                    <td>مثلاً «بدون سس»، «حساسیت بادام زمینی»</td>
+                    <td>خیر</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>پس از ثبت</h3>
+            <div class="callout success">
+              <strong>پیام موفقیت</strong>
+              «سفارش شما ثبت شد! ممنون که چامپ رو انتخاب کردی. به‌زودی با
+              شماره‌ی شما تماس می‌گیریم.»
+            </div>
+            <p>
+              سفارش هم در پایگاه داده (PostgreSQL) و هم در ذخیره محلی مدیر
+              ثبت می‌شود. قیمت‌ها سمت سرور دوباره محاسبه می‌شوند تا دستکاری
+              نشوند.
+            </p>
+          </section>
+
+          <!-- 9. Auth -->
+          <section id="auth">
+            <h2>ورود و ثبت‌نام</h2>
+            <p class="section-desc">
+              جریان احراز هویت مبتنی بر موبایل — برای راهنمایی مشتریان در
+              پشتیبانی.
+            </p>
+
+            <div class="flow">
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۱</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>وارد کردن شماره موبایل</h4>
+                  <p>سیستم بررسی می‌کند شماره قبلاً ثبت شده یا نه.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۲</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>کاربر موجود + رمز</h4>
+                  <p>ورود با رمز عبور یا درخواست OTP.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۳</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>کاربر موجود بدون رمز</h4>
+                  <p>فقط OTP — کد ۶ رقمی پیامک می‌شود.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۴</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>کاربر جدید</h4>
+                  <p>
+                    نام + رمز اختیاری + OTP → ثبت‌نام → ورود خودکار. امکان
+                    وارد کردن <strong>کد دعوت</strong> در ثبت‌نام.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <h3>قوانین OTP</h3>
+            <ul>
+              <li>کد ۶ رقمی — اعتبار ۲ دقیقه</li>
+              <li>ارسال مجدد: حداقل ۶۰ ثانیه فاصله</li>
+              <li>محدودیت: حداکثر ۵ درخواست در ساعت</li>
+              <li>در محیط توسعه، کد در کنسول سرور چاپ می‌شود</li>
+            </ul>
+
+            <div class="callout info">
+              <strong>هدایت پس از ورود</strong>
+              اگر کاربر قبل از ورود صفحه‌ای مثل /build را می‌خواست، پس از
+              ورود به همان صفحه برمی‌گردد (<code>?next=</code>).
+            </div>
+          </section>
+
+          <!-- 10. Dashboard -->
+          <section id="dashboard">
+            <h2>داشبورد مشتری</h2>
+            <p class="section-desc">
+              بخش‌های حساب کاربری پس از ورود — مسیر پایه: <code>/dashboard</code>
+            </p>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>بخش</th>
+                    <th>مسیر</th>
+                    <th>امکانات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>نمای کلی</td>
+                    <td><code>/dashboard</code></td>
+                    <td>
+                      تعداد سفارش، مجموع خرید، ساندویچ محبوب، آمار دعوت،
+                      تعداد آدرس و حساسیت
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>سفارش‌های من</td>
+                    <td><code>/dashboard/orders</code></td>
+                    <td>
+                      تاریخچه، جزئیات هر سفارش، دکمه
+                      <strong>سفارش مجدد</strong> (فعلاً فقط آیتم‌های منو)
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>ساندویچ‌های من</td>
+                    <td><code>/dashboard/saved</code></td>
+                    <td>دستورهای ذخیره‌شده — عمومی/خصوصی — سفارش مستقیم</td>
+                  </tr>
+                  <tr>
+                    <td>آدرس‌ها</td>
+                    <td><code>/dashboard/addresses</code></td>
+                    <td>
+                      چند آدرس، تعیین پیش‌فرض — استان، شهر، خیابان، کوچه،
+                      واحد، کدپستی
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>حساسیت‌ها</td>
+                    <td><code>/dashboard/allergies</code></td>
+                    <td>انتخاب مواد حساسیت‌زا — هشدار هنگام سفارش</td>
+                  </tr>
+                  <tr>
+                    <td>دعوت دوستان</td>
+                    <td><code>/dashboard/referrals</code></td>
+                    <td>کد و لینک دعوت، لیست دعوت‌شدگان، نرخ تبدیل</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- 11. Community -->
+          <section id="community">
+            <h2>مارکت ساندویچ</h2>
+            <p class="section-desc">
+              بازار دستورهای سفارشی کاربران — بخش اجتماعی و بازاریابی دهان‌به‌دهان.
+            </p>
+
+            <h3>چگونه کار می‌کند؟</h3>
+            <ol>
+              <li>مشتری در /build دستور می‌سازد و با حالت «عمومی» ذخیره می‌کند</li>
+              <li>دستور در <code>/community</code> نمایش داده می‌شود</li>
+              <li>دیگران می‌توانند جستجو، مرتب‌سازی و سفارش یک‌کلیکی بدهند</li>
+              <li>۳ ساندویچ برتر در بالای صفحه نمایش داده می‌شوند</li>
+              <li>پس از تحویل سفارش، خریدار می‌تواند ۱–۵ ستاره + نظر بگذارد</li>
+            </ol>
+
+            <h3>گزینه‌های مرتب‌سازی</h3>
+            <div class="card-grid">
+              <div class="card"><h4>جدیدترین</h4><p>آخرین دستورهای منتشرشده</p></div>
+              <div class="card"><h4>بیشترین سفارش</h4><p>محبوب‌ترین از نظر تعداد سفارش</p></div>
+              <div class="card"><h4>بالاترین امتیاز</h4><p>بهترین نظرات کاربران</p></div>
+              <div class="card"><h4>ترند</h4><p>ترکیب فعالیت اخیر و محبوبیت</p></div>
+            </div>
+
+            <div class="callout info">
+              <strong>قانون امتیازدهی</strong>
+              فقط کسی که آن ساندویچ را <em>خریده و تحویل گرفته</em> می‌تواند
+              یک نظر برای هر سفارش ثبت کند.
+            </div>
+          </section>
+
+          <!-- 12. Taste quiz -->
+          <section id="taste">
+            <h2>ذائقه‌سنج</h2>
+            <p class="section-desc">
+              ابزار شخصی‌سازی — مشتری را به ساندویچ مناسب سلیقه‌اش هدایت می‌کند.
+            </p>
+
+            <div class="flow">
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۱</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>پرسشنامه چندمرحله‌ای</h4>
+                  <p>سوالات توسط مدیر در /admin/taste-form تنظیم می‌شوند.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۲</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>تحلیل برچسب‌های طعم</h4>
+                  <p>پاسخ‌ها به برچسب‌هایی مثل شیرین، تند، دودی وزن می‌دهند.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-marker">
+                  <div class="flow-num">۳</div>
+                  <div class="flow-line"></div>
+                </div>
+                <div class="flow-body">
+                  <h4>پیشنهاد ساندویچ</h4>
+                  <p>سیستم نزدیک‌ترین ساندویچ امضایی را پیشنهاد می‌دهد — لینک سفارش/ساخت.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 13. Referrals -->
+          <section id="referrals">
+            <h2>برنامه دعوت دوستان</h2>
+            <p class="section-desc">
+              بازاریابی ارجاعی — هر مشتری کد منحصربه‌فرد دارد.
+            </p>
+
+            <ul>
+              <li>هر کاربر پس از ثبت‌نام یک <strong>کد دعوت</strong> دریافت می‌کند</li>
+              <li>در ثبت‌نام می‌توان کد معرف را وارد کرد</li>
+              <li>داشبورد مشتری: اشتراک لینک، تعداد دعوت‌شدگان، نرخ تبدیل</li>
+              <li>پنل مدیر <code>/admin/referrals</code>: leaderboard و آمار کلی</li>
+            </ul>
+          </section>
+
+          <!-- 14. Admin -->
+          <section id="admin">
+            <h2>پنل مدیریت</h2>
+            <p class="section-desc">
+              ابزارهای روزانه تیم رستوران — فقط با نقش ADMIN قابل دسترسی.
+            </p>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>بخش</th>
+                    <th>مسیر</th>
+                    <th>کاربرد</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>داشبورد</td>
+                    <td><code>/admin</code></td>
+                    <td>نمای کلی فروش (بخشی از داده‌ها هنوز از cache محلی)</td>
+                  </tr>
+                  <tr>
+                    <td>ساندویچ‌ها</td>
+                    <td><code>/admin/sandwiches</code></td>
+                    <td>افزودن/ویرایش/حذف ساندویچ‌های امضایی منو</td>
+                  </tr>
+                  <tr>
+                    <td>افزودنی‌ها</td>
+                    <td><code>/admin/toppings</code></td>
+                    <td>مدیریت مواد (پروتئین، پنیر، سبزی، سس، نان)</td>
+                  </tr>
+                  <tr>
+                    <td>دسته‌بندی‌ها</td>
+                    <td><code>/admin/categories</code></td>
+                    <td>دسته‌بندی مواد اولیه</td>
+                  </tr>
+                  <tr>
+                    <td>برچسب‌ها</td>
+                    <td><code>/admin/tags</code></td>
+                    <td>برچسب طعم و رژیم (شیرین، تند، گیاهی…)</td>
+                  </tr>
+                  <tr>
+                    <td>سفارش‌ها</td>
+                    <td><code>/admin/orders</code></td>
+                    <td>لیست سفارش‌ها، تغییر وضعیت، جزئیات مشتری</td>
+                  </tr>
+                  <tr>
+                    <td>تخفیف‌ها</td>
+                    <td><code>/admin/discounts</code></td>
+                    <td>کد تخفیف درصدی یا مبلغ ثابت، محدودیت استفاده</td>
+                  </tr>
+                  <tr>
+                    <td>کمبوها</td>
+                    <td><code>/admin/combos</code></td>
+                    <td>بسته‌های ترکیبی</td>
+                  </tr>
+                  <tr>
+                    <td>مشتریان</td>
+                    <td><code>/admin/customers</code></td>
+                    <td>لیست و جزئیات مشتریان (PostgreSQL)</td>
+                  </tr>
+                  <tr>
+                    <td>گزارش‌ها</td>
+                    <td><code>/admin/reports</code></td>
+                    <td>فروش، رشد، خروجی CSV</td>
+                  </tr>
+                  <tr>
+                    <td>نظرات</td>
+                    <td><code>/admin/reviews</code></td>
+                    <td>مدیریت و بررسی نظرات</td>
+                  </tr>
+                  <tr>
+                    <td>ذائقه‌سنج</td>
+                    <td><code>/admin/taste-form</code></td>
+                    <td>تنظیم سوالات پرسشنامه</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="callout warning">
+              <strong>نکته فنی برای مدیران</strong>
+              بخشی از پنل (به‌ویژه داشبورد اولیه) هنوز با داده محلی مرورگر
+              همگام است؛ منبع اصلی سفارش‌ها و گزارش‌ها پایگاه داده PostgreSQL
+              است. مهاجرت کامل در نقشه راه پروژه در جریان است.
+            </div>
+          </section>
+
+          <!-- 15. Order status -->
+          <section id="order-status">
+            <h2>چرخه وضعیت سفارش</h2>
+            <p class="section-desc">
+              وضعیت‌هایی که مدیر در پنل تنظیم می‌کند و معادل فارسی در UI.
+            </p>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>کد سیستم</th>
+                    <th>نمایش فارسی</th>
+                    <th>معنی برای تیم</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>NEW</code></td>
+                    <td><span class="badge new">ثبت‌شده</span></td>
+                    <td>سفارش تازه ثبت شده — نیاز به تماس/تأیید</td>
+                  </tr>
+                  <tr>
+                    <td><code>PREPARING</code></td>
+                    <td><span class="badge prep">در حال آماده‌سازی</span></td>
+                    <td>آشپزخانه در حال تهیه</td>
+                  </tr>
+                  <tr>
+                    <td><code>DELIVERED</code></td>
+                    <td><span class="badge done">تحویل‌شده</span></td>
+                    <td>سفارش به مشتری رسید — امکان امتیازدهی فعال</td>
+                  </tr>
+                  <tr>
+                    <td><code>CANCELLED</code></td>
+                    <td><span class="badge cancel">لغوشده</span></td>
+                    <td>سفارش لغو شده</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flow-h">
+              <span class="flow-box highlight">ثبت‌شده</span>
+              <span class="flow-arrow">←</span>
+              <span class="flow-box">در حال آماده‌سازی</span>
+              <span class="flow-arrow">←</span>
+              <span class="flow-box highlight">تحویل‌شده</span>
+            </div>
+            <p style="text-align: center; color: var(--muted); font-size: 13px">
+              از هر وضعیت می‌توان به «لغوشده» رفت
+            </p>
+          </section>
+
+          <!-- 16. Pricing -->
+          <section id="pricing">
+            <h2>قیمت‌گذاری</h2>
+            <p class="section-desc">
+              واحد پول: <strong>تومان</strong>. قیمت‌ها در seed اولیه و پنل
+              مدیر قابل تنظیم هستند.
+            </p>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>مورد</th>
+                    <th>محدوده / مقدار</th>
+                    <th>توضیح</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>ساندویچ پایه (امضایی)</td>
+                    <td>حدود ۳۹۰ – ۶۰۰ تومان</td>
+                    <td>بسته به نوع پروتئین پایه</td>
+                  </tr>
+                  <tr>
+                    <td>افزودنی‌ها</td>
+                    <td>قیمت جداگانه هر مورد</td>
+                    <td>در مراحل ۲ تا ۵ ساخت اضافه می‌شود</td>
+                  </tr>
+                  <tr>
+                    <td>هزینه ارسال</td>
+                    <td>+۵۰ تومان</td>
+                    <td>فقط روش «ارسال به آدرس»</td>
+                  </tr>
+                  <tr>
+                    <td>تحویل حضوری</td>
+                    <td>۰ تومان</td>
+                    <td>بدون هزینه اضافه</td>
+                  </tr>
+                  <tr>
+                    <td>تخفیف</td>
+                    <td>درصدی یا مبلغ ثابت</td>
+                    <td>کد تخفیف در checkout (در صورت فعال بودن)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>نمونه ساندویچ‌های امضایی</h3>
+            <ul>
+              <li><strong>رست بیف</strong> — پرفروش‌ترین، «پادشاه منو»</li>
+              <li><strong>بوقلمون</strong></li>
+              <li><strong>بیکن</strong></li>
+              <li><strong>مرغ</strong></li>
+              <li>و سایر موارد قابل مدیریت از پنل</li>
+            </ul>
+          </section>
+
+          <!-- 17. Limitations -->
+          <section id="limitations">
+            <h2>محدودیت‌ها و قابلیت‌های فعلی</h2>
+            <p class="section-desc">
+              شفاف‌سازی برای جلوگیری از انتظارات نادرست مشتری یا تیم.
+            </p>
+
+            <div class="card-grid">
+              <div class="card" style="border-color: rgba(220,38,38,0.2)">
+                <h4>❌ پرداخت آنلاین</h4>
+                <p>
+                  درگاه بانکی وجود ندارد. پرداخت پس از تماس تلفنی یا در محل
+                  انجام می‌شود.
+                </p>
+              </div>
+              <div class="card" style="border-color: rgba(220,38,38,0.2)">
+                <h4>❌ رزرو میز</h4>
+                <p>سیستم رزرو رستوران پیاده‌سازی نشده است.</p>
+              </div>
+              <div class="card" style="border-color: rgba(220,38,38,0.2)">
+                <h4>❌ چند رستورانه</h4>
+                <p>فقط برند چامپ — نه پلتفرم چند فروشنده.</p>
+              </div>
+              <div class="card" style="border-color: rgba(217,119,6,0.25)">
+                <h4>⚠️ سفارش مجدد</h4>
+                <p>فعلاً فقط ساندویچ‌های منو — نه دستورهای سفارشی مارکت.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 18. Glossary -->
+          <section id="glossary">
+            <h2>واژه‌نامه</h2>
+            <p class="section-desc">
+              اصطلاحات فارسی، معادل انگلیسی و کاربرد در سیستم — برای یکدستی
+              در ارتباطات.
+            </p>
+
+            <div class="glossary-grid">
+              <div class="glossary-row">
+                <span class="term">ساندویچ میکس</span>
+                <span>Mix sandwich</span>
+                <span>محصول اصلی — سفارشی‌سازی مرحله‌ای</span>
+              </div>
+              <div class="glossary-row">
+                <span class="term">ساندویچ امضایی</span>
+                <span>Signature sandwich</span>
+                <span>آیتم آماده منو با slug مشخص</span>
+              </div>
+              <div class="glossary-row">
+                <span class="term">افزودنی / topping</span>
+                <span>Ingredient</span>
+                <span>مواد اضافه — پروتئین، پنیر، سبزی، سس</span>
+              </div>
+              <div class="glossary-row">
+                <span class="term">مارکت ساندویچ</span>
+                <span>Community marketplace</span>
+                <span>دستورهای عمومی کاربران</span>
+              </div>
+              <div class="glossary-row">
+                <span class="term">ذائقه‌سنج</span>
+                <span>Taste quiz</span>
+                <span>پرسشنامه → پیشنهاد ساندویچ</span>
+              </div>
+              <div class="glossary-row">
+                <span class="term">کد دعوت</span>
+                <span>Referral code</span>
+                <span>شناسه ارجاع هر کاربر</span>
+              </div>
+              <div class="glossary-row">
+                <span class="term">ثبت سفارش</span>
+                <span>Checkout</span>
+                <span>صفحه نهایی قبل از تماس تیم</span>
+              </div>
+              <div class="glossary-row">
+                <span class="term">پنل چاپ / چامپ</span>
+                <span>Admin panel</span>
+                <span>مدیریت رستوران — /admin</span>
+              </div>
+              <div class="glossary-row">
+                <span class="term">OTP</span>
+                <span>One-time password</span>
+                <span>کد ۶ رقمی پیامکی برای ورود</span>
+              </div>
+              <div class="glossary-row">
+                <span class="term">برچسب طعم</span>
+                <span>Tag</span>
+                <span>شیرین، تند، دودی — برای فیلتر و ذائقه‌سنج</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- 19. Contact -->
+          <section id="contact">
+            <h2>تماس و پشتیبانی</h2>
+            <p class="section-desc">
+              اطلاعاتی که در وب‌سایت و این سند برای ارتباط با رستوران آمده
+              است.
+            </p>
+
+            <div class="card-grid">
+              <div class="card">
+                <div class="card-icon orange">📞</div>
+                <h4>تلفن</h4>
+                <p dir="ltr" style="text-align: center; font-size: 18px; font-weight: 800">۰۹۱۳۴۶۶۷۹۵۹</p>
+              </div>
+              <div class="card">
+                <div class="card-icon green">📍</div>
+                <h4>آدرس</h4>
+                <p>اصفهان، شیخ صدوق جنوبی، میدان برج، ساندویچ چامپ</p>
+              </div>
+              <div class="card">
+                <div class="card-icon blue">🕐</div>
+                <h4>ساعت کاری</h4>
+                <p>هر روز ۱۷:۰۰ تا ۲۳:۳۰</p>
+              </div>
+            </div>
+
+            <div class="callout info">
+              <strong>سفارش تلفنی</strong>
+              مشتریانی که به اینترنت دسترسی ندارند می‌توانند مستقیماً با
+              شماره بالا تماس بگیرند. سفارش‌های آنلاین نیز پس از ثبت، از همین
+              خط پیگیری می‌شوند.
+            </div>
+          </section>
+
+          <footer class="doc-footer">
+            <p>
+              <strong>ساندویچ چامپ</strong> — راهنمای کسب‌وکار وب‌سایت<br />
+              تهیه‌شده برای تیم داخلی · نسخه ۱.۰ · ۱۴۰۵
+            </p>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var links = document.querySelectorAll("nav.toc a");
+        var sections = [];
+
+        links.forEach(function (link) {
+          var id = link.getAttribute("href").slice(1);
+          var el = document.getElementById(id);
+          if (el) sections.push({ link: link, el: el });
+        });
+
+        function onScroll() {
+          var scrollY = window.scrollY + 120;
+          var current = sections[0];
+          sections.forEach(function (s) {
+            if (s.el.offsetTop <= scrollY) current = s;
+          });
+          links.forEach(function (l) {
+            l.classList.remove("active");
+          });
+          if (current) current.link.classList.add("active");
+        }
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+      })();
+    </script>
+  </body>
+</html>

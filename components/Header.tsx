@@ -14,7 +14,7 @@ const NAV = [
   { href: "/", label: "خانه" },
   { href: "/menu", label: "منو" },
   { href: "/build", label: "ساندویچ خودت رو بساز" },
-  { href: "/taste", label: "ذائقه‌سنج" },
+  { href: "/community", label: "مارکت ساندویچ" },
   { href: "/about", label: "درباره ما" },
 ];
 
@@ -26,6 +26,11 @@ export default function Header() {
   const count = cartCount(items);
   const { isAuthed } = useCurrentUser();
   const openAuth = useAuthModal((s) => s.open);
+
+  const currentPath =
+    typeof window !== "undefined"
+      ? `${window.location.pathname}${window.location.search}`
+      : "/";
 
   // Lock the page behind the mobile drawer so the user can't scroll the
   // background through the menu (fixes the "menu floating over scrolling
@@ -92,7 +97,7 @@ export default function Header() {
             </Link>
           ) : (
             <button
-              onClick={() => openAuth("/dashboard")}
+              onClick={() => openAuth(currentPath)}
               className="btn-ghost !px-3 !py-2"
               aria-label="ورود">
               <User size={20} />

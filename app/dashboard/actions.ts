@@ -42,7 +42,17 @@ export async function createAddressAction(raw: unknown): Promise<ActionResult> {
   const user = await requireUser();
   const data = cleanAddress(raw);
   if (!data) return { ok: false, error: "اطلاعات آدرس نامعتبر است." };
-  await createAddress(user.id, data);
+  try {
+    await createAddress(user.id, data);
+  } catch (e) {
+    if (e instanceof Error && e.message === "ADDRESS_LIMIT") {
+      return {
+        ok: false,
+        error: "در حال حاضر حداکثر ۲ آدرس می‌توانید ثبت کنید.",
+      };
+    }
+    return { ok: false, error: "ثبت آدرس با خطا مواجه شد." };
+  }
   revalidatePath("/dashboard/addresses");
   return { ok: true };
 }

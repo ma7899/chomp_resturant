@@ -5,8 +5,8 @@ import { checkPhoneSchema } from "@/lib/validation/auth";
 /**
  * POST /api/auth/check-phone
  * Body: { phone }
- * Used by the login modal to decide whether to show the password step
- * (existing user) or kick off the registration flow (new user).
+ * Used by the login modal to decide if this phone already has an account
+ * (OTP login) or should continue with registration.
  */
 export async function POST(req: Request) {
   let body: unknown;
@@ -28,7 +28,6 @@ export async function POST(req: Request) {
     const user = await findUserByPhone(parsed.data.phone);
     return NextResponse.json({
       exists: !!user,
-      hasPassword: !!user?.passwordHash,
     });
   } catch (err) {
     // Almost always a database connectivity / setup problem.

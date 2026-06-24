@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
-  Eye,
-  EyeOff,
   KeyRound,
   Loader2,
-  Lock,
   MessageSquareText,
   Phone,
   ShieldCheck,
@@ -19,21 +16,17 @@ import {
 import { useAuthModal } from "@/lib/authModal";
 import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 
-/**
- * Phone-first authentication modal.
- *
- * Flow (as specified):
- *   1) phone        → enter mobile number, we check if it exists
- *   2a) password    → existing user types password ("send code instead" available)
- *   2b) register    → new user: choose name + optional password, then verify OTP
- *   2c) otp         → verify the 6-digit code (login or registration)
- *
- * All requests go through the server APIs; sign-in uses Auth.js credentials.
- */
-
-type Step = "phone" | "password" | "otp" | "register";
+type Step = "phone" | "otp" | "register";
 
 const OTP_COOLDOWN = 60;
+
+function isIranPhone(raw: string) {
+  const ascii = raw
+    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
+    .replace(/\s+/g, "");
+  return /^(?:\+98|0098|98|0)?9\d{9}$/.test(ascii);
+}
 
 export default function AuthModal() {
   const { isOpen, redirectTo, close } = useAuthModal();
@@ -42,24 +35,17 @@ export default function AuthModal() {
 
   const [step, setStep] = useState<Step>("phone");
   const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
-  const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
-  // Tracks whether the OTP we sent was for a new (register) or existing (login) user.
   const [otpPurpose, setOtpPurpose] = useState<"LOGIN" | "REGISTER">("LOGIN");
 
-  const firstFieldRef = useRef<HTMLInputElement>(null);
-
-  // Reset to a clean state each time the modal opens.
   useEffect(() => {
     if (isOpen) {
       setStep("phone");
       setPhone("");
-      setPassword("");
       setName("");
       setCode("");
       setError(null);
@@ -68,14 +54,12 @@ export default function AuthModal() {
     }
   }, [isOpen]);
 
-  // Cooldown timer for OTP resend.
   useEffect(() => {
     if (cooldown <= 0) return;
     const t = setInterval(() => setCooldown((c) => Math.max(0, c - 1)), 1000);
     return () => clearInterval(t);
   }, [cooldown]);
 
-  // Esc to close.
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
@@ -99,41 +83,6 @@ export default function AuthModal() {
     return { res, data } as { res: Response; data: Record<string, unknown> };
   }
 
-  // ── Step 1: check phone ──
-  async function submitPhone(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const { res, data } = await api("/api/auth/check-phone", { phone });
-      if (res.status === 422) {
-        setError("شماره موبایل نامعتبر است.");
-        return;
-      }
-      if (!res.ok) {
-        // Server / database problem — don't blame the phone number.
-        setError(
-          "ارتباط با سرور برقرار نشد. لطفاً از اتصال پایگاه‌داده مطمئن شوید و دوباره تلاش کنید.",
-        );
-        return;
-      }
-      if (data.exists && data.hasPassword) {
-        setStep("password");
-      } else if (data.exists) {
-        // Exists but no password → OTP login.
-        await sendOtp("LOGIN");
-      } else {
-        // New user → registration.
-        setStep("register");
-      }
-    } catch {
-      setError("خطا در ارتباط با سرور.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // ── Send OTP ──
   async function sendOtp(purpose: "LOGIN" | "REGISTER") {
     setError(null);
     setLoading(true);
@@ -160,37 +109,47 @@ export default function AuthModal() {
     }
   }
 
-  // ── Password login ──
-  async function submitPassword(e: React.FormEvent) {
+  async function submitPhone(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (!isIranPhone(phone)) {
+      setError("شماره موبایل نامعتبر است.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const r = await signIn("credentials", {
-        phone,
-        password,
-        mode: "password",
-        redirect: false,
-      });
-      if (r?.error) {
-        setError("رمز عبور اشتباه است.");
+      const { res, data } = await api("/api/auth/check-phone", { phone });
+      if (res.status === 422) {
+        setError("شماره موبایل نامعتبر است.");
         return;
       }
-      finish();
+      if (!res.ok) {
+        setError("ارتباط با سرور برقرار نشد. لطفاً دوباره تلاش کنید.");
+        return;
+      }
+      if (data.exists) {
+        await sendOtp("LOGIN");
+      } else {
+        setStep("register");
+      }
     } catch {
-      setError("خطا در ورود.");
+      setError("خطا در ارتباط با سرور.");
     } finally {
       setLoading(false);
     }
   }
 
-  // ── Register (new user) → send OTP ──
   async function submitRegister(e: React.FormEvent) {
     e.preventDefault();
+    if ((name || "").trim().length < 2) {
+      setError("نام را وارد کنید.");
+      return;
+    }
     await sendOtp("REGISTER");
   }
 
-  // ── Verify OTP (login or finish registration) ──
   async function submitOtp(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -201,7 +160,6 @@ export default function AuthModal() {
           phone,
           code,
           name: name || undefined,
-          password: password || undefined,
         });
         if (!res.ok) {
           setError(
@@ -211,10 +169,13 @@ export default function AuthModal() {
           );
           return;
         }
+
+        // Register OTP is single-use. Send a fresh login OTP to complete sign-in.
+        setCode("");
+        await sendOtp("LOGIN");
+        return;
       }
-      // Sign in via OTP credentials (works for both flows; code is single-use,
-      // so for REGISTER we just issued+consumed it server-side — re-issue a
-      // login code transparently is avoided by signing in with password if set).
+
       const r = await signIn("credentials", {
         phone,
         code,
@@ -222,16 +183,6 @@ export default function AuthModal() {
         redirect: false,
       });
       if (r?.error) {
-        // If the register flow already consumed the code, fall back to password.
-        if (otpPurpose === "REGISTER" && password) {
-          const r2 = await signIn("credentials", {
-            phone,
-            password,
-            mode: "password",
-            redirect: false,
-          });
-          if (!r2?.error) return finish();
-        }
         setError("کد تأیید نامعتبر یا منقضی شده است.");
         return;
       }
@@ -244,10 +195,9 @@ export default function AuthModal() {
   }
 
   const titles: Record<Step, string> = {
-    phone: "ورود / ثبت‌نام",
-    password: "رمز عبور",
+    phone: "ورود / ثبت نام",
     otp: "کد تأیید",
-    register: "تکمیل ثبت‌نام",
+    register: "تکمیل ثبت نام",
   };
 
   return (
@@ -297,15 +247,12 @@ export default function AuthModal() {
               </div>
             )}
 
-            {/* STEP: phone */}
             {step === "phone" && (
               <form onSubmit={submitPhone} className="space-y-4">
                 <p className="text-sm text-ink-500 leading-6">
-                  شماره موبایل خود را وارد کنید تا وارد شوید یا حساب جدید
-                  بسازید.
+                  شماره موبایل خود را وارد کنید تا کد ورود برای شما پیامک شود.
                 </p>
                 <Input
-                  ref={firstFieldRef}
                   icon={<Phone size={18} />}
                   inputMode="numeric"
                   dir="ltr"
@@ -321,46 +268,11 @@ export default function AuthModal() {
               </form>
             )}
 
-            {/* STEP: password */}
-            {step === "password" && (
-              <form onSubmit={submitPassword} className="space-y-4">
-                <PhoneBadge phone={phone} onEdit={() => setStep("phone")} />
-                <div className="relative">
-                  <Input
-                    icon={<Lock size={18} />}
-                    type={showPw ? "text" : "password"}
-                    autoFocus
-                    placeholder="رمز عبور"
-                    value={password}
-                    onChange={setPassword}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPw((s) => !s)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-700"
-                    aria-label={showPw ? "پنهان" : "نمایش"}>
-                    {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                <SubmitButton loading={loading}>ورود</SubmitButton>
-                <button
-                  type="button"
-                  onClick={() => sendOtp("LOGIN")}
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 text-sm text-brand-600 font-semibold hover:text-brand-700 py-2">
-                  <MessageSquareText size={16} />
-                  ورود با کد پیامکی به‌جای رمز
-                </button>
-              </form>
-            )}
-
-            {/* STEP: register */}
             {step === "register" && (
               <form onSubmit={submitRegister} className="space-y-4">
                 <PhoneBadge phone={phone} onEdit={() => setStep("phone")} />
                 <p className="text-sm text-ink-500 leading-6">
-                  حساب جدید! نام خود را وارد کنید. می‌توانید رمز عبور هم تعیین
-                  کنید (اختیاری).
+                  حساب جدید! نام خود را وارد کنید تا کد ثبت نام پیامک شود.
                 </p>
                 <Input
                   icon={<KeyRound size={18} />}
@@ -369,34 +281,17 @@ export default function AuthModal() {
                   value={name}
                   onChange={setName}
                 />
-                <div className="relative">
-                  <Input
-                    icon={<Lock size={18} />}
-                    type={showPw ? "text" : "password"}
-                    placeholder="رمز عبور (اختیاری)"
-                    value={password}
-                    onChange={setPassword}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPw((s) => !s)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-700"
-                    aria-label={showPw ? "پنهان" : "نمایش"}>
-                    {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
                 <SubmitButton loading={loading}>
                   دریافت کد تأیید <MessageSquareText size={16} />
                 </SubmitButton>
               </form>
             )}
 
-            {/* STEP: otp */}
             {step === "otp" && (
               <form onSubmit={submitOtp} className="space-y-4">
                 <PhoneBadge phone={phone} onEdit={() => setStep("phone")} />
                 <p className="text-sm text-ink-500 leading-6">
-                  کد ۶ رقمی ارسال‌شده به شماره بالا را وارد کنید.
+                  کد ۶ رقمی ارسال شده به شماره بالا را وارد کنید.
                 </p>
                 <Input
                   icon={<KeyRound size={18} />}
@@ -427,8 +322,6 @@ export default function AuthModal() {
     </AnimatePresence>
   );
 }
-
-/* ───────── small presentational helpers ───────── */
 
 import { forwardRef } from "react";
 

@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 const SORTS: { id: CommunitySort; label: string }[] = [
   { id: "newest", label: "جدیدترین" },
-  { id: "top_orders", label: "پرسفارش‌ترین" },
+  { id: "top_orders", label: "پرسفارش ترین" },
   { id: "top_rated", label: "بالاترین امتیاز" },
   { id: "trending", label: "پرطرفدار" },
 ];
@@ -54,15 +54,14 @@ export default async function CommunityPage({
       <header>
         <span className="chip">ساندویچ دیگران</span>
         <h1 className="font-display font-black text-3xl md:text-4xl tracking-tight mt-2">
-          مارکت ساندویچ‌های مشتری‌ها
+          مارکت ساندویچ های مشتری ها
         </h1>
         <p className="text-ink-500 mt-2 max-w-2xl leading-7">
-          ترکیب‌هایی که خود مشتری‌ها ساخته‌اند را کشف کن، امتیازشان را ببین و با
+          ترکیب هایی که خود مشتری ها ساخته اند را کشف کن، امتیازشان را ببین و با
           یک کلیک سفارش بده.
         </p>
       </header>
 
-      {/* Top 3 hero ranking cards */}
       {top.length > 0 && (
         <section>
           <h2 className="flex items-center gap-2 font-display font-extrabold text-xl mb-4">
@@ -79,15 +78,14 @@ export default async function CommunityPage({
                     {(i + 1).toLocaleString("fa-IR")}
                   </span>
                   <span className="inline-flex items-center gap-1 text-sm font-bold">
-                    <Star
-                      size={15}
-                      className="fill-yellow-300 text-yellow-300"
-                    />
+                    <Star size={15} className="fill-yellow-300 text-yellow-300" />
                     {s.averageRating.toFixed(1)}
                   </span>
                 </div>
                 <h3 className="font-display font-black text-lg mt-3">
-                  {s.name}
+                  <Link href={`/community/${s.id}`} className="hover:underline">
+                    {s.name}
+                  </Link>
                 </h3>
                 <p className="text-white/80 text-xs mt-1 leading-6 line-clamp-2 min-h-[3rem]">
                   {s.description ||
@@ -118,7 +116,6 @@ export default async function CommunityPage({
         </section>
       )}
 
-      {/* Search + sort */}
       <section className="space-y-4">
         <form className="flex flex-col sm:flex-row gap-3" action="/community">
           <div className="relative flex-1">
@@ -161,10 +158,9 @@ export default async function CommunityPage({
         </div>
       </section>
 
-      {/* Grid */}
       {list.items.length === 0 ? (
         <div className="rounded-3xl bg-white border border-dashed border-ink-200 p-12 text-center text-ink-400">
-          هنوز ساندویچ عمومی‌ای ثبت نشده است. اولین نفر باش!
+          هنوز ساندویچ عمومی ای ثبت نشده است. اولین نفر باش!
           <div className="mt-4">
             <Link href="/build" className="btn-primary inline-flex">
               ساخت ساندویچ
@@ -179,7 +175,11 @@ export default async function CommunityPage({
               className="rounded-3xl bg-white border border-ink-100 p-5 flex flex-col">
               <div className="flex items-start justify-between gap-2">
                 <h3 className="font-display font-extrabold text-lg tracking-tight">
-                  {s.name}
+                  <Link
+                    href={`/community/${s.id}`}
+                    className="hover:text-brand-600 transition">
+                    {s.name}
+                  </Link>
                 </h3>
                 <span className="inline-flex items-center gap-1 text-sm font-bold text-amber-600">
                   <Star size={15} className="fill-amber-400 text-amber-400" />
@@ -187,7 +187,7 @@ export default async function CommunityPage({
                 </span>
               </div>
               <p className="text-xs text-ink-500 mt-1">
-                ساخته‌ی {s.creator.name || "یک مشتری"}
+                ساخته ی {s.creator.name || "یک مشتری"}
               </p>
               <p className="text-sm text-ink-600 mt-3 leading-6 line-clamp-2 flex-1">
                 {s.description ||
@@ -220,7 +220,6 @@ export default async function CommunityPage({
         </section>
       )}
 
-      {/* Pagination */}
       {list.pages > 1 && (
         <nav className="flex items-center justify-center gap-2">
           {Array.from({ length: list.pages }, (_, i) => i + 1).map((p) => {

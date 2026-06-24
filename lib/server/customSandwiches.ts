@@ -31,7 +31,52 @@ export type SaveCustomInput = {
   ingredientIds: string[];
 };
 
+function equalIdSets(a: string[], b: string[]) {
+  if (a.length !== b.length) return false;
+  const sa = [...a].sort();
+  const sb = [...b].sort();
+  for (let i = 0; i < sa.length; i += 1) {
+    if (sa[i] !== sb[i]) return false;
+  }
+  return true;
+}
+
+async function hasUserOrderedRecipe(
+  userId: string,
+  baseSlug: string | null,
+  ingredientIds: string[],
+) {
+  const orders = await prisma.order.findMany({
+    where: { userId },
+    include: { items: true },
+    orderBy: { createdAt: "desc" },
+    take: 120,
+  });
+
+  return orders.some((o) =>
+    o.items.some((it) => {
+      if (baseSlug) {
+        if (it.sandwichSlug !== baseSlug) return false;
+        return equalIdSets(it.toppingIds, ingredientIds);
+      }
+      if (!it.customSandwichId) return false;
+      return equalIdSets(it.toppingIds, ingredientIds);
+    }),
+  );
+}
+
 export async function saveCustomSandwich(input: SaveCustomInput) {
+  if (input.isPublic) {
+    const ordered = await hasUserOrderedRecipe(
+      input.creatorId,
+      input.baseSlug ?? null,
+      input.ingredientIds,
+    );
+    if (!ordered) {
+      throw new Error("ORDER_REQUIRED_FOR_PUBLIC");
+    }
+  }
+
   const recipeHash = computeRecipeHash(
     input.baseSlug ?? null,
     input.ingredientIds,
@@ -76,6 +121,16 @@ export async function listUserCustomSandwiches(userId: string) {
 export async function getCustomSandwich(id: string) {
   return prisma.customSandwich.findUnique({
     where: { id },
+    include: {
+      ingredients: { include: { ingredient: true } },
+      creator: { select: { name: true } },
+    },
+  });
+}
+
+export async function getPublicCustomSandwichById(id: string) {
+  return prisma.customSandwich.findFirst({
+    where: { id, isPublic: true },
     include: {
       ingredients: { include: { ingredient: true } },
       creator: { select: { name: true } },

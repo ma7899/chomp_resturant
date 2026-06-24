@@ -3,6 +3,10 @@ import { prisma } from "@/lib/db";
 
 /** Address repository — every function is scoped to the owning user (Phase 17). */
 
+export const DEFAULT_PROVINCE = "Isfahan";
+export const DEFAULT_CITY = "Isfahan";
+export const MAX_ADDRESSES_PER_USER = 2;
+
 export async function listAddresses(userId: string) {
   return prisma.address.findMany({
     where: { userId },
@@ -28,6 +32,9 @@ export async function createAddress(userId: string, data: AddressInput) {
   return prisma.$transaction(async (tx) => {
     // If this is the user's first address, force it default.
     const count = await tx.address.count({ where: { userId } });
+    if (count >= MAX_ADDRESSES_PER_USER) {
+      throw new Error("ADDRESS_LIMIT");
+    }
     const makeDefault = data.isDefault || count === 0;
     if (makeDefault) {
       await tx.address.updateMany({
@@ -36,7 +43,13 @@ export async function createAddress(userId: string, data: AddressInput) {
       });
     }
     return tx.address.create({
-      data: { ...data, isDefault: makeDefault, userId },
+      data: {
+        ...data,
+        province: DEFAULT_PROVINCE,
+        city: DEFAULT_CITY,
+        isDefault: makeDefault,
+        userId,
+      },
     });
   });
 }
@@ -57,7 +70,14 @@ export async function updateAddress(
         data: { isDefault: false },
       });
     }
-    return tx.address.update({ where: { id }, data });
+    return tx.address.update({
+      where: { id },
+      data: {
+        ...data,
+        province: DEFAULT_PROVINCE,
+        city: DEFAULT_CITY,
+      },
+    });
   });
 }
 

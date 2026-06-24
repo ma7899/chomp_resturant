@@ -31,11 +31,17 @@ const checkoutSchema = z.object({
   addressId: z.string().optional().nullable(),
   addressText: z.string().max(500).optional().nullable(),
   note: z.string().max(500).optional().nullable(),
+  confirmAllergyWarning: z.boolean().optional(),
 });
 
 export type CheckoutResult =
   | { ok: true; orderNumber: number; orderId: string }
-  | { ok: false; error: string };
+  | {
+      ok: false;
+      error: string;
+      code?: "ALLERGY_CONFLICT" | "ADDRESS_REQUIRED";
+      allergens?: string[];
+    };
 
 export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
   const parsed = checkoutSchema.safeParse(raw);
@@ -77,9 +83,23 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
   const toppingById = new Map(toppings.map((t) => [t.id, t]));
   const customById = new Map(customs.map((c) => [c.id, c]));
 
+  // Build menu ingredient name -> id map so allergy checks can include menu
+  // sandwiches (whose includedIngredients are stored as names).
+  const ingredientNames = Array.from(
+    new Set(sandwiches.flatMap((s) => s.includedIngredients)),
+  );
+  const namedIngredients = ingredientNames.length
+    ? await prisma.ingredient.findMany({
+        where: { name: { in: ingredientNames } },
+        select: { id: true, name: true },
+      })
+    : [];
+  const ingredientIdByName = new Map(namedIngredients.map((i) => [i.name, i.id]));
+
   const orderItems: NewOrderItem[] = [];
   let subtotal = 0;
   const orderedCustomIds: string[] = [];
+  const cartIngredientIds = new Set<string>();
 
   for (const line of input.items) {
     // ── Community / custom sandwich line ──
@@ -94,6 +114,13 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
       const lineToppings = line.toppingIds
         .map((id) => toppingById.get(id))
         .filter((t): t is NonNullable<typeof t> => !!t);
+      lineToppings.forEach((t) => cartIngredientIds.add(t.id));
+
+      const customIngredients = await prisma.customSandwichIngredient.findMany({
+        where: { sandwichId: c.id },
+        select: { ingredientId: true },
+      });
+      customIngredients.forEach((x) => cartIngredientIds.add(x.ingredientId));
 
       orderItems.push({
         sandwichSlug: c.baseSlug ?? null,
@@ -115,6 +142,11 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
     const lineToppings = line.toppingIds
       .map((id) => toppingById.get(id))
       .filter((t): t is NonNullable<typeof t> => !!t);
+    lineToppings.forEach((t) => cartIngredientIds.add(t.id));
+    s.includedIngredients
+      .map((name) => ingredientIdByName.get(name))
+      .filter((id): id is string => !!id)
+      .forEach((id) => cartIngredientIds.add(id));
 
     const unitPrice =
       s.basePrice + lineToppings.reduce((sum, t) => sum + t.price, 0);
@@ -134,6 +166,46 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
 
   const deliveryFee = input.method === "delivery" ? DELIVERY_FEE : 0;
   const total = subtotal + deliveryFee;
+
+  if (user) {
+    const [allergies, savedAddresses] = await Promise.all([
+      prisma.userAllergy.findMany({
+        where: { userId: user.id },
+        include: { ingredient: { select: { id: true, name: true } } },
+      }),
+      prisma.address.findMany({
+        where: { userId: user.id },
+        orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
+      }),
+    ]);
+
+    if (
+      input.method === "delivery" &&
+      savedAddresses.length > 0 &&
+      !input.addressId
+    ) {
+      return {
+        ok: false,
+        code: "ADDRESS_REQUIRED",
+        error: "لطفاً یکی از آدرس‌های ذخیره‌شده را انتخاب کنید.",
+      };
+    }
+
+    const allergySet = new Set(allergies.map((a) => a.ingredientId));
+    const hits = Array.from(cartIngredientIds)
+      .filter((id) => allergySet.has(id))
+      .map((id) => allergies.find((a) => a.ingredientId === id)?.ingredient.name)
+      .filter((name): name is string => !!name);
+
+    if (hits.length > 0 && !input.confirmAllergyWarning) {
+      return {
+        ok: false,
+        code: "ALLERGY_CONFLICT",
+        error: "این سفارش با حساسیت‌های ثبت‌شده شما تداخل دارد.",
+        allergens: hits,
+      };
+    }
+  }
 
   // Resolve address text from a saved address when provided.
   let addressText = input.addressText ?? null;

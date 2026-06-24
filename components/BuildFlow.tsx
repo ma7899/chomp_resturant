@@ -31,7 +31,7 @@ import SaveSandwichDialog from "@/components/SaveSandwichDialog";
 type StepId = "base" | "protein" | "cheese" | "veggie" | "sauce" | "review";
 
 const STEPS: { id: StepId; title: string; subtitle: string }[] = [
-  { id: "base", title: "پایه", subtitle: "ساندویچ پایه را انتخاب کنید" },
+  { id: "base", title: "پایه", subtitle: "در صورت تمایل ساندویچ پایه انتخاب کنید" },
   {
     id: "protein",
     title: "پروتئین اضافه",
@@ -68,7 +68,7 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
     return (base + extras) * qty;
   }, [sandwich, toppings, qty]);
 
-  const canNext = step.id === "base" ? !!slug : true;
+  const canNext = true;
 
   const next = () => {
     if (!canNext) return;
@@ -82,8 +82,17 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
     );
 
   const submit = () => {
-    if (!sandwich) return;
-    addItem({ sandwichSlug: sandwich.slug, toppingIds: toppings, qty });
+    if (sandwich) {
+      addItem({ sandwichSlug: sandwich.slug, toppingIds: toppings, qty });
+    } else {
+      addItem({
+        sandwichSlug: "custom",
+        toppingIds: toppings,
+        qty,
+        customName: "ساندویچ سفارشی",
+        customPrice: total / Math.max(1, qty),
+      });
+    }
     router.push("/checkout");
   };
 
@@ -193,6 +202,16 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
                   }
                 />
               )}
+              {step.id === "review" && !sandwich && (
+                <ReviewCustomOnlyStep
+                  toppings={toppings}
+                  qty={qty}
+                  setQty={setQty}
+                  onRemoveTopping={(id) =>
+                    setToppings((p) => p.filter((x) => x !== id))
+                  }
+                />
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -204,7 +223,7 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
             toppings={toppings}
             qty={qty}
             total={total}
-            canSubmit={!!sandwich}
+            canSubmit
             onSubmit={submit}
           />
         </aside>
@@ -257,10 +276,18 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
           <div className="flex items-center gap-2">
             {sandwich && (
               <SaveSandwichDialog
-                baseSlug={sandwich.slug}
+                baseSlug={sandwich?.slug ?? null}
                 basePrice={total / qty}
                 ingredientIds={toppings}
-                defaultName={sandwich.name}
+                defaultName={sandwich?.name ?? "ساندویچ سفارشی"}
+              />
+            )}
+            {!sandwich && (
+              <SaveSandwichDialog
+                baseSlug={null}
+                basePrice={total / qty}
+                ingredientIds={toppings}
+                defaultName="ساندویچ سفارشی"
               />
             )}
             <button onClick={submit} className="btn-primary">
@@ -285,7 +312,21 @@ function BaseStep({
   onSelect: (slug: string) => void;
 }) {
   return (
-    <div className="grid sm:grid-cols-2 gap-4">
+    <div className="space-y-4">
+      <button
+        type="button"
+        onClick={() => onSelect("")}
+        className={clsx(
+          "w-full rounded-2xl border-2 p-4 text-right transition-all",
+          !selected
+            ? "border-brand-500 bg-brand-50 shadow-glow"
+            : "border-ink-100 bg-white hover:border-brand-300",
+        )}>
+        <div className="font-bold">بدون ساندویچ پایه</div>
+        <div className="text-xs text-ink-500 mt-1">فقط با مواد و افزودنی ها می سازم</div>
+      </button>
+
+      <div className="grid sm:grid-cols-2 gap-4">
       {sandwiches.map((s) => {
         const active = selected === s.slug;
         return (
@@ -330,6 +371,69 @@ function BaseStep({
           </button>
         );
       })}
+      </div>
+    </div>
+  );
+}
+
+function ReviewCustomOnlyStep({
+  toppings,
+  qty,
+  setQty,
+  onRemoveTopping,
+}: {
+  toppings: string[];
+  qty: number;
+  setQty: (n: number) => void;
+  onRemoveTopping: (id: string) => void;
+}) {
+  return (
+    <div className="rounded-3xl bg-white border border-ink-100 p-6 space-y-5">
+      <div>
+        <h3 className="text-2xl font-black">ساندویچ سفارشی</h3>
+        <p className="text-ink-500 mt-2 leading-7 text-sm">
+          این سفارش بدون پایه منویی ثبت می شود و فقط شامل مواد انتخابی شماست.
+        </p>
+      </div>
+
+      <div>
+        <h4 className="font-bold mb-2">افزودنی ها</h4>
+        {toppings.length === 0 ? (
+          <p className="text-sm text-ink-500">هنوز افزودنی ای انتخاب نشده است.</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {toppings.map((id) => {
+              const t = getTopping(id);
+              if (!t) return null;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => onRemoveTopping(id)}
+                  className="px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 text-xs border border-brand-200 hover:bg-brand-100 transition">
+                  {t.name} - {formatPrice(t.price)} تومان
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <div className="inline-flex items-center gap-2 rounded-xl border border-ink-100 p-2">
+        <button
+          type="button"
+          className="w-8 h-8 rounded-lg bg-ink-100"
+          onClick={() => setQty(Math.max(1, qty - 1))}>
+          -
+        </button>
+        <span className="w-10 text-center tabular font-bold">{qty}</span>
+        <button
+          type="button"
+          className="w-8 h-8 rounded-lg bg-ink-100"
+          onClick={() => setQty(Math.min(20, qty + 1))}>
+          +
+        </button>
+      </div>
     </div>
   );
 }

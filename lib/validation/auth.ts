@@ -4,13 +4,13 @@ import { z } from "zod";
 
 export const phoneSchema = z
   .string()
-  .min(8, "شماره موبایل نامعتبر است")
-  .max(20);
-
-export const passwordSchema = z
-  .string()
-  .min(6, "رمز عبور باید حداقل ۶ کاراکتر باشد")
-  .max(100);
+  .transform((v) => v.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))))
+  .transform((v) => v.replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d))))
+  .transform((v) => v.replace(/\s+/g, ""))
+  .refine(
+    (v) => /^(?:\+98|0098|98|0)?9\d{9}$/.test(v),
+    "شماره موبایل نامعتبر است",
+  );
 
 export const otpCodeSchema = z
   .string()
@@ -31,19 +31,7 @@ export const registerSchema = z.object({
   phone: phoneSchema,
   code: otpCodeSchema,
   name: z.string().min(2, "نام را وارد کنید").max(80).optional(),
-  password: passwordSchema.optional(),
   referredByCode: z.string().max(32).optional(),
-});
-
-export const passwordLoginSchema = z.object({
-  phone: phoneSchema,
-  password: passwordSchema,
-});
-
-export const resetPasswordSchema = z.object({
-  phone: phoneSchema,
-  code: otpCodeSchema,
-  password: passwordSchema,
 });
 
 export const checkPhoneSchema = z.object({

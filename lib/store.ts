@@ -1,7 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import {
   SEED_SANDWICHES,
   SEED_TAGS,
@@ -66,9 +65,7 @@ const initial = {
   tasteForm: SEED_TASTE_FORM,
 };
 
-export const useData = create<State>()(
-  persist(
-    (set) => ({
+export const useData = create<State>()((set) => ({
       ...initial,
 
       upsertSandwich: (s) =>
@@ -180,13 +177,7 @@ export const useData = create<State>()(
         })),
 
       resetAll: () => set({ ...initial }),
-    }),
-    {
-      name: "chomp-data",
-      version: 1,
-    },
-  ),
-);
+    }));
 
 /* ───────── Non-react accessors (used by cart helpers, SSR, etc.) ───────── */
 

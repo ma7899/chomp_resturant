@@ -5,11 +5,11 @@ import { registerSchema } from "@/lib/validation/auth";
 
 /**
  * POST /api/auth/register
- * Body: { phone, code, name?, password?, referredByCode? }
+ * Body: { phone, code, name?, referredByCode? }
  *
  * Completes signup after the phone has been verified via OTP (purpose REGISTER).
  * Creates the user (+ referral link if a code was provided) and returns success.
- * The client then signs in through Auth.js with mode="otp" or password.
+ * The client then signs in through Auth.js with mode="otp".
  */
 export async function POST(req: Request) {
   let body: unknown;
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       { status: 422 },
     );
   }
-  const { phone, code, name, password, referredByCode } = parsed.data;
+  const { phone, code, name, referredByCode } = parsed.data;
 
   // Reject if the phone is already taken.
   const existing = await findUserByPhone(phone);
@@ -43,7 +43,6 @@ export async function POST(req: Request) {
   await createUser({
     phone,
     name,
-    password,
     phoneVerified: true,
     referredByCode,
   });

@@ -25,8 +25,8 @@ export type AddressView = {
 
 const EMPTY: Omit<AddressView, "id"> = {
   title: "",
-  province: "",
-  city: "",
+  province: "Isfahan",
+  city: "Isfahan",
   street: "",
   alley: "",
   buildingNumber: "",
@@ -40,6 +40,7 @@ export default function AddressManager({
 }: {
   initial: AddressView[];
 }) {
+  const canAddMore = initial.length < 2;
   const [editing, setEditing] = useState<AddressView | "new" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -70,6 +71,7 @@ export default function AddressManager({
       {editing ? (
         <AddressForm
           initial={editing === "new" ? null : editing}
+          canEditDefault={initial.length > 1}
           pending={pending}
           onCancel={() => {
             setEditing(null);
@@ -89,10 +91,15 @@ export default function AddressManager({
         />
       ) : (
         <button
+          disabled={!canAddMore}
           onClick={() => setEditing("new")}
           className="btn-outline w-full sm:w-auto">
           <Plus size={18} /> افزودن آدرس جدید
         </button>
+      )}
+
+      {!canAddMore && (
+        <p className="text-xs text-ink-500">حداکثر ۲ آدرس قابل ثبت است.</p>
       )}
 
       {initial.length === 0 && !editing && (
@@ -161,11 +168,13 @@ export default function AddressManager({
 
 function AddressForm({
   initial,
+  canEditDefault,
   pending,
   onCancel,
   onSubmit,
 }: {
   initial: AddressView | null;
+  canEditDefault: boolean;
   pending: boolean;
   onCancel: () => void;
   onSubmit: (values: Record<string, unknown>) => void;
@@ -219,7 +228,9 @@ function AddressForm({
             required
             className="acc-input"
             value={v.province}
-            onChange={(e) => set("province", e.target.value)}
+            disabled
+            readOnly
+            onChange={() => undefined}
           />
         </Field>
         <Field label="شهر" required>
@@ -227,7 +238,9 @@ function AddressForm({
             required
             className="acc-input"
             value={v.city}
-            onChange={(e) => set("city", e.target.value)}
+            disabled
+            readOnly
+            onChange={() => undefined}
           />
         </Field>
       </div>
@@ -280,6 +293,7 @@ function AddressForm({
         <input
           type="checkbox"
           checked={v.isDefault}
+          disabled={!canEditDefault}
           onChange={(e) => set("isDefault", e.target.checked)}
           className="w-4 h-4 accent-brand-500"
         />

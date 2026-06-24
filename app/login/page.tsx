@@ -10,7 +10,7 @@ import { useCurrentUser } from "@/lib/auth/client";
 function LoginInner() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("next") || "/dashboard";
+  const next = params.get("next") || "/";
   const open = useAuthModal((s) => s.open);
   const { isAuthed, isLoading } = useCurrentUser();
 

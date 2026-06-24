@@ -16,7 +16,7 @@ export default async function AddressesPage() {
         </h1>
         <p className="text-ink-500 mt-1 text-sm">
           آدرس‌های تحویل خود را مدیریت کنید. یک آدرس به‌عنوان پیش‌فرض انتخاب
-          می‌شود.
+          می‌شود. حداکثر ۲ آدرس قابل ثبت است.
         </p>
       </header>
 

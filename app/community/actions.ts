@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth/session";
 import { saveCustomSandwich } from "@/lib/server/customSandwiches";
-import { rateCustomSandwich } from "@/lib/server/ratings";
+import {
+  deleteCustomSandwichRating,
+  rateCustomSandwich,
+} from "@/lib/server/ratings";
 import { saveCustomSchema, rateSchema } from "@/lib/validation/sandwich";
 
 /**
@@ -25,15 +28,30 @@ export async function saveCustomSandwichAction(
   }
   const d = parsed.data;
 
-  const { sandwich, deduped } = await saveCustomSandwich({
-    creatorId: user.id,
-    name: d.name,
-    description: d.description ?? null,
-    baseSlug: d.baseSlug ?? null,
-    basePrice: d.basePrice,
-    isPublic: d.isPublic,
-    ingredientIds: d.ingredientIds,
-  });
+  let sandwich: { id: string };
+  let deduped: boolean;
+  try {
+    const result = await saveCustomSandwich({
+      creatorId: user.id,
+      name: d.name,
+      description: d.description ?? null,
+      baseSlug: d.baseSlug ?? null,
+      basePrice: d.basePrice,
+      isPublic: d.isPublic,
+      ingredientIds: d.ingredientIds,
+    });
+    sandwich = result.sandwich;
+    deduped = result.deduped;
+  } catch (e) {
+    if (e instanceof Error && e.message === "ORDER_REQUIRED_FOR_PUBLIC") {
+      return {
+        ok: false,
+        error:
+          "برای انتشار در مارکت، باید همین ساندویچ را قبلاً سفارش داده باشید.",
+      };
+    }
+    return { ok: false, error: "ذخیره ساندویچ با خطا مواجه شد." };
+  }
 
   revalidatePath("/dashboard/saved");
   if (d.isPublic) revalidatePath("/community");
@@ -57,6 +75,22 @@ export async function rateSandwichAction(raw: unknown): Promise<RateResult> {
 
   if (result.ok) {
     revalidatePath("/community");
+    revalidatePath(`/community/${parsed.data.sandwichId}`);
+    revalidatePath("/dashboard/orders");
+  }
+  return result;
+}
+
+export async function deleteSandwichRatingAction(
+  sandwichId: string,
+): Promise<RateResult> {
+  const user = await requireUser();
+  if (!sandwichId) return { ok: false, error: "ورودی نامعتبر است." };
+
+  const result = await deleteCustomSandwichRating(user.id, sandwichId);
+  if (result.ok) {
+    revalidatePath("/community");
+    revalidatePath(`/community/${sandwichId}`);
     revalidatePath("/dashboard/orders");
   }
   return result;
