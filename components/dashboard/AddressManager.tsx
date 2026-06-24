@@ -25,8 +25,8 @@ export type AddressView = {
 
 const EMPTY: Omit<AddressView, "id"> = {
   title: "",
-  province: "Isfahan",
-  city: "Isfahan",
+  province: "اصفهان",
+  city: "اصفهان",
   street: "",
   alley: "",
   buildingNumber: "",

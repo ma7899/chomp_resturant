@@ -3,8 +3,8 @@ import { prisma } from "@/lib/db";
 
 /** Address repository — every function is scoped to the owning user (Phase 17). */
 
-export const DEFAULT_PROVINCE = "Isfahan";
-export const DEFAULT_CITY = "Isfahan";
+export const DEFAULT_PROVINCE = "اصفهان";
+export const DEFAULT_CITY = "اصفهان";
 export const MAX_ADDRESSES_PER_USER = 2;
 
 export async function listAddresses(userId: string) {
