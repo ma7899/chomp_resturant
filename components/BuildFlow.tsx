@@ -31,7 +31,11 @@ import SaveSandwichDialog from "@/components/SaveSandwichDialog";
 type StepId = "base" | "protein" | "cheese" | "veggie" | "sauce" | "review";
 
 const STEPS: { id: StepId; title: string; subtitle: string }[] = [
-  { id: "base", title: "پایه", subtitle: "در صورت تمایل ساندویچ پایه انتخاب کنید" },
+  {
+    id: "base",
+    title: "پایه",
+    subtitle: "در صورت تمایل ساندویچ پایه انتخاب کنید",
+  },
   {
     id: "protein",
     title: "پروتئین اضافه",
@@ -323,54 +327,56 @@ function BaseStep({
             : "border-ink-100 bg-white hover:border-brand-300",
         )}>
         <div className="font-bold">بدون ساندویچ پایه</div>
-        <div className="text-xs text-ink-500 mt-1">فقط با مواد و افزودنی ها می سازم</div>
+        <div className="text-xs text-ink-500 mt-1">
+          فقط با مواد و افزودنی ها می سازم
+        </div>
       </button>
 
       <div className="grid sm:grid-cols-2 gap-4">
-      {sandwiches.map((s) => {
-        const active = selected === s.slug;
-        return (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => onSelect(s.slug)}
-            className={clsx(
-              "group relative text-right rounded-3xl overflow-hidden bg-white border-2 transition-all",
-              active
-                ? "border-brand-500 shadow-glow"
-                : "border-ink-100 hover:border-brand-300",
-            )}>
-            <div className="relative aspect-[16/10]">
-              <Image
-                src={s.image}
-                alt={s.name}
-                fill
-                sizes="(max-width:640px) 100vw, 50vw"
-                className="object-cover"
-              />
-              {active && (
-                <span className="absolute top-3 left-3 bg-brand-500 text-white rounded-full p-1.5 shadow">
-                  <Check size={16} />
-                </span>
-              )}
-            </div>
-            <div className="p-5">
-              <div className="flex items-center justify-between">
-                <h3 className="font-bold">{s.name}</h3>
-                <span className="price text-brand-600 text-sm">
-                  {formatPrice(s.basePrice)} T
-                </span>
+        {sandwiches.map((s) => {
+          const active = selected === s.slug;
+          return (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => onSelect(s.slug)}
+              className={clsx(
+                "group relative text-right rounded-3xl overflow-hidden bg-white border-2 transition-all",
+                active
+                  ? "border-brand-500 shadow-glow"
+                  : "border-ink-100 hover:border-brand-300",
+              )}>
+              <div className="relative aspect-[16/10]">
+                <Image
+                  src={s.image}
+                  alt={s.name}
+                  fill
+                  sizes="(max-width:640px) 100vw, 50vw"
+                  className="object-cover"
+                />
+                {active && (
+                  <span className="absolute top-3 left-3 bg-brand-500 text-white rounded-full p-1.5 shadow">
+                    <Check size={16} />
+                  </span>
+                )}
               </div>
-              <p className="text-xs text-ink-500 mt-2 leading-6 line-clamp-2">
-                {s.description}
-              </p>
-              <p className="text-[11px] text-ink-400 mt-3 leading-6">
-                شامل: {s.includedIngredients.join("، ")}
-              </p>
-            </div>
-          </button>
-        );
-      })}
+              <div className="p-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold">{s.name}</h3>
+                  <span className="price text-brand-600 text-sm">
+                    {formatPrice(s.basePrice)} T
+                  </span>
+                </div>
+                <p className="text-xs text-ink-500 mt-2 leading-6 line-clamp-2">
+                  {s.description}
+                </p>
+                <p className="text-[11px] text-ink-400 mt-3 leading-6">
+                  شامل: {s.includedIngredients.join("، ")}
+                </p>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -399,7 +405,9 @@ function ReviewCustomOnlyStep({
       <div>
         <h4 className="font-bold mb-2">افزودنی ها</h4>
         {toppings.length === 0 ? (
-          <p className="text-sm text-ink-500">هنوز افزودنی ای انتخاب نشده است.</p>
+          <p className="text-sm text-ink-500">
+            هنوز افزودنی ای انتخاب نشده است.
+          </p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {toppings.map((id) => {

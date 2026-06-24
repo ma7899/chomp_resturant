@@ -94,7 +94,9 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
         select: { id: true, name: true },
       })
     : [];
-  const ingredientIdByName = new Map(namedIngredients.map((i) => [i.name, i.id]));
+  const ingredientIdByName = new Map(
+    namedIngredients.map((i) => [i.name, i.id]),
+  );
 
   const orderItems: NewOrderItem[] = [];
   let subtotal = 0;
@@ -194,7 +196,9 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
     const allergySet = new Set(allergies.map((a) => a.ingredientId));
     const hits = Array.from(cartIngredientIds)
       .filter((id) => allergySet.has(id))
-      .map((id) => allergies.find((a) => a.ingredientId === id)?.ingredient.name)
+      .map(
+        (id) => allergies.find((a) => a.ingredientId === id)?.ingredient.name,
+      )
       .filter((name): name is string => !!name);
 
     if (hits.length > 0 && !input.confirmAllergyWarning) {

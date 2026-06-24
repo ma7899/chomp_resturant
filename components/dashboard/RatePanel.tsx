@@ -133,34 +133,34 @@ function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
 
           {editing && (
             <>
-          <div className="flex items-center gap-1 mt-2">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setRating(n)}
-                onMouseEnter={() => setHover(n)}
-                onMouseLeave={() => setHover(0)}
-                aria-label={`${n} ستاره`}>
-                <Star
-                  size={24}
-                  className={
-                    n <= (hover || rating)
-                      ? "fill-amber-400 text-amber-400"
-                      : "text-ink-200"
-                  }
-                />
-              </button>
-            ))}
-          </div>
-          <textarea
-            value={review}
-            onChange={(e) => setReview(e.target.value)}
-            rows={2}
-            placeholder="نظرت درباره این ساندویچ (اختیاری)"
-            className="mt-3 w-full rounded-xl border border-ink-100 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-100 transition"
-          />
-          {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+              <div className="flex items-center gap-1 mt-2">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setRating(n)}
+                    onMouseEnter={() => setHover(n)}
+                    onMouseLeave={() => setHover(0)}
+                    aria-label={`${n} ستاره`}>
+                    <Star
+                      size={24}
+                      className={
+                        n <= (hover || rating)
+                          ? "fill-amber-400 text-amber-400"
+                          : "text-ink-200"
+                      }
+                    />
+                  </button>
+                ))}
+              </div>
+              <textarea
+                value={review}
+                onChange={(e) => setReview(e.target.value)}
+                rows={2}
+                placeholder="نظرت درباره این ساندویچ (اختیاری)"
+                className="mt-3 w-full rounded-xl border border-ink-100 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-100 transition"
+              />
+              {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
               <button
                 onClick={submit}
                 disabled={pending}

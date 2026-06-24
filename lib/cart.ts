@@ -33,7 +33,10 @@ export const useCart = create<CartState>()((set) => ({
   isOpen: false,
   addItem: (item) =>
     set((s) => ({
-      items: [...s.items, { ...item, id: safeUUID(), qty: Math.max(1, item.qty) }],
+      items: [
+        ...s.items,
+        { ...item, id: safeUUID(), qty: Math.max(1, item.qty) },
+      ],
       isOpen: true,
     })),
   removeItem: (id) =>

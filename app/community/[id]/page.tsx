@@ -49,7 +49,8 @@ export default async function CommunityDetailPage({
                 {sandwich.name}
               </h1>
               <p className="text-sm text-ink-500 mt-2 flex items-center gap-2">
-                <UserRound size={14} /> ساخته ی {sandwich.creator.name || "یک مشتری"}
+                <UserRound size={14} /> ساخته ی{" "}
+                {sandwich.creator.name || "یک مشتری"}
               </p>
             </div>
             <span className="inline-flex items-center gap-1 text-sm font-bold text-amber-600">
@@ -64,7 +65,9 @@ export default async function CommunityDetailPage({
           </p>
 
           <div className="mt-6">
-            <h2 className="text-sm font-bold text-ink-700 mb-2">مواد تشکیل دهنده</h2>
+            <h2 className="text-sm font-bold text-ink-700 mb-2">
+              مواد تشکیل دهنده
+            </h2>
             <ul className="grid sm:grid-cols-2 gap-2">
               {sandwich.ingredients.map((x) => (
                 <li
@@ -80,7 +83,8 @@ export default async function CommunityDetailPage({
             <div>
               <div className="text-xs text-ink-500">قیمت</div>
               <div className="font-black text-xl text-ink-900">
-                {formatPrice(sandwich.basePrice)} <span className="text-xs">تومان</span>
+                {formatPrice(sandwich.basePrice)}{" "}
+                <span className="text-xs">تومان</span>
               </div>
             </div>
             <div className="w-48">
@@ -90,7 +94,9 @@ export default async function CommunityDetailPage({
                   name: sandwich.name,
                   baseSlug: sandwich.baseSlug,
                   basePrice: sandwich.basePrice,
-                  ingredientIds: sandwich.ingredients.map((x) => x.ingredient.id),
+                  ingredientIds: sandwich.ingredients.map(
+                    (x) => x.ingredient.id,
+                  ),
                 }}
               />
             </div>
@@ -113,9 +119,7 @@ export default async function CommunityDetailPage({
                 </span>{" "}
                 امتیاز ثبت شده
               </p>
-              <p>
-                ثبت شده در {formatDateFa(sandwich.createdAt)}
-              </p>
+              <p>ثبت شده در {formatDateFa(sandwich.createdAt)}</p>
             </div>
           </div>
 
@@ -152,15 +156,21 @@ export default async function CommunityDetailPage({
               <li key={r.id} className="rounded-2xl border border-ink-100 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-sm">{r.user.name || "کاربر"}</p>
-                    <p className="text-xs text-ink-400">{formatDateFa(r.createdAt)}</p>
+                    <p className="font-semibold text-sm">
+                      {r.user.name || "کاربر"}
+                    </p>
+                    <p className="text-xs text-ink-400">
+                      {formatDateFa(r.createdAt)}
+                    </p>
                   </div>
                   <span className="inline-flex items-center gap-1 text-amber-600 font-bold text-sm">
                     <Star size={14} className="fill-amber-400 text-amber-400" />
                     {r.rating.toLocaleString("fa-IR")}
                   </span>
                 </div>
-                <p className="text-sm text-ink-700 mt-2 leading-7">{r.review}</p>
+                <p className="text-sm text-ink-700 mt-2 leading-7">
+                  {r.review}
+                </p>
               </li>
             ))}
           </ul>

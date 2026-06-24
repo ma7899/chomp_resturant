@@ -78,7 +78,10 @@ export default async function CommunityPage({
                     {(i + 1).toLocaleString("fa-IR")}
                   </span>
                   <span className="inline-flex items-center gap-1 text-sm font-bold">
-                    <Star size={15} className="fill-yellow-300 text-yellow-300" />
+                    <Star
+                      size={15}
+                      className="fill-yellow-300 text-yellow-300"
+                    />
                     {s.averageRating.toFixed(1)}
                   </span>
                 </div>

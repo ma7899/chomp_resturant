@@ -66,118 +66,116 @@ const initial = {
 };
 
 export const useData = create<State>()((set) => ({
-      ...initial,
+  ...initial,
 
-      upsertSandwich: (s) =>
-        set((state) => {
-          const idx = state.sandwiches.findIndex((x) => x.id === s.id);
-          const next = [...state.sandwiches];
-          if (idx >= 0) next[idx] = s;
-          else next.push(s);
-          return { sandwiches: next };
-        }),
-      deleteSandwich: (id) =>
-        set((state) => ({
-          sandwiches: state.sandwiches.filter((x) => x.id !== id),
-        })),
+  upsertSandwich: (s) =>
+    set((state) => {
+      const idx = state.sandwiches.findIndex((x) => x.id === s.id);
+      const next = [...state.sandwiches];
+      if (idx >= 0) next[idx] = s;
+      else next.push(s);
+      return { sandwiches: next };
+    }),
+  deleteSandwich: (id) =>
+    set((state) => ({
+      sandwiches: state.sandwiches.filter((x) => x.id !== id),
+    })),
 
-      upsertTopping: (t) =>
-        set((state) => {
-          const idx = state.toppings.findIndex((x) => x.id === t.id);
-          const next = [...state.toppings];
-          if (idx >= 0) next[idx] = t;
-          else next.push(t);
-          return { toppings: next };
-        }),
-      deleteTopping: (id) =>
-        set((state) => ({
-          toppings: state.toppings.filter((x) => x.id !== id),
-        })),
+  upsertTopping: (t) =>
+    set((state) => {
+      const idx = state.toppings.findIndex((x) => x.id === t.id);
+      const next = [...state.toppings];
+      if (idx >= 0) next[idx] = t;
+      else next.push(t);
+      return { toppings: next };
+    }),
+  deleteTopping: (id) =>
+    set((state) => ({
+      toppings: state.toppings.filter((x) => x.id !== id),
+    })),
 
-      upsertTag: (t) =>
-        set((state) => {
-          const idx = state.tags.findIndex((x) => x.id === t.id);
-          const next = [...state.tags];
-          if (idx >= 0) next[idx] = t;
-          else next.push(t);
-          return { tags: next };
-        }),
-      deleteTag: (id) =>
-        set((state) => ({
-          tags: state.tags.filter((x) => x.id !== id),
-          // also strip from items
-          sandwiches: state.sandwiches.map((s) => ({
-            ...s,
-            tagIds: s.tagIds.filter((x) => x !== id),
+  upsertTag: (t) =>
+    set((state) => {
+      const idx = state.tags.findIndex((x) => x.id === t.id);
+      const next = [...state.tags];
+      if (idx >= 0) next[idx] = t;
+      else next.push(t);
+      return { tags: next };
+    }),
+  deleteTag: (id) =>
+    set((state) => ({
+      tags: state.tags.filter((x) => x.id !== id),
+      // also strip from items
+      sandwiches: state.sandwiches.map((s) => ({
+        ...s,
+        tagIds: s.tagIds.filter((x) => x !== id),
+      })),
+      toppings: state.toppings.map((t) => ({
+        ...t,
+        tagIds: t.tagIds.filter((x) => x !== id),
+      })),
+      tasteForm: {
+        ...state.tasteForm,
+        questions: state.tasteForm.questions.map((q) => ({
+          ...q,
+          options: q.options.map((o) => ({
+            ...o,
+            tagBoosts: o.tagBoosts.filter((b) => b.tagId !== id),
           })),
-          toppings: state.toppings.map((t) => ({
-            ...t,
-            tagIds: t.tagIds.filter((x) => x !== id),
-          })),
-          tasteForm: {
-            ...state.tasteForm,
-            questions: state.tasteForm.questions.map((q) => ({
-              ...q,
-              options: q.options.map((o) => ({
-                ...o,
-                tagBoosts: o.tagBoosts.filter((b) => b.tagId !== id),
-              })),
-            })),
-          },
         })),
-
-      addReview: (r) =>
-        set((state) => ({
-          reviews: [
-            { ...r, id: safeUUID(), date: new Date().toISOString() },
-            ...state.reviews,
-          ],
-        })),
-      deleteReview: (id) =>
-        set((state) => ({
-          reviews: state.reviews.filter((x) => x.id !== id),
-        })),
-
-      addOrder: (o) => {
-        const order: Order = {
-          ...o,
-          id: safeUUID(),
-          date: new Date().toISOString(),
-          status: "new",
-        };
-        set((state) => ({ orders: [order, ...state.orders] }));
-        return order;
       },
-      setOrderStatus: (id, status) =>
-        set((state) => ({
-          orders: state.orders.map((o) =>
-            o.id === id ? { ...o, status } : o,
-          ),
-        })),
-      deleteOrder: (id) =>
-        set((state) => ({
-          orders: state.orders.filter((o) => o.id !== id),
-        })),
+    })),
 
-      setTasteForm: (f) => set({ tasteForm: f }),
-      upsertQuestion: (q) =>
-        set((state) => {
-          const idx = state.tasteForm.questions.findIndex((x) => x.id === q.id);
-          const next = [...state.tasteForm.questions];
-          if (idx >= 0) next[idx] = q;
-          else next.push(q);
-          return { tasteForm: { ...state.tasteForm, questions: next } };
-        }),
-      deleteQuestion: (id) =>
-        set((state) => ({
-          tasteForm: {
-            ...state.tasteForm,
-            questions: state.tasteForm.questions.filter((q) => q.id !== id),
-          },
-        })),
+  addReview: (r) =>
+    set((state) => ({
+      reviews: [
+        { ...r, id: safeUUID(), date: new Date().toISOString() },
+        ...state.reviews,
+      ],
+    })),
+  deleteReview: (id) =>
+    set((state) => ({
+      reviews: state.reviews.filter((x) => x.id !== id),
+    })),
 
-      resetAll: () => set({ ...initial }),
-    }));
+  addOrder: (o) => {
+    const order: Order = {
+      ...o,
+      id: safeUUID(),
+      date: new Date().toISOString(),
+      status: "new",
+    };
+    set((state) => ({ orders: [order, ...state.orders] }));
+    return order;
+  },
+  setOrderStatus: (id, status) =>
+    set((state) => ({
+      orders: state.orders.map((o) => (o.id === id ? { ...o, status } : o)),
+    })),
+  deleteOrder: (id) =>
+    set((state) => ({
+      orders: state.orders.filter((o) => o.id !== id),
+    })),
+
+  setTasteForm: (f) => set({ tasteForm: f }),
+  upsertQuestion: (q) =>
+    set((state) => {
+      const idx = state.tasteForm.questions.findIndex((x) => x.id === q.id);
+      const next = [...state.tasteForm.questions];
+      if (idx >= 0) next[idx] = q;
+      else next.push(q);
+      return { tasteForm: { ...state.tasteForm, questions: next } };
+    }),
+  deleteQuestion: (id) =>
+    set((state) => ({
+      tasteForm: {
+        ...state.tasteForm,
+        questions: state.tasteForm.questions.filter((q) => q.id !== id),
+      },
+    })),
+
+  resetAll: () => set({ ...initial }),
+}));
 
 /* ───────── Non-react accessors (used by cart helpers, SSR, etc.) ───────── */
 
@@ -198,7 +196,10 @@ export function getTagById(id: string): Tag | undefined {
 export function recommendSandwich(
   scores: Record<string, number>,
   sandwiches: Sandwich[],
-): { sandwich: Sandwich | null; ranked: { sandwich: Sandwich; score: number }[] } {
+): {
+  sandwich: Sandwich | null;
+  ranked: { sandwich: Sandwich; score: number }[];
+} {
   if (sandwiches.length === 0) return { sandwich: null, ranked: [] };
   const ranked = sandwiches
     .map((s) => {
