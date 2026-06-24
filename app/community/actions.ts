@@ -50,6 +50,19 @@ export async function saveCustomSandwichAction(
           "برای انتشار در مارکت، باید همین ساندویچ را قبلاً سفارش داده باشید.",
       };
     }
+    if (e instanceof Error && e.message === "RECIPE_EXISTS_IN_MENU") {
+      return {
+        ok: false,
+        error:
+          "ترکیب مواد این ساندویچ قبلاً در منوی اصلی وجود دارد و قابل انتشار نیست.",
+      };
+    }
+    if (e instanceof Error && e.message === "RECIPE_EXISTS_IN_MARKET") {
+      return {
+        ok: false,
+        error: "ترکیب مواد این ساندویچ قبلاً در مارکت عمومی ثبت شده است.",
+      };
+    }
     return { ok: false, error: "ذخیره ساندویچ با خطا مواجه شد." };
   }
 

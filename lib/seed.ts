@@ -108,7 +108,7 @@ export const SEED_SANDWICHES: Sandwich[] = [
       "پاپریکا",
       "زیتون سیاه",
     ],
-    image: "/images/chick.png",
+    image: "/images/chicken.png",
     badge: "اقتصادی",
     tagIds: tag("t-chicken", "t-cheesy", "t-grilled", "t-light", "t-creamy"),
   },

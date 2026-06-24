@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth/session";
 import { listUserCustomSandwiches } from "@/lib/server/customSandwiches";
 import { formatPrice } from "@/lib/format";
 import CommunityOrderButton from "@/components/community/CommunityOrderButton";
+import SavedSandwichActions from "@/components/dashboard/SavedSandwichActions";
 
 export const dynamic = "force-dynamic";
 
@@ -88,6 +89,9 @@ export default async function SavedSandwichesPage() {
                     ingredientIds: s.ingredients.map((x) => x.ingredient.id),
                   }}
                 />
+              </div>
+              <div className="mt-2">
+                <SavedSandwichActions sandwichId={s.id} isPublic={s.isPublic} />
               </div>
             </article>
           ))}

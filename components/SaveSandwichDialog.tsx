@@ -8,8 +8,8 @@ import { saveCustomSandwichAction } from "@/app/community/actions";
 /**
  * "Save my sandwich" dialog (features 2, 7, 10).
  * Lets a customer name their built recipe, optionally publish it to the
- * community marketplace, and save it. Duplicate public recipes are de-duped
- * server-side via recipeHash.
+ * community marketplace, and save it. Public publishing is validated against
+ * existing menu/market recipes by ingredient composition.
  */
 export default function SaveSandwichDialog({
   baseSlug,

@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
-  ArrowRight,
   Check,
   ChevronLeft,
+  Minus,
   Plus,
   ShoppingBag,
 } from "lucide-react";
@@ -27,6 +27,25 @@ import {
 } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
 import SaveSandwichDialog from "@/components/SaveSandwichDialog";
+
+type SavedBuildSandwich = {
+  id: string;
+  name: string;
+  baseSlug: string | null;
+  ingredientIds: string[];
+};
+
+function countById(ids: string[]) {
+  const m: Record<string, number> = {};
+  for (const id of ids) m[id] = (m[id] ?? 0) + 1;
+  return m;
+}
+
+function removeOneOccurrence(ids: string[], target: string) {
+  const idx = ids.indexOf(target);
+  if (idx === -1) return ids;
+  return [...ids.slice(0, idx), ...ids.slice(idx + 1)];
+}
 
 type StepId = "base" | "protein" | "cheese" | "veggie" | "sauce" | "review";
 
@@ -47,7 +66,13 @@ const STEPS: { id: StepId; title: string; subtitle: string }[] = [
   { id: "review", title: "بررسی نهایی", subtitle: "همه چیز درست است؟" },
 ];
 
-export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
+export default function BuildFlow({
+  initialSlug,
+  savedSandwiches,
+}: {
+  initialSlug?: string;
+  savedSandwiches?: SavedBuildSandwich[];
+}) {
   const router = useRouter();
   const addItem = useCart((s) => s.addItem);
   const proteins = useProteins();
@@ -57,11 +82,23 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
   const sandwiches = useSandwiches();
   const [stepIdx, setStepIdx] = useState(0);
   const [slug, setSlug] = useState<string | undefined>(initialSlug);
-  const [toppings, setToppings] = useState<string[]>([]);
+  const [selectedSavedId, setSelectedSavedId] = useState<string | null>(null);
+  const [selectedSavedName, setSelectedSavedName] = useState<string | null>(
+    null,
+  );
+  const [lockedToppings, setLockedToppings] = useState<string[]>([]);
+  const [extraToppings, setExtraToppings] = useState<string[]>([]);
   const [qty, setQty] = useState(1);
 
   const step = STEPS[stepIdx];
   const sandwich = slug ? getSandwich(slug) : undefined;
+  const toppings = useMemo(
+    () => [...lockedToppings, ...extraToppings],
+    [lockedToppings, extraToppings],
+  );
+  const toppingCounts = useMemo(() => countById(toppings), [toppings]);
+  const lockedCounts = useMemo(() => countById(lockedToppings), [lockedToppings]);
+  const extraCounts = useMemo(() => countById(extraToppings), [extraToppings]);
 
   const total = useMemo(() => {
     const base = sandwich?.basePrice ?? 0;
@@ -80,10 +117,9 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
   };
   const prev = () => stepIdx > 0 && setStepIdx(stepIdx - 1);
 
-  const toggleTopping = (id: string) =>
-    setToppings((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+  const addTopping = (id: string) => setExtraToppings((prev) => [...prev, id]);
+  const removeTopping = (id: string) =>
+    setExtraToppings((prev) => removeOneOccurrence(prev, id));
 
   const submit = () => {
     if (sandwich) {
@@ -93,7 +129,7 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
         sandwichSlug: "custom",
         toppingIds: toppings,
         qty,
-        customName: "ساندویچ سفارشی",
+        customName: selectedSavedName || "ساندویچ سفارشی",
         customPrice: total / Math.max(1, qty),
       });
     }
@@ -161,59 +197,74 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
               {step.id === "base" && (
                 <BaseStep
                   sandwiches={sandwiches}
+                  savedSandwiches={savedSandwiches ?? []}
                   selected={slug}
-                  onSelect={(s) => {
-                    setSlug(s);
+                  selectedSavedId={selectedSavedId}
+                  onSelect={(choice) => {
+                    setSlug(choice.slug);
+                    setSelectedSavedId(choice.savedId ?? null);
+                    setSelectedSavedName(choice.savedName ?? null);
+                    setLockedToppings(choice.fixedIngredientIds);
+                    setExtraToppings([]);
                   }}
                 />
               )}
               {step.id === "protein" && (
                 <ToppingsGrid
                   items={proteins}
-                  selected={toppings}
-                  onToggle={toggleTopping}
+                  selectedCounts={toppingCounts}
+                  lockedCounts={lockedCounts}
+                  onAdd={addTopping}
+                  onRemove={removeTopping}
                 />
               )}
               {step.id === "cheese" && (
                 <ToppingsGrid
                   items={cheeses}
-                  selected={toppings}
-                  onToggle={toggleTopping}
+                  selectedCounts={toppingCounts}
+                  lockedCounts={lockedCounts}
+                  onAdd={addTopping}
+                  onRemove={removeTopping}
                 />
               )}
               {step.id === "veggie" && (
                 <ToppingsGrid
                   items={veggies}
-                  selected={toppings}
-                  onToggle={toggleTopping}
+                  selectedCounts={toppingCounts}
+                  lockedCounts={lockedCounts}
+                  onAdd={addTopping}
+                  onRemove={removeTopping}
                 />
               )}
               {step.id === "sauce" && (
                 <ToppingsGrid
                   items={sauces}
-                  selected={toppings}
-                  onToggle={toggleTopping}
+                  selectedCounts={toppingCounts}
+                  lockedCounts={lockedCounts}
+                  onAdd={addTopping}
+                  onRemove={removeTopping}
                 />
               )}
               {step.id === "review" && sandwich && (
                 <ReviewStep
                   sandwich={sandwich}
-                  toppings={toppings}
+                  title={selectedSavedName ?? undefined}
+                  allCounts={toppingCounts}
+                  fixedCounts={lockedCounts}
+                  extraCounts={extraCounts}
                   qty={qty}
                   setQty={setQty}
-                  onRemoveTopping={(id) =>
-                    setToppings((p) => p.filter((x) => x !== id))
-                  }
+                  onRemoveTopping={removeTopping}
                 />
               )}
               {step.id === "review" && !sandwich && (
                 <ReviewCustomOnlyStep
-                  toppings={toppings}
+                  allCounts={toppingCounts}
+                  fixedCounts={lockedCounts}
+                  extraCounts={extraCounts}
                   qty={qty}
                   setQty={setQty}
-                  onRemoveTopping={(id) =>
-                    setToppings((p) => p.filter((x) => x !== id))
-                  }
+                  onRemoveTopping={removeTopping}
                 />
               )}
             </motion.div>
@@ -224,6 +275,7 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
         <aside className="hidden lg:block">
           <SummaryCard
             sandwich={sandwich}
+            title={selectedSavedName ?? undefined}
             toppings={toppings}
             qty={qty}
             total={total}
@@ -283,7 +335,7 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
                 baseSlug={sandwich?.slug ?? null}
                 basePrice={total / qty}
                 ingredientIds={toppings}
-                defaultName={sandwich?.name ?? "ساندویچ سفارشی"}
+                defaultName={selectedSavedName ?? sandwich?.name ?? "ساندویچ سفارشی"}
               />
             )}
             {!sandwich && (
@@ -291,7 +343,7 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
                 baseSlug={null}
                 basePrice={total / qty}
                 ingredientIds={toppings}
-                defaultName="ساندویچ سفارشی"
+                defaultName={selectedSavedName ?? "ساندویچ سفارشی"}
               />
             )}
             <button onClick={submit} className="btn-primary">
@@ -308,21 +360,30 @@ export default function BuildFlow({ initialSlug }: { initialSlug?: string }) {
 
 function BaseStep({
   sandwiches,
+  savedSandwiches,
   selected,
+  selectedSavedId,
   onSelect,
 }: {
   sandwiches: Sandwich[];
+  savedSandwiches: SavedBuildSandwich[];
   selected?: string;
-  onSelect: (slug: string) => void;
+  selectedSavedId: string | null;
+  onSelect: (choice: {
+    slug?: string;
+    savedId?: string;
+    savedName?: string;
+    fixedIngredientIds: string[];
+  }) => void;
 }) {
   return (
     <div className="space-y-4">
       <button
         type="button"
-        onClick={() => onSelect("")}
+        onClick={() => onSelect({ slug: undefined, fixedIngredientIds: [] })}
         className={clsx(
           "w-full rounded-2xl border-2 p-4 text-right transition-all",
-          !selected
+          !selected && !selectedSavedId
             ? "border-brand-500 bg-brand-50 shadow-glow"
             : "border-ink-100 bg-white hover:border-brand-300",
         )}>
@@ -334,12 +395,12 @@ function BaseStep({
 
       <div className="grid sm:grid-cols-2 gap-4">
         {sandwiches.map((s) => {
-          const active = selected === s.slug;
+          const active = !selectedSavedId && selected === s.slug;
           return (
             <button
               key={s.id}
               type="button"
-              onClick={() => onSelect(s.slug)}
+              onClick={() => onSelect({ slug: s.slug, fixedIngredientIds: [] })}
               className={clsx(
                 "group relative text-right rounded-3xl overflow-hidden bg-white border-2 transition-all",
                 active
@@ -378,17 +439,60 @@ function BaseStep({
           );
         })}
       </div>
+
+      {savedSandwiches.length > 0 && (
+        <div className="space-y-3">
+          <h4 className="font-bold text-sm text-ink-700">
+            ساندویچ‌های ثبت‌شده من
+          </h4>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {savedSandwiches.map((s) => {
+              const active = selectedSavedId === s.id;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() =>
+                    onSelect({
+                      slug: s.baseSlug ?? undefined,
+                      savedId: s.id,
+                      savedName: s.name,
+                      fixedIngredientIds: s.ingredientIds,
+                    })
+                  }
+                  className={clsx(
+                    "rounded-2xl border-2 p-4 text-right transition-all",
+                    active
+                      ? "border-brand-500 bg-brand-50 shadow-glow"
+                      : "border-ink-100 bg-white hover:border-brand-300",
+                  )}>
+                  <div className="font-bold text-sm">{s.name}</div>
+                  <p className="text-xs text-ink-500 mt-1 leading-6">
+                    {s.baseSlug
+                      ? "با پایه منو + مواد رسپی"
+                      : "بدون پایه منو (فقط مواد رسپی)"}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 function ReviewCustomOnlyStep({
-  toppings,
+  allCounts,
+  fixedCounts,
+  extraCounts,
   qty,
   setQty,
   onRemoveTopping,
 }: {
-  toppings: string[];
+  allCounts: Record<string, number>;
+  fixedCounts: Record<string, number>;
+  extraCounts: Record<string, number>;
   qty: number;
   setQty: (n: number) => void;
   onRemoveTopping: (id: string) => void;
@@ -404,22 +508,31 @@ function ReviewCustomOnlyStep({
 
       <div>
         <h4 className="font-bold mb-2">افزودنی ها</h4>
-        {toppings.length === 0 ? (
+        {Object.keys(allCounts).length === 0 ? (
           <p className="text-sm text-ink-500">
             هنوز افزودنی ای انتخاب نشده است.
           </p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {toppings.map((id) => {
+            {Object.entries(allCounts).map(([id, count]) => {
               const t = getTopping(id);
               if (!t) return null;
+              const fixed = fixedCounts[id] ?? 0;
+              const removable = extraCounts[id] ?? 0;
               return (
                 <button
                   key={id}
                   type="button"
                   onClick={() => onRemoveTopping(id)}
+                  disabled={removable <= 0}
                   className="px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 text-xs border border-brand-200 hover:bg-brand-100 transition">
-                  {t.name} - {formatPrice(t.price)} تومان
+                  {t.name} × {count.toLocaleString("fa-IR")}
+                  {fixed > 0 && (
+                    <span className="mr-1 text-[10px] text-ink-500">
+                      (پایه {fixed.toLocaleString("fa-IR")})
+                    </span>
+                  )}
+                  <span className="mr-1">- {formatPrice(t.price)} تومان</span>
                 </button>
               );
             })}
@@ -448,22 +561,27 @@ function ReviewCustomOnlyStep({
 
 function ToppingsGrid({
   items,
-  selected,
-  onToggle,
+  selectedCounts,
+  lockedCounts,
+  onAdd,
+  onRemove,
 }: {
   items: Topping[];
-  selected: string[];
-  onToggle: (id: string) => void;
+  selectedCounts: Record<string, number>;
+  lockedCounts: Record<string, number>;
+  onAdd: (id: string) => void;
+  onRemove: (id: string) => void;
 }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
       {items.map((t) => {
-        const active = selected.includes(t.id);
+        const count = selectedCounts[t.id] ?? 0;
+        const locked = lockedCounts[t.id] ?? 0;
+        const active = count > 0;
+        const canRemove = count > locked;
         return (
-          <button
+          <div
             key={t.id}
-            type="button"
-            onClick={() => onToggle(t.id)}
             className={clsx(
               "relative rounded-2xl p-4 text-right border-2 transition-all bg-white",
               active
@@ -472,14 +590,21 @@ function ToppingsGrid({
             )}>
             <div className="flex items-start justify-between gap-2">
               <span className="font-bold text-sm">{t.name}</span>
-              <span
-                className={clsx(
-                  "w-6 h-6 rounded-full flex items-center justify-center text-xs transition",
-                  active
-                    ? "bg-brand-500 text-white"
-                    : "bg-ink-100 text-ink-400",
-                )}>
-                {active ? <Check size={14} /> : <Plus size={14} />}
+              <span className="inline-flex items-center gap-1">
+                {locked > 0 && (
+                  <span className="chip !bg-amber-50 !text-amber-700 text-[10px]">
+                    ثابت
+                  </span>
+                )}
+                <span
+                  className={clsx(
+                    "w-7 h-7 rounded-full flex items-center justify-center text-xs transition font-bold",
+                    active
+                      ? "bg-brand-500 text-white"
+                      : "bg-ink-100 text-ink-500",
+                  )}>
+                  {count.toLocaleString("fa-IR")}
+                </span>
               </span>
             </div>
             <div className="mt-3 price text-brand-600 text-sm">
@@ -488,7 +613,22 @@ function ToppingsGrid({
                 تومان
               </span>
             </div>
-          </button>
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onAdd(t.id)}
+                className="btn-outline !py-1.5 !px-2 text-xs">
+                <Plus size={14} /> افزودن
+              </button>
+              <button
+                type="button"
+                onClick={() => onRemove(t.id)}
+                disabled={!canRemove}
+                className="btn-ghost !py-1.5 !px-2 text-xs disabled:opacity-40 disabled:cursor-not-allowed">
+                <Minus size={14} /> کم
+              </button>
+            </div>
+          </div>
         );
       })}
     </div>
@@ -497,13 +637,19 @@ function ToppingsGrid({
 
 function ReviewStep({
   sandwich,
-  toppings,
+  title,
+  allCounts,
+  fixedCounts,
+  extraCounts,
   qty,
   setQty,
   onRemoveTopping,
 }: {
   sandwich: Sandwich;
-  toppings: string[];
+  title?: string;
+  allCounts: Record<string, number>;
+  fixedCounts: Record<string, number>;
+  extraCounts: Record<string, number>;
   qty: number;
   setQty: (n: number) => void;
   onRemoveTopping: (id: string) => void;
@@ -521,7 +667,7 @@ function ReviewStep({
       </div>
       <div className="p-6 space-y-5">
         <div>
-          <h3 className="text-2xl font-black">{sandwich.name}</h3>
+          <h3 className="text-2xl font-black">{title ?? sandwich.name}</h3>
           <p className="text-ink-500 mt-2 leading-7 text-sm">
             {sandwich.description}
           </p>
@@ -540,24 +686,34 @@ function ReviewStep({
 
         <div>
           <h4 className="font-bold mb-2">افزودنی‌های شما</h4>
-          {toppings.length === 0 ? (
+          {Object.keys(allCounts).length === 0 ? (
             <p className="text-sm text-ink-400">هیچ افزودنی انتخاب نشده است.</p>
           ) : (
             <ul className="divide-y divide-ink-100">
-              {toppings.map((id) => {
+              {Object.entries(allCounts).map(([id, count]) => {
                 const t = getTopping(id);
                 if (!t) return null;
+                const fixed = fixedCounts[id] ?? 0;
+                const removable = extraCounts[id] ?? 0;
                 return (
                   <li
                     key={id}
                     className="flex items-center justify-between py-2 text-sm">
-                    <span>{t.name}</span>
+                    <span>
+                      {t.name} × {count.toLocaleString("fa-IR")}
+                      {fixed > 0 && (
+                        <span className="text-xs text-ink-400 mr-2">
+                          (پایه: {fixed.toLocaleString("fa-IR")})
+                        </span>
+                      )}
+                    </span>
                     <div className="flex items-center gap-3">
                       <span className="text-brand-600 font-bold tabular">
-                        +{formatPrice(t.price)}
+                        +{formatPrice(t.price * count)}
                       </span>
                       <button
                         onClick={() => onRemoveTopping(id)}
+                        disabled={removable <= 0}
                         className="text-xs text-ink-400 hover:text-red-500">
                         حذف
                       </button>
@@ -594,6 +750,7 @@ function ReviewStep({
 
 function SummaryCard({
   sandwich,
+  title,
   toppings,
   qty,
   total,
@@ -601,6 +758,7 @@ function SummaryCard({
   onSubmit,
 }: {
   sandwich?: Sandwich;
+  title?: string;
   toppings: string[];
   qty: number;
   total: number;
@@ -620,14 +778,14 @@ function SummaryCard({
               <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0">
                 <Image
                   src={sandwich.image}
-                  alt={sandwich.name}
+                  alt={title ?? sandwich.name}
                   fill
                   sizes="64px"
                   className="object-cover"
                 />
               </div>
               <div>
-                <div className="font-bold text-sm">{sandwich.name}</div>
+                <div className="font-bold text-sm">{title ?? sandwich.name}</div>
                 <div className="text-xs text-ink-500 tabular mt-1">
                   پایه: {formatPrice(sandwich.basePrice)} تومان
                 </div>
@@ -636,16 +794,18 @@ function SummaryCard({
 
             {toppings.length > 0 && (
               <div className="border-t border-ink-100 pt-3 space-y-1.5 max-h-48 overflow-y-auto">
-                {toppings.map((id) => {
+                {Object.entries(countById(toppings)).map(([id, count]) => {
                   const t = getTopping(id);
                   if (!t) return null;
                   return (
                     <div
                       key={id}
                       className="flex items-center justify-between text-xs">
-                      <span className="text-ink-700">{t.name}</span>
+                      <span className="text-ink-700">
+                        {t.name} × {count.toLocaleString("fa-IR")}
+                      </span>
                       <span className="tabular text-brand-600 font-bold">
-                        +{formatPrice(t.price)}
+                        +{formatPrice(t.price * count)}
                       </span>
                     </div>
                   );
@@ -673,10 +833,54 @@ function SummaryCard({
               افزودن به سبد <ArrowLeft size={16} />
             </button>
           </>
+        ) : toppings.length > 0 ? (
+          <>
+            <div>
+              <div className="font-bold text-sm">{title ?? "ساندویچ سفارشی"}</div>
+              <div className="text-xs text-ink-500 mt-1">بدون پایه منو</div>
+            </div>
+
+            <div className="border-t border-ink-100 pt-3 space-y-1.5 max-h-48 overflow-y-auto">
+              {Object.entries(countById(toppings)).map(([id, count]) => {
+                const t = getTopping(id);
+                if (!t) return null;
+                return (
+                  <div
+                    key={id}
+                    className="flex items-center justify-between text-xs">
+                    <span className="text-ink-700">
+                      {t.name} × {count.toLocaleString("fa-IR")}
+                    </span>
+                    <span className="tabular text-brand-600 font-bold">
+                      +{formatPrice(t.price * count)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="border-t border-ink-100 pt-3 flex items-center justify-between text-sm">
+              <span>تعداد</span>
+              <span className="font-bold tabular">{qty}</span>
+            </div>
+
+            <div className="border-t border-ink-100 pt-3 flex items-center justify-between">
+              <span className="text-sm">جمع کل</span>
+              <span className="price text-2xl text-brand-700">
+                {formatPrice(total)}{" "}
+                <span className="text-xs font-medium text-ink-500">تومان</span>
+              </span>
+            </div>
+
+            <button
+              onClick={onSubmit}
+              disabled={!canSubmit}
+              className="btn-primary w-full">
+              افزودن به سبد <ArrowLeft size={16} />
+            </button>
+          </>
         ) : (
-          <p className="text-sm text-ink-500">
-            ابتدا یک ساندویچ پایه انتخاب کنید.
-          </p>
+          <p className="text-sm text-ink-500">ابتدا یک ساندویچ پایه انتخاب کنید.</p>
         )}
       </div>
     </div>
