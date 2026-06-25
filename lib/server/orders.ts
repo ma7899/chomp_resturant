@@ -61,6 +61,14 @@ export async function getUserOrder(userId: string, id: string) {
   });
 }
 
+/** Admin: List all orders with items. */
+export async function listAllOrders() {
+  return prisma.order.findMany({
+    orderBy: { createdAt: "desc" },
+    include: { items: true, user: { select: { name: true, phone: true } } },
+  });
+}
+
 /** Lightweight spend/summary stats for the customer dashboard overview. */
 export async function getUserOrderStats(userId: string) {
   const orders = await prisma.order.findMany({

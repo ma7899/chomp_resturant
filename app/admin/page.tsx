@@ -1,6 +1,3 @@
-"use client";
-
-import { useMemo } from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -12,63 +9,68 @@ import {
 } from "lucide-react";
 import { Card, PageHeader } from "@/components/admin/AdminUI";
 import { StatusPill } from "@/components/admin/StatusPill";
-import { useData } from "@/lib/store";
-import { formatPrice } from "@/lib/menu";
+import { requireAdmin } from "@/lib/auth/session";
+import { listAllOrders } from "@/lib/server/orders";
+import { formatPrice } from "@/lib/format";
+import { SEED_SANDWICHES, SEED_TOPPINGS } from "@/lib/seed";
 
-export default function AdminDashboard() {
-  const sandwiches = useData((s) => s.sandwiches);
-  const toppings = useData((s) => s.toppings);
-  const orders = useData((s) => s.orders);
-  const reviews = useData((s) => s.reviews);
+export const dynamic = "force-dynamic";
 
-  const stats = useMemo(() => {
-    const revenue = orders.reduce((sum, o) => sum + o.total, 0);
-    const itemsSold = orders.reduce(
+export default async function AdminDashboard() {
+  await requireAdmin();
+  
+  const sandwiches = SEED_SANDWICHES;
+  const toppings = SEED_TOPPINGS;
+  const orders = await listAllOrders();
+
+  const stats = {
+    revenue: orders.reduce((sum, o) => sum + o.total, 0),
+    itemsSold: orders.reduce(
       (sum, o) => sum + o.items.reduce((s2, i) => s2 + i.qty, 0),
       0,
-    );
+    ),
+  };
 
-    // Aggregate qty per sandwich
-    const perSandwich = new Map<string, { name: string; qty: number; revenue: number }>();
-    for (const o of orders) {
-      for (const it of o.items) {
-        const cur = perSandwich.get(it.sandwichSlug) ?? {
-          name: it.sandwichName,
-          qty: 0,
-          revenue: 0,
-        };
-        cur.qty += it.qty;
-        cur.revenue += it.lineTotal;
-        perSandwich.set(it.sandwichSlug, cur);
-      }
+  // Aggregate qty per sandwich
+  const perSandwich = new Map<string, { name: string; qty: number; revenue: number }>();
+  for (const o of orders) {
+    for (const it of o.items) {
+      const cur = perSandwich.get(it.sandwichSlug ?? "") ?? {
+        name: it.name,
+        qty: 0,
+        revenue: 0,
+      };
+      cur.qty += it.qty;
+      cur.revenue += it.lineTotal;
+      perSandwich.set(it.sandwichSlug ?? "", cur);
     }
-    const topSandwiches = [...perSandwich.values()].sort(
-      (a, b) => b.qty - a.qty,
-    );
+  }
+  const topSandwiches = [...perSandwich.values()].sort(
+    (a, b) => b.qty - a.qty,
+  );
 
-    // Daily revenue last 7 days
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const days: { label: string; value: number }[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const next = new Date(d);
-      next.setDate(d.getDate() + 1);
-      const sum = orders
-        .filter((o) => {
-          const od = new Date(o.date);
-          return od >= d && od < next;
-        })
-        .reduce((s, o) => s + o.total, 0);
-      days.push({
-        label: d.toLocaleDateString("fa-IR", { weekday: "short" }),
-        value: sum,
-      });
-    }
+  // Daily revenue last 7 days
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const days: { label: string; value: number }[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const next = new Date(d);
+    next.setDate(d.getDate() + 1);
+    const sum = orders
+      .filter((o) => {
+        const od = new Date(o.createdAt);
+        return od >= d && od < next;
+      })
+      .reduce((s, o) => s + o.total, 0);
+    days.push({
+      label: d.toLocaleDateString("fa-IR", { weekday: "short" }),
+      value: sum,
+    });
+  }
 
-    return { revenue, itemsSold, topSandwiches, days };
-  }, [orders]);
+  const reviews = 0; // TODO: fetch reviews count from DB
 
   return (
     <div className="space-y-6">
@@ -99,7 +101,7 @@ export default function AdminDashboard() {
         <StatCard
           icon={<Activity size={18} />}
           label="نظر مشتری"
-          value={`${formatPrice(reviews.length)}`}
+          value={`${formatPrice(reviews)}`}
           accent="from-violet-500 to-violet-600"
         />
       </div>
@@ -112,19 +114,19 @@ export default function AdminDashboard() {
               <p className="text-xs text-ink-500 mt-1">به تومان</p>
             </div>
           </header>
-          <BarChart data={stats.days} />
+          <BarChart data={days} />
         </Card>
 
         <Card>
           <h2 className="font-bold mb-4">پرفروش‌ترین ساندویچ‌ها</h2>
-          {stats.topSandwiches.length === 0 && (
+          {topSandwiches.length === 0 && (
             <p className="text-sm text-ink-400 text-center py-8">
               هنوز سفارشی ثبت نشده است.
             </p>
           )}
           <ul className="space-y-2">
-            {stats.topSandwiches.slice(0, 5).map((s, i) => {
-              const max = stats.topSandwiches[0]?.qty || 1;
+            {topSandwiches.slice(0, 5).map((s, i) => {
+              const max = topSandwiches[0]?.qty || 1;
               return (
                 <li key={i}>
                   <div className="flex items-center justify-between text-sm mb-1">
@@ -181,7 +183,7 @@ export default function AdminDashboard() {
             سفارش‌های جدید
           </h2>
           <div className="price text-3xl text-ink-900 mt-2">
-            {orders.filter((o) => o.status === "new").length}
+            {orders.filter((o) => o.status === "NEW").length}
           </div>
           <Link
             href="/admin/orders"
@@ -220,7 +222,7 @@ export default function AdminDashboard() {
                 {orders.slice(0, 6).map((o) => (
                   <tr key={o.id} className="border-t border-ink-100">
                     <td className="px-3 py-2.5 font-medium">
-                      {o.customer.name}
+                      {o.customerName}
                     </td>
                     <td className="px-3 py-2.5 text-ink-500">
                       {o.items.reduce((s, i) => s + i.qty, 0)} آیتم
@@ -232,7 +234,7 @@ export default function AdminDashboard() {
                       <StatusPill status={o.status} />
                     </td>
                     <td className="px-3 py-2.5 text-xs text-ink-400 tabular">
-                      {new Date(o.date).toLocaleDateString("fa-IR")}
+                      {new Date(o.createdAt).toLocaleDateString("fa-IR")}
                     </td>
                   </tr>
                 ))}
