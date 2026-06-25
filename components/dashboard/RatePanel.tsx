@@ -40,7 +40,10 @@ export function OrderRatings({
   if (list.length === 0) return null;
 
   return (
-    <div className={boxed ? "rounded-3xl bg-white border border-ink-100 p-5" : "space-y-3"}>
+    <div
+      className={
+        boxed ? "rounded-3xl bg-white border border-ink-100 p-5" : "space-y-3"
+      }>
       <h2 className="font-bold mb-1">{title}</h2>
       <p className="text-sm text-ink-500 mb-4">{description}</p>
       <div className="space-y-3">
