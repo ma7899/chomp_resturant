@@ -7,6 +7,7 @@ import {
   type RangeKey,
 } from "@/lib/server/reports";
 import { PageHeader, Card } from "@/components/admin/AdminUI";
+import ReportsCustomRangeForm from "@/components/admin/ReportsCustomRangeForm";
 import { formatPrice } from "@/lib/format";
 import { Download, TrendingUp, ShoppingBag, Wallet, Users } from "lucide-react";
 
@@ -65,30 +66,7 @@ export default async function AdminReportsPage({
 
       {/* Custom range form */}
       {range === "custom" && (
-        <form
-          action="/admin/reports"
-          className="flex flex-wrap items-end gap-3 mb-6 rounded-2xl bg-white border border-ink-100 p-4">
-          <input type="hidden" name="range" value="custom" />
-          <label className="text-sm">
-            <span className="text-ink-500">از تاریخ</span>
-            <input
-              type="date"
-              name="from"
-              defaultValue={searchParams.from}
-              className="block mt-1 rounded-xl border border-ink-100 px-3 py-2 outline-none focus:border-brand-500"
-            />
-          </label>
-          <label className="text-sm">
-            <span className="text-ink-500">تا تاریخ</span>
-            <input
-              type="date"
-              name="to"
-              defaultValue={searchParams.to}
-              className="block mt-1 rounded-xl border border-ink-100 px-3 py-2 outline-none focus:border-brand-500"
-            />
-          </label>
-          <button className="btn-primary !py-2 !px-4 text-sm">اعمال</button>
-        </form>
+        <ReportsCustomRangeForm from={searchParams.from} to={searchParams.to} />
       )}
 
       {/* KPI cards */}

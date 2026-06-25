@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { CalendarDays } from "lucide-react";
+import DatePicker from "react-multi-date-picker";
+import DateObject from "react-date-object";
+import persian from "react-date-object/calendars/persian";
+import gregorian from "react-date-object/calendars/gregorian";
+import persian_fa from "react-date-object/locales/persian_fa";
+import gregorian_en from "react-date-object/locales/gregorian_en";
 import {
   PageHeader,
   Card,
@@ -44,6 +51,49 @@ const EMPTY: Omit<DiscountView, "id" | "used"> = {
   usagePerUser: null,
   isActive: true,
 };
+
+// const RIAL_FACTOR = 10;
+
+// function formatRialFromToman(amount: number): string {
+//   return `${formatPrice(amount * RIAL_FACTOR)} ریال`;
+// }
+
+// function parseRialInput(value: string): number | null {
+//   if (value === "") return null;
+//   const n = Number(value);
+//   if (!Number.isFinite(n)) return null;
+//   return Math.round(n / RIAL_FACTOR);
+// }
+
+// function rialInputValue(amount: number | null): string {
+//   return amount == null ? "" : String(amount * RIAL_FACTOR);
+// }
+
+function formatJalaliDate(iso: string | null): string | null {
+  if (!iso) return null;
+  return new DateObject({
+    date: iso,
+    format: "YYYY-MM-DD",
+    calendar: gregorian,
+    locale: gregorian_en,
+  })
+    .convert(persian, persian_fa)
+    .format("YYYY/MM/DD");
+}
+
+function toPickerValue(iso: string | null): DateObject | "" {
+  if (!iso) return "";
+  return new DateObject({
+    date: iso,
+    format: "YYYY-MM-DD",
+    calendar: gregorian,
+    locale: gregorian_en,
+  }).convert(persian, persian_fa);
+}
+
+function toGregorianIso(date: DateObject): string {
+  return date.convert(gregorian, gregorian_en).format("YYYY-MM-DD");
+}
 
 export default function DiscountsManager({
   initial,
@@ -115,7 +165,7 @@ export default function DiscountsManager({
                   <Td>{d.minPurchase ? formatPrice(d.minPurchase) : "—"}</Td>
                   <Td className="text-xs text-ink-500">
                     {d.startDate || d.endDate
-                      ? `${d.startDate ?? "…"} تا ${d.endDate ?? "…"}`
+                      ? `${formatJalaliDate(d.startDate) ?? "…"} تا ${formatJalaliDate(d.endDate) ?? "…"}`
                       : "نامحدود"}
                   </Td>
                   <Td className="tabular text-xs">
@@ -282,20 +332,48 @@ function DiscountForm({
 
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="تاریخ شروع">
-            <Input
-              type="date"
-              value={v.startDate ?? ""}
-              onChange={(e) =>
-                setV({ ...v, startDate: e.target.value || null })
-              }
-            />
+            <div className="relative">
+              <DatePicker
+                calendar={persian}
+                locale={persian_fa}
+                format="YYYY/MM/DD"
+                value={toPickerValue(v.startDate)}
+                onChange={(value) => {
+                  const d = value instanceof DateObject ? value : null;
+                  setV({ ...v, startDate: d ? toGregorianIso(d) : null });
+                }}
+                calendarPosition="bottom-right"
+                editable={false}
+                containerClassName="w-full"
+                inputClass="w-full rounded-xl border border-ink-100 bg-white px-3 py-2.5 pl-10 outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-100 transition"
+              />
+              <CalendarDays
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none"
+              />
+            </div>
           </Field>
           <Field label="تاریخ پایان">
-            <Input
-              type="date"
-              value={v.endDate ?? ""}
-              onChange={(e) => setV({ ...v, endDate: e.target.value || null })}
-            />
+            <div className="relative">
+              <DatePicker
+                calendar={persian}
+                locale={persian_fa}
+                format="YYYY/MM/DD"
+                value={toPickerValue(v.endDate)}
+                onChange={(value) => {
+                  const d = value instanceof DateObject ? value : null;
+                  setV({ ...v, endDate: d ? toGregorianIso(d) : null });
+                }}
+                calendarPosition="bottom-right"
+                editable={false}
+                containerClassName="w-full"
+                inputClass="w-full rounded-xl border border-ink-100 bg-white px-3 py-2.5 pl-10 outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-100 transition"
+              />
+              <CalendarDays
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none"
+              />
+            </div>
           </Field>
         </div>
 

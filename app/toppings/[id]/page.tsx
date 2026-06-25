@@ -39,9 +39,13 @@ export default function ToppingDetailPage() {
   return (
     <div className="container-x py-10 md:py-16">
       <nav className="text-xs text-ink-500 mb-6 flex items-center gap-2">
-        <Link href="/" className="hover:text-brand-600">خانه</Link>
+        <Link href="/" className="hover:text-brand-600">
+          خانه
+        </Link>
         <span>›</span>
-        <Link href="/menu" className="hover:text-brand-600">منو</Link>
+        <Link href="/menu" className="hover:text-brand-600">
+          منو
+        </Link>
         <span>›</span>
         <span className="text-ink-700">{t.name}</span>
       </nav>
@@ -56,8 +60,8 @@ export default function ToppingDetailPage() {
         <div className="mt-5 flex items-baseline gap-2">
           <span className="text-xs opacity-80">قیمت افزودنی</span>
           <span className="price text-3xl">
-            + {formatPrice(t.price)}{" "}
-            <span className="text-xs font-medium opacity-90">تومان</span>
+            + {formatPrice(t.price * 10)}{" "}
+            <span className="text-xs font-medium opacity-90">ریال</span>
           </span>
         </div>
       </div>
