@@ -145,6 +145,7 @@ export default function CheckoutPage() {
         toppingIds: it.toppingIds,
         qty: it.qty,
         customSandwichId: it.customSandwichId ?? null,
+        customName: it.customName ?? null,
       })),
       method: form.method,
       name: form.name,
@@ -200,7 +201,10 @@ export default function CheckoutPage() {
             </div>
             <p className="text-sm text-amber-900 mt-2 leading-6">
               این سفارش شامل مواد حساسیت زا است:
-              <span className="font-semibold"> {allergyWarning.join("، ")}</span>
+              <span className="font-semibold">
+                {" "}
+                {allergyWarning.join("، ")}
+              </span>
             </p>
             <label className="mt-3 flex items-center gap-2 text-sm text-amber-900">
               <input
@@ -303,7 +307,9 @@ export default function CheckoutPage() {
                   <textarea
                     required
                     value={form.address}
-                    onChange={(e) => setForm({ ...form, address: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, address: e.target.value })
+                    }
                     rows={3}
                     className="input"
                     placeholder="خیابان، کوچه، پلاک، واحد..."
@@ -324,8 +330,13 @@ export default function CheckoutPage() {
           </Field>
         </div>
 
-        <button type="submit" disabled={!canSubmit} className="btn-primary w-full disabled:opacity-50">
-          {submitting ? "در حال ثبت..." : `ثبت نهایی سفارش - ${formatPrice(grand)} تومان`}
+        <button
+          type="submit"
+          disabled={!canSubmit}
+          className="btn-primary w-full disabled:opacity-50">
+          {submitting
+            ? "در حال ثبت..."
+            : `ثبت نهایی سفارش - ${formatPrice(grand)} تومان`}
           <ArrowLeft size={18} />
         </button>
 

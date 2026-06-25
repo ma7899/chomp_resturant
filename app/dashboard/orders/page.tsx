@@ -59,6 +59,7 @@ export default async function OrdersPage() {
             total: o.total,
             items: o.items.map((it) => ({
               sandwichSlug: it.sandwichSlug,
+              customSandwichId: it.customSandwichId,
               name: it.name,
               toppingIds: it.toppingIds,
               toppingNames: it.toppingNames,

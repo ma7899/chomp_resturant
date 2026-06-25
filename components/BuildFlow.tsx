@@ -97,7 +97,10 @@ export default function BuildFlow({
     [lockedToppings, extraToppings],
   );
   const toppingCounts = useMemo(() => countById(toppings), [toppings]);
-  const lockedCounts = useMemo(() => countById(lockedToppings), [lockedToppings]);
+  const lockedCounts = useMemo(
+    () => countById(lockedToppings),
+    [lockedToppings],
+  );
   const extraCounts = useMemo(() => countById(extraToppings), [extraToppings]);
 
   const total = useMemo(() => {
@@ -123,7 +126,12 @@ export default function BuildFlow({
 
   const submit = () => {
     if (sandwich) {
-      addItem({ sandwichSlug: sandwich.slug, toppingIds: toppings, qty });
+      addItem({
+        sandwichSlug: sandwich.slug,
+        toppingIds: toppings,
+        qty,
+        customName: selectedSavedName || undefined,
+      });
     } else {
       addItem({
         sandwichSlug: "custom",
@@ -335,7 +343,9 @@ export default function BuildFlow({
                 baseSlug={sandwich?.slug ?? null}
                 basePrice={total / qty}
                 ingredientIds={toppings}
-                defaultName={selectedSavedName ?? sandwich?.name ?? "ساندویچ سفارشی"}
+                defaultName={
+                  selectedSavedName ?? sandwich?.name ?? "ساندویچ سفارشی"
+                }
               />
             )}
             {!sandwich && (
@@ -785,7 +795,9 @@ function SummaryCard({
                 />
               </div>
               <div>
-                <div className="font-bold text-sm">{title ?? sandwich.name}</div>
+                <div className="font-bold text-sm">
+                  {title ?? sandwich.name}
+                </div>
                 <div className="text-xs text-ink-500 tabular mt-1">
                   پایه: {formatPrice(sandwich.basePrice)} تومان
                 </div>
@@ -836,7 +848,9 @@ function SummaryCard({
         ) : toppings.length > 0 ? (
           <>
             <div>
-              <div className="font-bold text-sm">{title ?? "ساندویچ سفارشی"}</div>
+              <div className="font-bold text-sm">
+                {title ?? "ساندویچ سفارشی"}
+              </div>
               <div className="text-xs text-ink-500 mt-1">بدون پایه منو</div>
             </div>
 
@@ -880,7 +894,9 @@ function SummaryCard({
             </button>
           </>
         ) : (
-          <p className="text-sm text-ink-500">ابتدا یک ساندویچ پایه انتخاب کنید.</p>
+          <p className="text-sm text-ink-500">
+            ابتدا یک ساندویچ پایه انتخاب کنید.
+          </p>
         )}
       </div>
     </div>

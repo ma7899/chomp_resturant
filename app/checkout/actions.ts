@@ -21,6 +21,7 @@ const lineSchema = z.object({
   toppingIds: z.array(z.string()).max(60),
   qty: z.number().int().min(1).max(50),
   customSandwichId: z.string().optional().nullable(),
+  customName: z.string().max(120).optional().nullable(),
 });
 
 const checkoutSchema = z.object({
@@ -153,7 +154,7 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
       orderItems.push({
         sandwichSlug: null,
         customSandwichId: null,
-        name: "ساندویچ سفارشی",
+        name: line.customName?.trim() || "ساندویچ سفارشی",
         toppingIds: lineToppings.map((t) => t.id),
         toppingNames: lineToppings.map((t) => t.name),
         qty: line.qty,
@@ -183,7 +184,7 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
 
     orderItems.push({
       sandwichSlug: s.slug,
-      name: s.name,
+      name: line.customName?.trim() || s.name,
       toppingIds: lineToppings.map((t) => t.id),
       toppingNames: lineToppings.map((t) => t.name),
       qty: line.qty,

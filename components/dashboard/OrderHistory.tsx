@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { RotateCcw, ShoppingBag, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import { useCart } from "@/lib/cart";
+import { getSandwich } from "@/lib/menu";
 import { formatPrice, formatDateFa } from "@/lib/format";
 
 type OrderItemView = {
   sandwichSlug: string | null;
+  customSandwichId: string | null;
   name: string;
   toppingIds: string[];
   toppingNames: string[];
@@ -42,18 +44,44 @@ export default function OrderHistory({ orders }: { orders: OrderView[] }) {
   function reorder(order: OrderView, goCheckout = false) {
     let added = 0;
     for (const it of order.items) {
-      if (!it.sandwichSlug) continue; // custom-only lines can't be reordered yet
+      const unitPrice = Math.round(it.lineTotal / Math.max(1, it.qty));
+
+      if (it.customSandwichId) {
+        addItem({
+          sandwichSlug: it.sandwichSlug ?? "custom",
+          toppingIds: it.toppingIds,
+          qty: it.qty,
+          customSandwichId: it.customSandwichId,
+          customName: it.name,
+          customPrice: unitPrice,
+        });
+        added++;
+        continue;
+      }
+
+      if (!it.sandwichSlug) {
+        addItem({
+          sandwichSlug: "custom",
+          toppingIds: it.toppingIds,
+          qty: it.qty,
+          customName: it.name,
+          customPrice: unitPrice,
+        });
+        added++;
+        continue;
+      }
+
+      const baseName = getSandwich(it.sandwichSlug)?.name;
       addItem({
         sandwichSlug: it.sandwichSlug,
         toppingIds: it.toppingIds,
         qty: it.qty,
+        customName: it.name !== baseName ? it.name : undefined,
       });
       added++;
     }
     if (added === 0) {
-      alert(
-        "این سفارش از ساندویچ‌های سفارشی است و فعلاً قابل سفارش مجدد نیست.",
-      );
+      alert("این سفارش آیتم قابل افزودن به سبد ندارد.");
       return;
     }
     if (goCheckout) router.push("/checkout");

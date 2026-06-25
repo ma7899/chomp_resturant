@@ -26,11 +26,13 @@ export default function CommunityOrderButton({
   function order() {
     if (sandwich.baseSlug) {
       // Based on a menu sandwich → reuse the normal cart line so pricing and
-      // checkout work exactly like the builder.
+      // checkout work exactly like the builder, but preserve the saved/public
+      // sandwich name in the cart UI.
       addItem({
         sandwichSlug: sandwich.baseSlug,
         toppingIds: sandwich.ingredientIds,
         qty: 1,
+        customName: sandwich.name,
       });
     } else {
       // From-scratch recipe → carry its own price + name as a custom line.
