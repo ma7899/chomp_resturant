@@ -10,7 +10,13 @@ import type { NextAuthConfig } from "next-auth";
 
 // Routes that are reachable without authentication.
 // Everything else is gated by the middleware (Phase 3).
-export const PUBLIC_ROUTES = ["/menu", "/login", "/about", "/contact"];
+export const PUBLIC_ROUTES = [
+  "/menu",
+  "/toppings",
+  "/login",
+  "/about",
+  "/contact",
+];
 
 // Prefixes that are always public (assets, auth endpoints, etc.).
 export const PUBLIC_PREFIXES = [
