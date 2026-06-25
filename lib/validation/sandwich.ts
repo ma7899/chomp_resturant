@@ -9,9 +9,16 @@ export const saveCustomSchema = z.object({
   ingredientIds: z.array(z.string()).max(60),
 });
 
-export const rateSchema = z.object({
-  sandwichId: z.string().min(1),
-  orderId: z.string().min(1),
-  rating: z.number().int().min(1).max(5),
-  review: z.string().max(500).optional().nullable(),
-});
+export const rateSchema = z
+  .object({
+    customSandwichId: z.string().min(1).optional().nullable(),
+    menuSandwichSlug: z.string().min(1).optional().nullable(),
+    sandwichId: z.string().min(1).optional().nullable(), // for backwards compatibility
+    orderId: z.string().min(1),
+    rating: z.number().int().min(1).max(5),
+    review: z.string().max(500).optional().nullable(),
+  })
+  .refine(
+    (data) => data.customSandwichId || data.menuSandwichSlug || data.sandwichId,
+    { message: "customSandwichId یا menuSandwichSlug باید وجود داشته باشد" },
+  );

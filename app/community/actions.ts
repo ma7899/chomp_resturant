@@ -6,6 +6,8 @@ import { saveCustomSandwich } from "@/lib/server/customSandwiches";
 import {
   deleteCustomSandwichRating,
   rateCustomSandwich,
+  rateSandwich,
+  deleteSandwichRating,
 } from "@/lib/server/ratings";
 import { saveCustomSchema, rateSchema } from "@/lib/validation/sandwich";
 
@@ -78,9 +80,14 @@ export async function rateSandwichAction(raw: unknown): Promise<RateResult> {
   const parsed = rateSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: "ورودی نامعتبر است." };
 
-  const result = await rateCustomSandwich({
+  const customSandwichId =
+    parsed.data.customSandwichId || parsed.data.sandwichId;
+  const menuSandwichSlug = parsed.data.menuSandwichSlug;
+
+  const result = await rateSandwich({
     userId: user.id,
-    sandwichId: parsed.data.sandwichId,
+    customSandwichId: customSandwichId || undefined,
+    menuSandwichSlug: menuSandwichSlug || undefined,
     orderId: parsed.data.orderId,
     rating: parsed.data.rating,
     review: parsed.data.review ?? null,
@@ -88,22 +95,50 @@ export async function rateSandwichAction(raw: unknown): Promise<RateResult> {
 
   if (result.ok) {
     revalidatePath("/community");
-    revalidatePath(`/community/${parsed.data.sandwichId}`);
+    if (customSandwichId) revalidatePath(`/community/${customSandwichId}`);
     revalidatePath("/dashboard/orders");
   }
   return result;
 }
 
 export async function deleteSandwichRatingAction(
-  sandwichId: string,
+  raw: unknown,
 ): Promise<RateResult> {
   const user = await requireUser();
-  if (!sandwichId) return { ok: false, error: "ورودی نامعتبر است." };
 
-  const result = await deleteCustomSandwichRating(user.id, sandwichId);
+  // Parse the input - could be a string (sandwichId) or object with orderId/sandwich info
+  let customSandwichId: string | undefined;
+  let menuSandwichSlug: string | undefined;
+  let orderId: string | undefined;
+
+  if (typeof raw === "string") {
+    // Legacy: just sandwichId
+    customSandwichId = raw;
+  } else if (typeof raw === "object" && raw !== null) {
+    const obj = raw as Record<string, unknown>;
+    customSandwichId = obj.customSandwichId as string | undefined;
+    menuSandwichSlug = obj.menuSandwichSlug as string | undefined;
+    orderId = obj.orderId as string | undefined;
+  }
+
+  if (!customSandwichId && !menuSandwichSlug) {
+    return { ok: false, error: "ورودی نامعتبر است." };
+  }
+
+  if (!orderId) {
+    return { ok: false, error: "شناسه سفارش ضروری است." };
+  }
+
+  const result = await deleteSandwichRating(
+    user.id,
+    orderId,
+    customSandwichId,
+    menuSandwichSlug,
+  );
+
   if (result.ok) {
     revalidatePath("/community");
-    revalidatePath(`/community/${sandwichId}`);
+    if (customSandwichId) revalidatePath(`/community/${customSandwichId}`);
     revalidatePath("/dashboard/orders");
   }
   return result;

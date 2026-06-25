@@ -30,7 +30,9 @@ export default async function OrdersPage() {
         items={rateable.map((r) => ({
           orderId: r.orderId,
           orderNumber: r.orderNumber,
-          sandwichId: r.sandwichId,
+          sandwichType: r.sandwichType,
+          customSandwichId: r.customSandwichId,
+          sandwichSlug: r.sandwichSlug,
           name: r.name,
           currentRating: r.currentRating,
           currentReview: r.currentReview,

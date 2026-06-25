@@ -10,7 +10,9 @@ import {
 type Rateable = {
   orderId: string;
   orderNumber: number;
-  sandwichId: string;
+  sandwichType: "menu" | "custom";
+  customSandwichId?: string;
+  sandwichSlug?: string;
   name: string;
   currentRating: number | null;
   currentReview: string | null;
@@ -30,14 +32,17 @@ export default function RatePanel({ items }: { items: Rateable[] }) {
       <div className="space-y-3">
         {list.map((it) => (
           <RateRow
-            key={`${it.orderId}:${it.sandwichId}`}
+            key={`${it.orderId}:${it.customSandwichId || it.sandwichSlug}`}
             item={it}
             onDone={() =>
               setList((prev) =>
                 prev.filter(
                   (x) =>
                     !(
-                      x.orderId === it.orderId && x.sandwichId === it.sandwichId
+                      x.orderId === it.orderId &&
+                      ((it.customSandwichId &&
+                        x.customSandwichId === it.customSandwichId) ||
+                        (it.sandwichSlug && x.sandwichSlug === it.sandwichSlug))
                     ),
                 ),
               )
@@ -66,7 +71,8 @@ function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
     setError(null);
     startTransition(async () => {
       const r = await rateSandwichAction({
-        sandwichId: item.sandwichId,
+        customSandwichId: item.customSandwichId,
+        menuSandwichSlug: item.sandwichSlug,
         orderId: item.orderId,
         rating,
         review: review || null,
@@ -84,7 +90,11 @@ function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
   function remove() {
     setError(null);
     startTransition(async () => {
-      const r = await deleteSandwichRatingAction(item.sandwichId);
+      const r = await deleteSandwichRatingAction({
+        customSandwichId: item.customSandwichId,
+        menuSandwichSlug: item.sandwichSlug,
+        orderId: item.orderId,
+      });
       if (!r.ok) {
         setError(r.error);
         return;
