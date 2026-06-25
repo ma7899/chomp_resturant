@@ -131,6 +131,10 @@ export async function rateSandwich(
     return { ok: false, error: "نوع ساندویچ نامشخص است." };
   }
 
+  if (input.customSandwichId && input.menuSandwichSlug) {
+    return { ok: false, error: "نوع ساندویچ نامعتبر است." };
+  }
+
   const purchased = await assertPurchased(
     input.userId,
     input.orderId,
@@ -143,29 +147,36 @@ export async function rateSandwich(
 
   try {
     await prisma.$transaction(async (tx) => {
-      const whereUnique = {
-        userId: input.userId,
-        orderId: input.orderId,
-        customSandwichId: input.customSandwichId ?? (null as any),
-        menuSandwichSlug: input.menuSandwichSlug ?? (null as any),
-      };
-      await tx.sandwichRating.upsert({
+      const existing = await tx.sandwichRating.findFirst({
         where: {
-          userId_orderId_customSandwichId_menuSandwichSlug: whereUnique,
-        },
-        create: {
           userId: input.userId,
           orderId: input.orderId,
-          customSandwichId: input.customSandwichId || undefined,
-          menuSandwichSlug: input.menuSandwichSlug || undefined,
-          rating: input.rating,
-          review: input.review ?? null,
+          customSandwichId: input.customSandwichId ?? null,
+          menuSandwichSlug: input.menuSandwichSlug ?? null,
         },
-        update: {
-          rating: input.rating,
-          review: input.review ?? null,
-        },
+        select: { id: true },
       });
+
+      if (existing) {
+        await tx.sandwichRating.update({
+          where: { id: existing.id },
+          data: {
+            rating: input.rating,
+            review: input.review ?? null,
+          },
+        });
+      } else {
+        await tx.sandwichRating.create({
+          data: {
+            userId: input.userId,
+            orderId: input.orderId,
+            customSandwichId: input.customSandwichId ?? null,
+            menuSandwichSlug: input.menuSandwichSlug ?? null,
+            rating: input.rating,
+            review: input.review ?? null,
+          },
+        });
+      }
 
       // Only recompute aggregates for custom sandwiches
       if (input.customSandwichId) {
@@ -200,19 +211,27 @@ export async function deleteSandwichRating(
     return { ok: false, error: "نوع ساندویچ نامشخص است." };
   }
 
+  if (customSandwichId && menuSandwichSlug) {
+    return { ok: false, error: "نوع ساندویچ نامعتبر است." };
+  }
+
   try {
     await prisma.$transaction(async (tx) => {
-      const whereUnique = {
-        userId,
-        orderId,
-        customSandwichId: customSandwichId ?? (null as any),
-        menuSandwichSlug: menuSandwichSlug ?? (null as any),
-      };
-      await tx.sandwichRating.delete({
+      const existing = await tx.sandwichRating.findFirst({
         where: {
-          userId_orderId_customSandwichId_menuSandwichSlug: whereUnique,
+          userId,
+          orderId,
+          customSandwichId: customSandwichId ?? null,
+          menuSandwichSlug: menuSandwichSlug ?? null,
         },
+        select: { id: true },
       });
+
+      if (!existing) {
+        throw new Error("RATING_NOT_FOUND");
+      }
+
+      await tx.sandwichRating.delete({ where: { id: existing.id } });
 
       // Only recompute aggregates for custom sandwiches
       if (customSandwichId) {
@@ -233,6 +252,9 @@ export async function deleteSandwichRating(
     });
     return { ok: true };
   } catch (e) {
+    if (e instanceof Error && e.message === "RATING_NOT_FOUND") {
+      return { ok: false, error: "امتیازی برای حذف یافت نشد." };
+    }
     console.error("Delete rating error:", e);
     return { ok: false, error: "حذف امتیاز با خطا مواجه شد." };
   }

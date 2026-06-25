@@ -252,8 +252,17 @@ export async function placeOrderAction(raw: unknown): Promise<CheckoutResult> {
     }
   }
 
+  // Session can be stale after DB reset/seed; avoid FK failures by attaching
+  // the order only when the current user id still exists in DB.
+  const userExists = user
+    ? await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { id: true },
+      })
+    : null;
+
   const order = await createOrder({
-    userId: user?.id ?? null,
+    userId: userExists?.id ?? null,
     method: input.method === "delivery" ? "DELIVERY" : "PICKUP",
     subtotal,
     deliveryFee,

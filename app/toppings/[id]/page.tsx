@@ -60,8 +60,8 @@ export default function ToppingDetailPage() {
         <div className="mt-5 flex items-baseline gap-2">
           <span className="text-xs opacity-80">قیمت افزودنی</span>
           <span className="price text-3xl">
-            + {formatPrice(t.price * 10)}{" "}
-            <span className="text-xs font-medium opacity-90">ریال</span>
+            + {formatPrice(t.price)}{" "}
+            <span className="text-xs font-medium opacity-90">تومان</span>
           </span>
         </div>
       </div>
