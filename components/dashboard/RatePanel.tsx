@@ -7,7 +7,7 @@ import {
   rateSandwichAction,
 } from "@/app/community/actions";
 
-type Rateable = {
+export type Rateable = {
   orderId: string;
   orderNumber: number;
   sandwichType: "menu" | "custom";
@@ -19,21 +19,36 @@ type Rateable = {
 };
 
 export default function RatePanel({ items }: { items: Rateable[] }) {
+  return <OrderRatings items={items} />;
+}
+
+export function OrderRatings({
+  items,
+  title = "به ساندویچهایت امتیاز بده",
+  description = "از سفارشهای تحویلشده، تجربهات را با دیگران به اشتراک بگذار.",
+  boxed = true,
+  showOrderNumber = true,
+}: {
+  items: Rateable[];
+  title?: string;
+  description?: string;
+  boxed?: boolean;
+  showOrderNumber?: boolean;
+}) {
   const [list, setList] = useState(items);
 
   if (list.length === 0) return null;
 
   return (
-    <div className="rounded-3xl bg-white border border-ink-100 p-5">
-      <h2 className="font-bold mb-1">به ساندویچ‌هایت امتیاز بده</h2>
-      <p className="text-sm text-ink-500 mb-4">
-        از سفارش‌های تحویل‌شده، تجربه‌ات را با دیگران به اشتراک بگذار.
-      </p>
+    <div className={boxed ? "rounded-3xl bg-white border border-ink-100 p-5" : "space-y-3"}>
+      <h2 className="font-bold mb-1">{title}</h2>
+      <p className="text-sm text-ink-500 mb-4">{description}</p>
       <div className="space-y-3">
         {list.map((it) => (
           <RateRow
             key={`${it.orderId}:${it.customSandwichId || it.sandwichSlug}`}
             item={it}
+            showOrderNumber={showOrderNumber}
             onDone={() =>
               setList((prev) =>
                 prev.filter(
@@ -54,7 +69,15 @@ export default function RatePanel({ items }: { items: Rateable[] }) {
   );
 }
 
-function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
+function RateRow({
+  item,
+  onDone,
+  showOrderNumber,
+}: {
+  item: Rateable;
+  onDone: () => void;
+  showOrderNumber: boolean;
+}) {
   const [rating, setRating] = useState(item.currentRating ?? 0);
   const [hover, setHover] = useState(0);
   const [review, setReview] = useState(item.currentReview ?? "");
@@ -107,9 +130,11 @@ function RateRow({ item, onDone }: { item: Rateable; onDone: () => void }) {
     <div className="rounded-2xl border border-ink-100 p-4">
       <div className="flex items-center justify-between">
         <span className="font-semibold text-sm">{item.name}</span>
-        <span className="text-xs text-ink-400 tabular">
-          سفارش #{item.orderNumber.toLocaleString("fa-IR")}
-        </span>
+        {showOrderNumber && (
+          <span className="text-xs text-ink-400 tabular">
+            سفارش #{item.orderNumber.toLocaleString("fa-IR")}
+          </span>
+        )}
       </div>
       {saved ? (
         <div className="mt-2 text-sm text-green-600 font-semibold inline-flex items-center gap-1">

@@ -4,7 +4,6 @@ import { requireUser } from "@/lib/auth/session";
 import { listUserOrders } from "@/lib/server/orders";
 import { getRateableForUser } from "@/lib/server/ratings";
 import OrderHistory from "@/components/dashboard/OrderHistory";
-import RatePanel from "@/components/dashboard/RatePanel";
 
 export const dynamic = "force-dynamic";
 
@@ -26,19 +25,6 @@ export default async function OrdersPage() {
         </p>
       </header>
 
-      <RatePanel
-        items={rateable.map((r) => ({
-          orderId: r.orderId,
-          orderNumber: r.orderNumber,
-          sandwichType: r.sandwichType,
-          customSandwichId: r.customSandwichId,
-          sandwichSlug: r.sandwichSlug,
-          name: r.name,
-          currentRating: r.currentRating,
-          currentReview: r.currentReview,
-        }))}
-      />
-
       {orders.length === 0 ? (
         <div className="rounded-3xl bg-white border border-dashed border-ink-200 p-10 text-center text-ink-400">
           <ClipboardList size={40} className="mx-auto mb-3 opacity-40" />
@@ -57,6 +43,18 @@ export default async function OrdersPage() {
             date: o.createdAt.toISOString(),
             status: o.status,
             total: o.total,
+            rateableItems: rateable
+              .filter((r) => r.orderId === o.id)
+              .map((r) => ({
+                orderId: r.orderId,
+                orderNumber: r.orderNumber,
+                sandwichType: r.sandwichType,
+                customSandwichId: r.customSandwichId,
+                sandwichSlug: r.sandwichSlug,
+                name: r.name,
+                currentRating: r.currentRating,
+                currentReview: r.currentReview,
+              })),
             items: o.items.map((it) => ({
               sandwichSlug: it.sandwichSlug,
               customSandwichId: it.customSandwichId,

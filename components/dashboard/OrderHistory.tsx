@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { useCart } from "@/lib/cart";
 import { getSandwich } from "@/lib/menu";
 import { formatPrice, formatDateFa } from "@/lib/format";
+import { OrderRatings, type Rateable } from "@/components/dashboard/RatePanel";
 
 type OrderItemView = {
   sandwichSlug: string | null;
@@ -25,6 +26,7 @@ type OrderView = {
   status: "NEW" | "PREPARING" | "DELIVERED" | "CANCELLED";
   total: number;
   items: OrderItemView[];
+  rateableItems: Rateable[];
 };
 
 const STATUS: Record<OrderView["status"], { label: string; cls: string }> = {
@@ -165,6 +167,13 @@ export default function OrderHistory({ orders }: { orders: OrderView[] }) {
                     <ShoppingBag size={16} /> افزودن به سبد
                   </button>
                 </div>
+                <OrderRatings
+                  items={o.rateableItems}
+                  title="امتیازدهی این سفارش"
+                  description="برای ساندویچ‌های همین سفارش امتیاز ثبت کن یا نظر قبلی‌ات را ویرایش کن."
+                  boxed={false}
+                  showOrderNumber={false}
+                />
               </div>
             )}
           </div>
