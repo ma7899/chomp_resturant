@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
   await requireAdmin();
-  
+
   const sandwiches = SEED_SANDWICHES;
   const toppings = SEED_TOPPINGS;
   const orders = await listAllOrders();
@@ -32,7 +32,10 @@ export default async function AdminDashboard() {
   };
 
   // Aggregate qty per sandwich
-  const perSandwich = new Map<string, { name: string; qty: number; revenue: number }>();
+  const perSandwich = new Map<
+    string,
+    { name: string; qty: number; revenue: number }
+  >();
   for (const o of orders) {
     for (const it of o.items) {
       const cur = perSandwich.get(it.sandwichSlug ?? "") ?? {
@@ -45,9 +48,7 @@ export default async function AdminDashboard() {
       perSandwich.set(it.sandwichSlug ?? "", cur);
     }
   }
-  const topSandwiches = [...perSandwich.values()].sort(
-    (a, b) => b.qty - a.qty,
-  );
+  const topSandwiches = [...perSandwich.values()].sort((a, b) => b.qty - a.qty);
 
   // Daily revenue last 7 days
   const today = new Date();
@@ -74,10 +75,7 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="داشبورد"
-        subtitle="نمای کلی فروش و فعالیت رستوران"
-      />
+      <PageHeader title="داشبورد" subtitle="نمای کلی فروش و فعالیت رستوران" />
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
@@ -299,4 +297,3 @@ function BarChart({ data }: { data: { label: string; value: number }[] }) {
     </div>
   );
 }
-

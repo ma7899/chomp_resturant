@@ -1,6 +1,4 @@
-import {
-  PageHeader,
-} from "@/components/admin/AdminUI";
+import { PageHeader } from "@/components/admin/AdminUI";
 import { OrdersClient } from "@/components/admin/OrdersClient";
 import { requireAdmin } from "@/lib/auth/session";
 import { listAllOrders } from "@/lib/server/orders";

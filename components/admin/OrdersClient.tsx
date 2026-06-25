@@ -84,11 +84,7 @@ function pill(active: boolean) {
   );
 }
 
-function OrderRow({
-  o,
-}: {
-  o: OrdersClientProps["orders"][0];
-}) {
+function OrderRow({ o }: { o: OrdersClientProps["orders"][0] }) {
   const [open, setOpen] = useState(false);
   return (
     <Card className="!p-0 overflow-hidden">
@@ -101,8 +97,7 @@ function OrderRow({
         <div className="flex-1 min-w-0">
           <div className="font-bold">{o.customerName}</div>
           <div className="text-xs text-ink-500 tabular">
-            {o.customerPhone} ·{" "}
-            {new Date(o.createdAt).toLocaleString("fa-IR")}
+            {o.customerPhone} · {new Date(o.createdAt).toLocaleString("fa-IR")}
           </div>
         </div>
         <div className="text-sm">
@@ -113,9 +108,7 @@ function OrderRow({
         </div>
         <div className="text-sm">
           <span className="text-ink-500">مبلغ: </span>
-          <span className="price text-brand-700">
-            {formatPrice(o.total)} ت
-          </span>
+          <span className="price text-brand-700">{formatPrice(o.total)} ت</span>
         </div>
         <StatusPill status={o.status} />
       </div>
@@ -148,7 +141,10 @@ function OrderRow({
           </div>
 
           <div className="grid sm:grid-cols-3 gap-3 text-xs">
-            <Info label="نوع سفارش" value={o.method === "DELIVERY" ? "ارسال" : "حضوری"} />
+            <Info
+              label="نوع سفارش"
+              value={o.method === "DELIVERY" ? "ارسال" : "حضوری"}
+            />
             <Info label="آدرس" value={o.addressText ?? "—"} />
             <Info label="یادداشت" value={o.note ?? "—"} />
           </div>
