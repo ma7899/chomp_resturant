@@ -23,7 +23,7 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/community", label: "مارکت ساندویچ", icon: Store },
   { href: "/dashboard/addresses", label: "آدرس‌ها", icon: MapPin },
   { href: "/dashboard/allergies", label: "حساسیت‌ها", icon: ShieldAlert },
-  { href: "/dashboard/referrals", label: "دعوت دوستان", icon: Users },
+  // { href: "/dashboard/referrals", label: "دعوت دوستان", icon: Users },
 ];
 
 export default function DashboardNav({ mobile = false }: { mobile?: boolean }) {

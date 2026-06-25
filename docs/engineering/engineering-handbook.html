@@ -20,9 +20,15 @@
         --radius: 14px;
       }
 
-      * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; }
-      :root { scrollbar-gutter: stable both-edges; }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      :root {
+        scrollbar-gutter: stable both-edges;
+      }
       body {
         margin: 0;
         background:
@@ -34,13 +40,21 @@
         line-height: 1.65;
       }
 
+      html[dir="rtl"] body {
+        font-family: Vazirmatn, Tahoma, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.95;
+        letter-spacing: 0;
+      }
+
       .layout {
         display: grid;
-        grid-template-columns: 300px 1fr;
+        grid-template-columns: 300px minmax(0, 1fr);
         min-height: 100vh;
       }
 
       .side {
+        grid-column: 1;
         position: sticky;
         top: 0;
         align-self: start;
@@ -53,23 +67,49 @@
       }
 
       .main {
+        grid-column: 2;
+        min-width: 0;
         max-width: 1100px;
         padding: 28px 28px 120px;
       }
 
-      html[dir="rtl"] .layout {
-        grid-template-columns: 1fr 300px;
-      }
-
       html[dir="rtl"] .side {
+        grid-column: 2;
         border-right: none;
         border-left: 1px solid var(--line);
+      }
+
+      html[dir="rtl"] .main {
+        grid-column: 1;
+        justify-self: stretch;
+      }
+
+      html[dir="rtl"] .section,
+      html[dir="rtl"] .hero,
+      html[dir="rtl"] .card,
+      html[dir="rtl"] details,
+      html[dir="rtl"] .callout,
+      html[dir="rtl"] pre,
+      html[dir="rtl"] table {
+        text-align: right;
+      }
+
+      html[dir="rtl"] th,
+      html[dir="rtl"] td,
+      html[dir="rtl"] .toc a,
+      html[dir="rtl"] .brand p,
+      html[dir="rtl"] .muted {
+        text-align: right;
       }
 
       .brand {
         border: 1px solid var(--line);
         border-radius: var(--radius);
-        background: linear-gradient(145deg, rgba(249, 115, 22, 0.18), rgba(251, 146, 60, 0.08));
+        background: linear-gradient(
+          145deg,
+          rgba(249, 115, 22, 0.18),
+          rgba(251, 146, 60, 0.08)
+        );
         padding: 14px;
         margin-bottom: 16px;
       }
@@ -130,14 +170,22 @@
 
       .toc a.active {
         color: #fff;
-        background: linear-gradient(90deg, rgba(249, 115, 22, 0.35), rgba(251, 146, 60, 0.2));
+        background: linear-gradient(
+          90deg,
+          rgba(249, 115, 22, 0.35),
+          rgba(251, 146, 60, 0.2)
+        );
         border: 1px solid rgba(249, 115, 22, 0.45);
       }
 
       .hero {
         border: 1px solid var(--line);
         border-radius: var(--radius);
-        background: linear-gradient(145deg, rgba(25, 37, 59, 0.8), rgba(17, 26, 43, 0.8));
+        background: linear-gradient(
+          145deg,
+          rgba(25, 37, 59, 0.8),
+          rgba(17, 26, 43, 0.8)
+        );
         padding: 20px;
         margin-bottom: 20px;
       }
@@ -183,9 +231,23 @@
         font-size: 16px;
       }
 
-      .muted { color: var(--muted); }
+      .muted {
+        color: var(--muted);
+      }
 
-      .lang-fa, .lang-en, .mode-beginner, .mode-expert { display: block; }
+      .lang-fa,
+      .lang-en,
+      .mode-beginner,
+      .mode-expert {
+        display: block;
+      }
+
+      html[dir="rtl"] .lang-fa {
+        direction: rtl;
+        unicode-bidi: plaintext;
+        word-break: normal;
+        overflow-wrap: anywhere;
+      }
 
       .grid {
         display: grid;
@@ -207,7 +269,8 @@
         font-size: 13px;
       }
 
-      th, td {
+      th,
+      td {
         border: 1px solid var(--line);
         padding: 8px;
         text-align: left;
@@ -256,11 +319,26 @@
         border: 1px solid var(--line);
       }
 
-      .ok { background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.35); }
-      .warn { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.35); }
-      .danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.35); }
+      .ok {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.35);
+      }
+      .warn {
+        background: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.35);
+      }
+      .danger {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.35);
+      }
 
-      .tag { font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; color: var(--muted); }
+      .tag {
+        font-size: 11px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 2px 8px;
+        color: var(--muted);
+      }
 
       #toTop {
         position: fixed;
@@ -274,7 +352,7 @@
         font-weight: 800;
         padding: 10px 14px;
         cursor: pointer;
-        box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
         display: none;
       }
 
@@ -298,15 +376,22 @@
       }
 
       @media (max-width: 960px) {
-        .layout { grid-template-columns: 1fr; }
+        .layout {
+          grid-template-columns: 1fr;
+        }
         .side {
+          grid-column: auto;
           position: static;
           height: auto;
           border-right: none;
           border-bottom: 1px solid var(--line);
           border-left: none;
         }
-        .main { padding: 16px; }
+        .main {
+          grid-column: auto;
+          padding: 16px;
+          max-width: none;
+        }
       }
     </style>
   </head>
@@ -338,7 +423,9 @@
           <a href="#api">8-11) API, DB, Auth, Security</a>
           <a href="#frontend">12-14) Styling, State, Routing</a>
           <a href="#devtasks">15-18) Dev Tasks, Workflow, Deploy, Testing</a>
-          <a href="#quality">19-24) Performance, Problems, Debt, Roadmap, Flows, Onboarding</a>
+          <a href="#quality"
+            >19-24) Performance, Problems, Debt, Roadmap, Flows, Onboarding</a
+          >
           <a href="#governance">25-27) ADRs, Standards, Glossary</a>
           <a href="#ai-analysis">AI Analysis</a>
           <a href="#db-migration-roadmap">Database Migration Roadmap</a>
@@ -349,18 +436,27 @@
         <section class="hero">
           <div class="pill">Official Internal Docs</div>
           <h2 class="lang-en">Chomp Engineering Handbook</h2>
-          <h2 class="lang-fa" style="display:none;">هندبوک مهندسی چامپ</h2>
-          <p class="lang-en">Production-grade documentation for onboarding, development, operations, and scaling.</p>
-          <p class="lang-fa" style="display:none;">مستندات سطح تولید برای آنبوردینگ، توسعه، عملیات و مقیاس‌پذیری.</p>
+          <h2 class="lang-fa" style="display: none">هندبوک مهندسی چامپ</h2>
+          <p class="lang-en">
+            Production-grade documentation for onboarding, development,
+            operations, and scaling.
+          </p>
+          <p class="lang-fa" style="display: none">
+            مستندات سطح تولید برای آنبوردینگ، توسعه، عملیات و مقیاس‌پذیری.
+          </p>
         </section>
 
         <section id="quickstart" class="section">
           <h3 class="lang-en">Quick Start (Setup Project)</h3>
-          <h3 class="lang-fa" style="display:none;">شروع سریع (راه‌اندازی پروژه)</h3>
+          <h3 class="lang-fa" style="display: none">
+            شروع سریع (راه‌اندازی پروژه)
+          </h3>
 
           <div class="mode-beginner">
             <h4 class="lang-en">First Time Setup</h4>
-            <h4 class="lang-fa" style="display:none;">راه‌اندازی برای بار اول</h4>
+            <h4 class="lang-fa" style="display: none">
+              راه‌اندازی برای بار اول
+            </h4>
             <pre><code>npm install
 cp .env.example .env   # create env file (manual on Windows if needed)
 npm run db:generate
@@ -369,12 +465,16 @@ npm run db:seed
 npm run dev</code></pre>
 
             <h4 class="lang-en">Subsequent Runs (Daily Development)</h4>
-            <h4 class="lang-fa" style="display:none;">اجرای دفعات بعد (توسعه روزمره)</h4>
+            <h4 class="lang-fa" style="display: none">
+              اجرای دفعات بعد (توسعه روزمره)
+            </h4>
             <pre><code>npm install             # only if dependencies changed
 npm run dev</code></pre>
 
             <h4 class="lang-en">After Pulling New Changes</h4>
-            <h4 class="lang-fa" style="display:none;">بعد از دریافت تغییرات جدید</h4>
+            <h4 class="lang-fa" style="display: none">
+              بعد از دریافت تغییرات جدید
+            </h4>
             <pre><code>git pull
 npm install
 npm run db:generate
@@ -382,73 +482,84 @@ npm run db:migrate      # if schema changed
 npm run dev</code></pre>
           </div>
 
-          <div class="mode-expert" style="display:none;">
+          <div class="mode-expert" style="display: none">
             <h4 class="lang-en">Fast Path</h4>
-            <h4 class="lang-fa" style="display:none;">مسیر سریع</h4>
+            <h4 class="lang-fa" style="display: none">مسیر سریع</h4>
             <pre><code># first boot
 npm ci && npm run db:generate && npm run db:push && npm run db:seed && npm run dev
 
 # regular boot
 npm run dev</code></pre>
-            <div class="callout warn lang-en">Use <b>db:migrate</b> for team-safe schema evolution; reserve <b>db:push</b> for non-production prototyping.</div>
-            <div class="callout warn lang-fa" style="display:none;">برای تغییرات امن تیمی از <b>db:migrate</b> استفاده کنید؛ <b>db:push</b> برای نمونه‌سازی و محیط غیر Production مناسب است.</div>
+            <div class="callout warn lang-en">
+              Use <b>db:migrate</b> for team-safe schema evolution; reserve
+              <b>db:push</b> for non-production prototyping.
+            </div>
+            <div class="callout warn lang-fa" style="display: none">
+              برای تغییرات امن تیمی از <b>db:migrate</b> استفاده کنید؛
+              <b>db:push</b> برای نمونه‌سازی و محیط غیر Production مناسب است.
+            </div>
           </div>
         </section>
 
         <section id="overview" class="section">
           <h3 class="lang-en">1) Project Overview</h3>
-          <h3 class="lang-fa" style="display:none;">1) نمای کلی پروژه</h3>
+          <h3 class="lang-fa" style="display: none">1) نمای کلی پروژه</h3>
           <div class="grid">
             <div class="card">
-              <h4 class="lang-en">Purpose</h4><h4 class="lang-fa" style="display:none;">هدف</h4>
-              <p class="lang-en">Persian-first sandwich ordering platform with customization, checkout, dashboard, community, and admin operations.</p>
-              <p class="lang-fa" style="display:none;">پلتفرم سفارش ساندویچ فارسی‌محور با شخصی‌سازی، پرداخت، داشبورد، کامیونیتی و عملیات ادمین.</p>
+              <h4 class="lang-en">Purpose</h4>
+              <h4 class="lang-fa" style="display: none">هدف</h4>
+              <p class="lang-en">
+                Persian-first sandwich ordering platform with customization,
+                checkout, dashboard, community, and admin operations.
+              </p>
+              <p class="lang-fa" style="display: none">
+                پلتفرم سفارش ساندویچ فارسی‌محور با شخصی‌سازی، پرداخت، داشبورد،
+                کامیونیتی و عملیات ادمین.
+              </p>
             </div>
             <div class="card">
-              <h4 class="lang-en">Business Goals</h4><h4 class="lang-fa" style="display:none;">اهداف کسب‌وکار</h4>
-              <p class="lang-en">Increase conversion, repeat purchase, referral growth, and operational visibility.</p>
-              <p class="lang-fa" style="display:none;">افزایش نرخ تبدیل، خرید مجدد، رشد معرفی و شفافیت عملیاتی.</p>
+              <h4 class="lang-en">Business Goals</h4>
+              <h4 class="lang-fa" style="display: none">اهداف کسب‌وکار</h4>
+              <p class="lang-en">
+                Increase conversion, repeat purchase, referral growth, and
+                operational visibility.
+              </p>
+              <p class="lang-fa" style="display: none">
+                افزایش نرخ تبدیل، خرید مجدد، رشد معرفی و شفافیت عملیاتی.
+              </p>
             </div>
           </div>
         </section>
 
         <section id="architecture" class="section">
           <h3 class="lang-en">2) Architecture</h3>
-          <h3 class="lang-fa" style="display:none;">2) معماری</h3>
+          <h3 class="lang-fa" style="display: none">2) معماری</h3>
           <pre><code>Browser -> Next.js App Router -> Server Actions / API Routes -> Prisma -> PostgreSQL</code></pre>
 
           <h4 class="lang-en">System Flow Diagram</h4>
-          <h4 class="lang-fa" style="display:none;">نمودار جریان سیستم</h4>
-          <div class="mermaid">flowchart LR
-        Browser[User Browser] --> App[Next.js App Router]
-        App --> Actions[Server Actions]
-        App --> API[Route Handlers]
-        Actions --> Svc[lib/server]
-        API --> Svc
-        Svc --> Prisma[(Prisma)]
-        Prisma --> DB[(PostgreSQL)]
-        App --> Stores[Zustand Stores]
+          <h4 class="lang-fa" style="display: none">نمودار جریان سیستم</h4>
+          <div class="mermaid">
+            flowchart LR Browser[User Browser] --> App[Next.js App Router] App
+            --> Actions[Server Actions] App --> API[Route Handlers] Actions -->
+            Svc[lib/server] API --> Svc Svc --> Prisma[(Prisma)] Prisma -->
+            DB[(PostgreSQL)] App --> Stores[Zustand Stores]
           </div>
 
           <h4 class="lang-en">Checkout Sequence</h4>
-          <h4 class="lang-fa" style="display:none;">توالی Checkout</h4>
-          <div class="mermaid">sequenceDiagram
-        participant C as Client
-        participant A as checkout action
-        participant S as lib/server/orders
-        participant D as PostgreSQL
-        C->>A: submit cart lines
-        A->>A: validate + recompute prices
-        A->>A: allergy and discount checks
-        A->>S: createOrder
-        S->>D: insert order + items
-        D-->>S: persisted order
-        S-->>A: order number
-        A-->>C: success response
+          <h4 class="lang-fa" style="display: none">توالی Checkout</h4>
+          <div class="mermaid">
+            sequenceDiagram participant C as Client participant A as checkout
+            action participant S as lib/server/orders participant D as
+            PostgreSQL C->>A: submit cart lines A->>A: validate + recompute
+            prices A->>A: allergy and discount checks A->>S: createOrder S->>D:
+            insert order + items D-->>S: persisted order S-->>A: order number
+            A-->>C: success response
           </div>
           <details>
             <summary class="lang-en">Beginner Diagram</summary>
-            <summary class="lang-fa" style="display:none;">نمودار سطح مبتدی</summary>
+            <summary class="lang-fa" style="display: none">
+              نمودار سطح مبتدی
+            </summary>
             <pre><code>[Client UI]
    | 
 [Pages + Components]
@@ -461,63 +572,144 @@ npm run dev</code></pre>
           </details>
           <details>
             <summary class="lang-en">Expert Notes</summary>
-            <summary class="lang-fa" style="display:none;">نکات Expert</summary>
-            <p class="lang-en">Mixed admin persistence currently exists (legacy Zustand + DB-backed modules). Migration completion is a top priority.</p>
-            <p class="lang-fa" style="display:none;">در ادمین، حالت ترکیبی persistence وجود دارد (Zustand قدیمی + ماژول‌های DB-backed). تکمیل مهاجرت اولویت اصلی است.</p>
+            <summary class="lang-fa" style="display: none">نکات Expert</summary>
+            <p class="lang-en">
+              Mixed admin persistence currently exists (legacy Zustand +
+              DB-backed modules). Migration completion is a top priority.
+            </p>
+            <p class="lang-fa" style="display: none">
+              در ادمین، حالت ترکیبی persistence وجود دارد (Zustand قدیمی +
+              ماژول‌های DB-backed). تکمیل مهاجرت اولویت اصلی است.
+            </p>
           </details>
         </section>
 
         <section id="repo" class="section">
           <h3 class="lang-en">3) Repository Structure</h3>
-          <h3 class="lang-fa" style="display:none;">3) ساختار ریپازیتوری</h3>
+          <h3 class="lang-fa" style="display: none">3) ساختار ریپازیتوری</h3>
           <table>
             <thead>
               <tr>
                 <th>Folder</th>
                 <th class="lang-en">Why It Exists</th>
-                <th class="lang-fa" style="display:none;">دلیل وجود</th>
+                <th class="lang-fa" style="display: none">دلیل وجود</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td>app/</td><td class="lang-en">Routes, layouts, server actions, API handlers</td><td class="lang-fa" style="display:none;">مسیرها، layoutها، server actionها و API</td></tr>
-              <tr><td>components/</td><td class="lang-en">Reusable UI and feature components</td><td class="lang-fa" style="display:none;">کامپوننت‌های قابل‌استفاده مجدد</td></tr>
-              <tr><td>lib/server/</td><td class="lang-en">Domain repositories and business logic</td><td class="lang-fa" style="display:none;">ریپازیتوری‌های دامنه و منطق کسب‌وکار</td></tr>
-              <tr><td>lib/auth/</td><td class="lang-en">Authentication configuration and session guards</td><td class="lang-fa" style="display:none;">تنظیمات احراز هویت و گاردها</td></tr>
-              <tr><td>lib/validation/</td><td class="lang-en">Zod input contracts</td><td class="lang-fa" style="display:none;">قراردادهای اعتبارسنجی ورودی</td></tr>
-              <tr><td>prisma/</td><td class="lang-en">Schema, migrations, seed</td><td class="lang-fa" style="display:none;">اسکیما، مایگریشن، سید</td></tr>
+              <tr>
+                <td>app/</td>
+                <td class="lang-en">
+                  Routes, layouts, server actions, API handlers
+                </td>
+                <td class="lang-fa" style="display: none">
+                  مسیرها، layoutها، server actionها و API
+                </td>
+              </tr>
+              <tr>
+                <td>components/</td>
+                <td class="lang-en">Reusable UI and feature components</td>
+                <td class="lang-fa" style="display: none">
+                  کامپوننت‌های قابل‌استفاده مجدد
+                </td>
+              </tr>
+              <tr>
+                <td>lib/server/</td>
+                <td class="lang-en">Domain repositories and business logic</td>
+                <td class="lang-fa" style="display: none">
+                  ریپازیتوری‌های دامنه و منطق کسب‌وکار
+                </td>
+              </tr>
+              <tr>
+                <td>lib/auth/</td>
+                <td class="lang-en">
+                  Authentication configuration and session guards
+                </td>
+                <td class="lang-fa" style="display: none">
+                  تنظیمات احراز هویت و گاردها
+                </td>
+              </tr>
+              <tr>
+                <td>lib/validation/</td>
+                <td class="lang-en">Zod input contracts</td>
+                <td class="lang-fa" style="display: none">
+                  قراردادهای اعتبارسنجی ورودی
+                </td>
+              </tr>
+              <tr>
+                <td>prisma/</td>
+                <td class="lang-en">Schema, migrations, seed</td>
+                <td class="lang-fa" style="display: none">
+                  اسکیما، مایگریشن، سید
+                </td>
+              </tr>
             </tbody>
           </table>
         </section>
 
         <section id="modules" class="section">
           <h3 class="lang-en">4-7) Modules, Components, Hooks, Utilities</h3>
-          <h3 class="lang-fa" style="display:none;">4-7) ماژول‌ها، کامپوننت‌ها، هوک‌ها، ابزارها</h3>
+          <h3 class="lang-fa" style="display: none">
+            4-7) ماژول‌ها، کامپوننت‌ها، هوک‌ها، ابزارها
+          </h3>
 
           <div class="mode-beginner">
             <h4 class="lang-en">How to Read the Codebase</h4>
-            <h4 class="lang-fa" style="display:none;">روش خواندن کدبیس</h4>
+            <h4 class="lang-fa" style="display: none">روش خواندن کدبیس</h4>
             <ol class="lang-en">
               <li>Start with app/layout and route pages.</li>
               <li>Follow each page to server actions or API routes.</li>
-              <li>Trace business logic in lib/server and validation in lib/validation.</li>
+              <li>
+                Trace business logic in lib/server and validation in
+                lib/validation.
+              </li>
               <li>Review shared state in Zustand stores.</li>
             </ol>
-            <ol class="lang-fa" style="display:none;">
+            <ol class="lang-fa" style="display: none">
               <li>از app/layout و صفحات شروع کنید.</li>
               <li>هر صفحه را تا server action یا API route دنبال کنید.</li>
-              <li>منطق دامنه را در lib/server و validation را در lib/validation ببینید.</li>
+              <li>
+                منطق دامنه را در lib/server و validation را در lib/validation
+                ببینید.
+              </li>
               <li>استیت مشترک را در Zustand مرور کنید.</li>
             </ol>
           </div>
 
-          <div class="mode-expert" style="display:none;">
+          <div class="mode-expert" style="display: none">
             <table>
-              <thead><tr><th>Module</th><th>Responsibilities</th><th>Extension Points</th><th>Risks</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Module</th>
+                  <th>Responsibilities</th>
+                  <th>Extension Points</th>
+                  <th>Risks</th>
+                </tr>
+              </thead>
               <tbody>
-                <tr><td>lib/server/orders.ts</td><td>Create/list user orders, stats</td><td>Status workflows, receipts</td><td>Pricing regression without tests</td></tr>
-                <tr><td>lib/server/customSandwiches.ts</td><td>Save/publish/list recipes, dedupe hash, ranking</td><td>Ranking formula versioning</td><td>Popularity bias over freshness</td></tr>
-                <tr><td>lib/server/otp.ts</td><td>Issue/verify OTP, throttling</td><td>Anti-abuse policies</td><td>No centralized abuse telemetry</td></tr>
-                <tr><td>components/admin/*</td><td>Admin management UIs</td><td>Migrate remaining legacy pages to DB</td><td>Split source of truth</td></tr>
+                <tr>
+                  <td>lib/server/orders.ts</td>
+                  <td>Create/list user orders, stats</td>
+                  <td>Status workflows, receipts</td>
+                  <td>Pricing regression without tests</td>
+                </tr>
+                <tr>
+                  <td>lib/server/customSandwiches.ts</td>
+                  <td>Save/publish/list recipes, dedupe hash, ranking</td>
+                  <td>Ranking formula versioning</td>
+                  <td>Popularity bias over freshness</td>
+                </tr>
+                <tr>
+                  <td>lib/server/otp.ts</td>
+                  <td>Issue/verify OTP, throttling</td>
+                  <td>Anti-abuse policies</td>
+                  <td>No centralized abuse telemetry</td>
+                </tr>
+                <tr>
+                  <td>components/admin/*</td>
+                  <td>Admin management UIs</td>
+                  <td>Migrate remaining legacy pages to DB</td>
+                  <td>Split source of truth</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -525,25 +717,59 @@ npm run dev</code></pre>
 
         <section id="api" class="section">
           <h3 class="lang-en">8-11) API, Database, Authentication, Security</h3>
-          <h3 class="lang-fa" style="display:none;">8-11) API، دیتابیس، احراز هویت، امنیت</h3>
+          <h3 class="lang-fa" style="display: none">
+            8-11) API، دیتابیس، احراز هویت، امنیت
+          </h3>
 
           <h4 class="lang-en">API Endpoints</h4>
-          <h4 class="lang-fa" style="display:none;">Endpointهای API</h4>
+          <h4 class="lang-fa" style="display: none">Endpointهای API</h4>
           <table>
-            <thead><tr><th>Endpoint</th><th>Method</th><th>Auth</th><th>Purpose</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Endpoint</th>
+                <th>Method</th>
+                <th>Auth</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>/api/auth/otp</td><td>POST</td><td>Public</td><td>Issue OTP with rate limits</td></tr>
-              <tr><td>/api/auth/check-phone</td><td>POST</td><td>Public</td><td>Branch auth flow safely</td></tr>
-              <tr><td>/api/auth/register</td><td>POST</td><td>Public</td><td>Register after OTP verification</td></tr>
-              <tr><td>/api/account/checkout-profile</td><td>GET</td><td>User</td><td>Fetch profile/address/allergies for checkout</td></tr>
-              <tr><td>/api/admin/reports/export</td><td>GET</td><td>Admin</td><td>CSV export by range/type</td></tr>
+              <tr>
+                <td>/api/auth/otp</td>
+                <td>POST</td>
+                <td>Public</td>
+                <td>Issue OTP with rate limits</td>
+              </tr>
+              <tr>
+                <td>/api/auth/check-phone</td>
+                <td>POST</td>
+                <td>Public</td>
+                <td>Branch auth flow safely</td>
+              </tr>
+              <tr>
+                <td>/api/auth/register</td>
+                <td>POST</td>
+                <td>Public</td>
+                <td>Register after OTP verification</td>
+              </tr>
+              <tr>
+                <td>/api/account/checkout-profile</td>
+                <td>GET</td>
+                <td>User</td>
+                <td>Fetch profile/address/allergies for checkout</td>
+              </tr>
+              <tr>
+                <td>/api/admin/reports/export</td>
+                <td>GET</td>
+                <td>Admin</td>
+                <td>CSV export by range/type</td>
+              </tr>
             </tbody>
           </table>
 
           <div class="grid">
             <div class="card">
               <h4 class="lang-en">Security Checklist</h4>
-              <h4 class="lang-fa" style="display:none;">چک‌لیست امنیت</h4>
+              <h4 class="lang-fa" style="display: none">چک‌لیست امنیت</h4>
               <ul class="lang-en">
                 <li>OTP hashed + TTL + attempts + cooldown</li>
                 <li>Route guard + role guard</li>
@@ -551,7 +777,7 @@ npm run dev</code></pre>
                 <li>Zod validation on boundaries</li>
                 <li>Prisma query parameter safety</li>
               </ul>
-              <ul class="lang-fa" style="display:none;">
+              <ul class="lang-fa" style="display: none">
                 <li>OTP هش‌شده + TTL + محدودیت تلاش + cooldown</li>
                 <li>گارد مسیر + گارد نقش</li>
                 <li>محاسبه قیمت سمت سرور</li>
@@ -561,13 +787,13 @@ npm run dev</code></pre>
             </div>
             <div class="card">
               <h4 class="lang-en">Known Weaknesses</h4>
-              <h4 class="lang-fa" style="display:none;">ضعف‌های شناخته‌شده</h4>
+              <h4 class="lang-fa" style="display: none">ضعف‌های شناخته‌شده</h4>
               <ul class="lang-en">
                 <li>No automated test suite yet</li>
                 <li>Partial legacy admin persistence</li>
                 <li>No centralized observability stack</li>
               </ul>
-              <ul class="lang-fa" style="display:none;">
+              <ul class="lang-fa" style="display: none">
                 <li>عدم وجود تست خودکار کامل</li>
                 <li>پایداری داده ترکیبی در بخشی از ادمین</li>
                 <li>نبود stack یکپارچه مشاهده‌پذیری</li>
@@ -576,96 +802,224 @@ npm run dev</code></pre>
           </div>
 
           <h4 class="lang-en">Security Coverage Matrix</h4>
-          <h4 class="lang-fa" style="display:none;">ماتریس پوشش امنیتی</h4>
+          <h4 class="lang-fa" style="display: none">ماتریس پوشش امنیتی</h4>
           <table>
-            <thead><tr><th>Area</th><th>Status</th><th>Current Control</th><th>Gap</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Status</th>
+                <th>Current Control</th>
+                <th>Gap</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>CSRF</td><td>Partial</td><td>Framework defaults + same-origin flows</td><td>Explicit token strategy not documented for all APIs</td></tr>
-              <tr><td>CORS</td><td>Partial</td><td>No broad public cross-origin API</td><td>No explicit policy middleware for future external APIs</td></tr>
-              <tr><td>XSS</td><td>Good</td><td>React escaping + no raw html rendering in main flows</td><td>Need lint rule for dangerous HTML APIs</td></tr>
-              <tr><td>SQL Injection</td><td>Good</td><td>Prisma parameterized ORM queries</td><td>Policy needed if raw SQL introduced later</td></tr>
-              <tr><td>Secrets Mgmt</td><td>Good</td><td>Environment variables</td><td>Rotation schedule and audit runbook pending</td></tr>
-              <tr><td>Audit Trail</td><td>Partial</td><td>Basic logs from runtime</td><td>Centralized structured audit trail missing</td></tr>
+              <tr>
+                <td>CSRF</td>
+                <td>Partial</td>
+                <td>Framework defaults + same-origin flows</td>
+                <td>Explicit token strategy not documented for all APIs</td>
+              </tr>
+              <tr>
+                <td>CORS</td>
+                <td>Partial</td>
+                <td>No broad public cross-origin API</td>
+                <td>No explicit policy middleware for future external APIs</td>
+              </tr>
+              <tr>
+                <td>XSS</td>
+                <td>Good</td>
+                <td>React escaping + no raw html rendering in main flows</td>
+                <td>Need lint rule for dangerous HTML APIs</td>
+              </tr>
+              <tr>
+                <td>SQL Injection</td>
+                <td>Good</td>
+                <td>Prisma parameterized ORM queries</td>
+                <td>Policy needed if raw SQL introduced later</td>
+              </tr>
+              <tr>
+                <td>Secrets Mgmt</td>
+                <td>Good</td>
+                <td>Environment variables</td>
+                <td>Rotation schedule and audit runbook pending</td>
+              </tr>
+              <tr>
+                <td>Audit Trail</td>
+                <td>Partial</td>
+                <td>Basic logs from runtime</td>
+                <td>Centralized structured audit trail missing</td>
+              </tr>
             </tbody>
           </table>
 
           <h4 class="lang-en">API Flow Diagram</h4>
-          <h4 class="lang-fa" style="display:none;">نمودار جریان API</h4>
-          <div class="mermaid">flowchart TD
-  R[Request] --> V[Validate Input Zod]
-  V --> G{Auth/Role Guard}
-  G -- No --> E[401/403]
-  G -- Yes --> L[Service Layer lib/server]
-  L --> P[(Prisma + PostgreSQL)]
-  P --> O[Response JSON/CSV]
+          <h4 class="lang-fa" style="display: none">نمودار جریان API</h4>
+          <div class="mermaid">
+            flowchart TD R[Request] --> V[Validate Input Zod] V --> G{Auth/Role
+            Guard} G -- No --> E[401/403] G -- Yes --> L[Service Layer
+            lib/server] L --> P[(Prisma + PostgreSQL)] P --> O[Response
+            JSON/CSV]
           </div>
         </section>
 
         <section id="frontend" class="section">
-          <h3 class="lang-en">12-14) Styling System, State Management, Routing</h3>
-          <h3 class="lang-fa" style="display:none;">12-14) سیستم استایل، مدیریت استیت، مسیریابی</h3>
-          <p class="lang-en">Tailwind-driven design system with RTL-friendly typography and responsive layout. Zustand is used for cart/auth modal and legacy admin state. App Router provides nested routes and dynamic route segments.</p>
-          <p class="lang-fa" style="display:none;">سیستم طراحی مبتنی بر Tailwind با تایپوگرافی سازگار با RTL و ساختار واکنش‌گرا. Zustand برای سبد/مودال auth و بخشی از استیت قدیمی ادمین استفاده می‌شود. App Router مسیرهای تو در تو و داینامیک را مدیریت می‌کند.</p>
+          <h3 class="lang-en">
+            12-14) Styling System, State Management, Routing
+          </h3>
+          <h3 class="lang-fa" style="display: none">
+            12-14) سیستم استایل، مدیریت استیت، مسیریابی
+          </h3>
+          <p class="lang-en">
+            Tailwind-driven design system with RTL-friendly typography and
+            responsive layout. Zustand is used for cart/auth modal and legacy
+            admin state. App Router provides nested routes and dynamic route
+            segments.
+          </p>
+          <p class="lang-fa" style="display: none">
+            سیستم طراحی مبتنی بر Tailwind با تایپوگرافی سازگار با RTL و ساختار
+            واکنش‌گرا. Zustand برای سبد/مودال auth و بخشی از استیت قدیمی ادمین
+            استفاده می‌شود. App Router مسیرهای تو در تو و داینامیک را مدیریت
+            می‌کند.
+          </p>
 
           <table>
-            <thead><tr><th>Topic</th><th>Current Implementation</th><th>Best-Practice Recommendation</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Topic</th>
+                <th>Current Implementation</th>
+                <th>Best-Practice Recommendation</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>CSS Architecture</td><td>Tailwind utility-first + shared admin primitives</td><td>Add token contract doc for spacing/color/typography naming</td></tr>
-              <tr><td>Theme</td><td>Dark-focused docs UI, app style in Tailwind</td><td>Add system theme strategy and semantic token aliases</td></tr>
-              <tr><td>Responsive</td><td>Mobile-first layouts and adaptive grid</td><td>Add visual regression checklist for breakpoints</td></tr>
-              <tr><td>State Sync</td><td>Zustand local state + server truth for core flows</td><td>Complete admin state migration to DB-backed reads/writes</td></tr>
-              <tr><td>Routing Guards</td><td>middleware + requireUser/requireAdmin</td><td>Add route-policy test matrix in CI</td></tr>
+              <tr>
+                <td>CSS Architecture</td>
+                <td>Tailwind utility-first + shared admin primitives</td>
+                <td>
+                  Add token contract doc for spacing/color/typography naming
+                </td>
+              </tr>
+              <tr>
+                <td>Theme</td>
+                <td>Dark-focused docs UI, app style in Tailwind</td>
+                <td>Add system theme strategy and semantic token aliases</td>
+              </tr>
+              <tr>
+                <td>Responsive</td>
+                <td>Mobile-first layouts and adaptive grid</td>
+                <td>Add visual regression checklist for breakpoints</td>
+              </tr>
+              <tr>
+                <td>State Sync</td>
+                <td>Zustand local state + server truth for core flows</td>
+                <td>
+                  Complete admin state migration to DB-backed reads/writes
+                </td>
+              </tr>
+              <tr>
+                <td>Routing Guards</td>
+                <td>middleware + requireUser/requireAdmin</td>
+                <td>Add route-policy test matrix in CI</td>
+              </tr>
             </tbody>
           </table>
         </section>
 
         <section id="devtasks" class="section">
-          <h3 class="lang-en">15-18) Developer Tasks, Workflow, Deployment, Testing</h3>
-          <h3 class="lang-fa" style="display:none;">15-18) وظایف توسعه، گردش کار، دیپلوی، تست</h3>
+          <h3 class="lang-en">
+            15-18) Developer Tasks, Workflow, Deployment, Testing
+          </h3>
+          <h3 class="lang-fa" style="display: none">
+            15-18) وظایف توسعه، گردش کار، دیپلوی، تست
+          </h3>
 
           <details>
             <summary class="lang-en">Common Tasks</summary>
-            <summary class="lang-fa" style="display:none;">کارهای رایج</summary>
+            <summary class="lang-fa" style="display: none">کارهای رایج</summary>
             <ul class="lang-en">
-              <li>Add page: create route page, add guards, metadata, navigation.</li>
+              <li>
+                Add page: create route page, add guards, metadata, navigation.
+              </li>
               <li>Add API: create route handler + validation + auth + docs.</li>
-              <li>Add migration: edit Prisma schema, run migrate, update services.</li>
-              <li>Add role: enum + token/session claims + middleware + server checks.</li>
+              <li>
+                Add migration: edit Prisma schema, run migrate, update services.
+              </li>
+              <li>
+                Add role: enum + token/session claims + middleware + server
+                checks.
+              </li>
             </ul>
-            <ul class="lang-fa" style="display:none;">
+            <ul class="lang-fa" style="display: none">
               <li>افزودن صفحه: ساخت route، گارد، metadata و لینک ناوبری.</li>
               <li>افزودن API: route + validation + auth + مستندسازی.</li>
-              <li>افزودن migration: تغییر schema، اجرای migrate، آپدیت سرویس‌ها.</li>
+              <li>
+                افزودن migration: تغییر schema، اجرای migrate، آپدیت سرویس‌ها.
+              </li>
               <li>افزودن نقش: enum + claimها + middleware + چک سروری.</li>
             </ul>
           </details>
 
           <details>
             <summary class="lang-en">Build and Deploy Commands</summary>
-            <summary class="lang-fa" style="display:none;">دستورات Build و Deploy</summary>
+            <summary class="lang-fa" style="display: none">
+              دستورات Build و Deploy
+            </summary>
             <pre><code>npm run build
 npm run db:deploy
 npm start</code></pre>
           </details>
 
           <details>
-            <summary class="lang-en">Expanded Workflow (Git/PR/Release)</summary>
-            <summary class="lang-fa" style="display:none;">گردش کار توسعه (Git/PR/Release)</summary>
+            <summary class="lang-en">
+              Expanded Workflow (Git/PR/Release)
+            </summary>
+            <summary class="lang-fa" style="display: none">
+              گردش کار توسعه (Git/PR/Release)
+            </summary>
             <table>
-              <thead><tr><th>Stage</th><th>Action</th><th>Output</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Stage</th>
+                  <th>Action</th>
+                  <th>Output</th>
+                </tr>
+              </thead>
               <tbody>
-                <tr><td>Branch</td><td>Create short-lived feature branch</td><td>Scoped change-set</td></tr>
-                <tr><td>Develop</td><td>Implement with validation + auth checks</td><td>Secure functional feature</td></tr>
-                <tr><td>Verify</td><td>Run lint/build/manual smoke</td><td>Ready for review</td></tr>
-                <tr><td>PR</td><td>Describe behavior changes, db impact, rollback note</td><td>Traceable review context</td></tr>
-                <tr><td>Release</td><td>Deploy migration-safe sequence</td><td>Stable production rollout</td></tr>
+                <tr>
+                  <td>Branch</td>
+                  <td>Create short-lived feature branch</td>
+                  <td>Scoped change-set</td>
+                </tr>
+                <tr>
+                  <td>Develop</td>
+                  <td>Implement with validation + auth checks</td>
+                  <td>Secure functional feature</td>
+                </tr>
+                <tr>
+                  <td>Verify</td>
+                  <td>Run lint/build/manual smoke</td>
+                  <td>Ready for review</td>
+                </tr>
+                <tr>
+                  <td>PR</td>
+                  <td>Describe behavior changes, db impact, rollback note</td>
+                  <td>Traceable review context</td>
+                </tr>
+                <tr>
+                  <td>Release</td>
+                  <td>Deploy migration-safe sequence</td>
+                  <td>Stable production rollout</td>
+                </tr>
               </tbody>
             </table>
           </details>
 
           <details>
-            <summary class="lang-en">Deployment and Operations Checklist</summary>
-            <summary class="lang-fa" style="display:none;">چک‌لیست عملیات و دیپلوی</summary>
+            <summary class="lang-en">
+              Deployment and Operations Checklist
+            </summary>
+            <summary class="lang-fa" style="display: none">
+              چک‌لیست عملیات و دیپلوی
+            </summary>
             <ul class="lang-en">
               <li>Build artifact validated</li>
               <li>Environment variables set for target environment</li>
@@ -674,7 +1028,7 @@ npm start</code></pre>
               <li>Rollback target version prepared</li>
               <li>Post-deploy monitoring window assigned</li>
             </ul>
-            <ul class="lang-fa" style="display:none;">
+            <ul class="lang-fa" style="display: none">
               <li>اعتبارسنجی build artifact</li>
               <li>تنظیم env vars برای محیط هدف</li>
               <li>تایید migration plan قابل بازگشت</li>
@@ -684,165 +1038,355 @@ npm start</code></pre>
             </ul>
           </details>
 
-          <div class="callout warn lang-en">Testing framework setup is currently missing. Prioritize unit + integration + E2E onboarding in CI.</div>
-          <div class="callout warn lang-fa" style="display:none;">فریم‌ورک تست هنوز کامل تنظیم نشده است. اولویت با راه‌اندازی Unit + Integration + E2E در CI است.</div>
+          <div class="callout warn lang-en">
+            Testing framework setup is currently missing. Prioritize unit +
+            integration + E2E onboarding in CI.
+          </div>
+          <div class="callout warn lang-fa" style="display: none">
+            فریم‌ورک تست هنوز کامل تنظیم نشده است. اولویت با راه‌اندازی Unit +
+            Integration + E2E در CI است.
+          </div>
         </section>
 
         <section id="quality" class="section">
-          <h3 class="lang-en">19-24) Performance, Common Problems, Technical Debt, Future Improvements, Flows, Onboarding</h3>
-          <h3 class="lang-fa" style="display:none;">19-24) عملکرد، مشکلات رایج، بدهی فنی، بهبود آینده، جریان‌ها، آنبوردینگ</h3>
+          <h3 class="lang-en">
+            19-24) Performance, Common Problems, Technical Debt, Future
+            Improvements, Flows, Onboarding
+          </h3>
+          <h3 class="lang-fa" style="display: none">
+            19-24) عملکرد، مشکلات رایج، بدهی فنی، بهبود آینده، جریان‌ها،
+            آنبوردینگ
+          </h3>
 
           <h4 class="lang-en">Common Problems</h4>
-          <h4 class="lang-fa" style="display:none;">مشکلات رایج</h4>
+          <h4 class="lang-fa" style="display: none">مشکلات رایج</h4>
           <table>
-            <thead><tr><th>Symptom</th><th>Root Cause</th><th>Fix</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Symptom</th>
+                <th>Root Cause</th>
+                <th>Fix</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Auth redirect loop</td><td>Missing session or route misclassification</td><td>Review middleware public/protected lists</td></tr>
-              <tr><td>Wrong checkout total</td><td>Client assumption mismatch</td><td>Trace server recompute logic in checkout action</td></tr>
-              <tr><td>Admin data mismatch</td><td>Legacy Zustand vs DB records</td><td>Migrate remaining admin pages to DB-backed services</td></tr>
+              <tr>
+                <td>Auth redirect loop</td>
+                <td>Missing session or route misclassification</td>
+                <td>Review middleware public/protected lists</td>
+              </tr>
+              <tr>
+                <td>Wrong checkout total</td>
+                <td>Client assumption mismatch</td>
+                <td>Trace server recompute logic in checkout action</td>
+              </tr>
+              <tr>
+                <td>Admin data mismatch</td>
+                <td>Legacy Zustand vs DB records</td>
+                <td>Migrate remaining admin pages to DB-backed services</td>
+              </tr>
             </tbody>
           </table>
 
           <h4 class="lang-en">Technical Debt Highlights</h4>
-          <h4 class="lang-fa" style="display:none;">نقاط اصلی بدهی فنی</h4>
+          <h4 class="lang-fa" style="display: none">نقاط اصلی بدهی فنی</h4>
           <ul class="lang-en">
             <li>No test suite</li>
             <li>Partial dual persistence in admin surfaces</li>
             <li>Operational observability is limited</li>
           </ul>
-          <ul class="lang-fa" style="display:none;">
+          <ul class="lang-fa" style="display: none">
             <li>نبود تست خودکار</li>
             <li>پایداری دوگانه در برخی صفحات ادمین</li>
             <li>محدودبودن مشاهده‌پذیری عملیاتی</li>
           </ul>
 
           <h4 class="lang-en">Onboarding Roadmap</h4>
-          <h4 class="lang-fa" style="display:none;">نقشه راه آنبوردینگ</h4>
+          <h4 class="lang-fa" style="display: none">نقشه راه آنبوردینگ</h4>
           <div class="grid">
-            <div class="card"><b>Day 1</b><div class="muted">Run quick start, inspect app/layout, middleware, auth flow.</div></div>
-            <div class="card"><b>Week 1</b><div class="muted">Implement one small feature end-to-end with schema+action+UI.</div></div>
-            <div class="card"><b>Month 1</b><div class="muted">Own one domain area and ship production-safe changes.</div></div>
+            <div class="card">
+              <b>Day 1</b>
+              <div class="muted">
+                Run quick start, inspect app/layout, middleware, auth flow.
+              </div>
+            </div>
+            <div class="card">
+              <b>Week 1</b>
+              <div class="muted">
+                Implement one small feature end-to-end with schema+action+UI.
+              </div>
+            </div>
+            <div class="card">
+              <b>Month 1</b>
+              <div class="muted">
+                Own one domain area and ship production-safe changes.
+              </div>
+            </div>
           </div>
 
           <h4 class="lang-en">Performance Optimization Matrix</h4>
-          <h4 class="lang-fa" style="display:none;">ماتریس بهینه‌سازی عملکرد</h4>
+          <h4 class="lang-fa" style="display: none">
+            ماتریس بهینه‌سازی عملکرد
+          </h4>
           <table>
-            <thead><tr><th>Area</th><th>Current State</th><th>Bottleneck Risk</th><th>Optimization</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Current State</th>
+                <th>Bottleneck Risk</th>
+                <th>Optimization</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Rendering</td><td>RSC + dynamic routes for dashboards</td><td>Heavy dynamic pages under load</td><td>Introduce partial caching and segment-level revalidation</td></tr>
-              <tr><td>API</td><td>Validation and service layering present</td><td>Large exports block response</td><td>Async export jobs + streaming responses</td></tr>
-              <tr><td>Database</td><td>Key indexes exist</td><td>Analytical queries grow with data</td><td>Materialized summaries and pagination</td></tr>
-              <tr><td>Bundle</td><td>Next build optimization baseline</td><td>Admin client bundles can grow</td><td>Route-level code splitting and lazy-loading heavy widgets</td></tr>
+              <tr>
+                <td>Rendering</td>
+                <td>RSC + dynamic routes for dashboards</td>
+                <td>Heavy dynamic pages under load</td>
+                <td>
+                  Introduce partial caching and segment-level revalidation
+                </td>
+              </tr>
+              <tr>
+                <td>API</td>
+                <td>Validation and service layering present</td>
+                <td>Large exports block response</td>
+                <td>Async export jobs + streaming responses</td>
+              </tr>
+              <tr>
+                <td>Database</td>
+                <td>Key indexes exist</td>
+                <td>Analytical queries grow with data</td>
+                <td>Materialized summaries and pagination</td>
+              </tr>
+              <tr>
+                <td>Bundle</td>
+                <td>Next build optimization baseline</td>
+                <td>Admin client bundles can grow</td>
+                <td>
+                  Route-level code splitting and lazy-loading heavy widgets
+                </td>
+              </tr>
             </tbody>
           </table>
 
           <h4 class="lang-en">Future Improvements by Priority</h4>
-          <h4 class="lang-fa" style="display:none;">بهبودهای آینده بر اساس اولویت</h4>
+          <h4 class="lang-fa" style="display: none">
+            بهبودهای آینده بر اساس اولویت
+          </h4>
           <table>
-            <thead><tr><th>Priority</th><th>Improvement</th><th>Why It Matters</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Priority</th>
+                <th>Improvement</th>
+                <th>Why It Matters</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Critical</td><td>Automated testing baseline</td><td>Prevents regressions in auth, checkout, and admin operations</td></tr>
-              <tr><td>Critical</td><td>Complete admin DB migration</td><td>Eliminates inconsistent dual source-of-truth behavior</td></tr>
-              <tr><td>High</td><td>Centralized observability</td><td>Speeds incident detection and root-cause analysis</td></tr>
-              <tr><td>High</td><td>Security event audit trail</td><td>Improves compliance, forensics, and risk posture</td></tr>
-              <tr><td>Medium</td><td>Async report export and caching</td><td>Improves scalability and user experience on large datasets</td></tr>
-              <tr><td>Low</td><td>Design system token hardening</td><td>Improves consistency for long-term UI evolution</td></tr>
+              <tr>
+                <td>Critical</td>
+                <td>Automated testing baseline</td>
+                <td>
+                  Prevents regressions in auth, checkout, and admin operations
+                </td>
+              </tr>
+              <tr>
+                <td>Critical</td>
+                <td>Complete admin DB migration</td>
+                <td>Eliminates inconsistent dual source-of-truth behavior</td>
+              </tr>
+              <tr>
+                <td>High</td>
+                <td>Centralized observability</td>
+                <td>Speeds incident detection and root-cause analysis</td>
+              </tr>
+              <tr>
+                <td>High</td>
+                <td>Security event audit trail</td>
+                <td>Improves compliance, forensics, and risk posture</td>
+              </tr>
+              <tr>
+                <td>Medium</td>
+                <td>Async report export and caching</td>
+                <td>
+                  Improves scalability and user experience on large datasets
+                </td>
+              </tr>
+              <tr>
+                <td>Low</td>
+                <td>Design system token hardening</td>
+                <td>Improves consistency for long-term UI evolution</td>
+              </tr>
             </tbody>
           </table>
 
           <h4 class="lang-en">Major End-to-End Flows</h4>
-          <h4 class="lang-fa" style="display:none;">جریان‌های اصلی End-to-End</h4>
-          <div class="mermaid">sequenceDiagram
-  participant U as User
-  participant M as Auth Modal
-  participant O as OTP API
-  participant N as NextAuth
-  U->>M: enter phone
-  M->>O: request OTP
-  O-->>M: code sent
-  U->>M: submit OTP
-  M->>N: signIn credentials(otp)
-  N-->>U: authenticated session
+          <h4 class="lang-fa" style="display: none">
+            جریان‌های اصلی End-to-End
+          </h4>
+          <div class="mermaid">
+            sequenceDiagram participant U as User participant M as Auth Modal
+            participant O as OTP API participant N as NextAuth U->>M: enter
+            phone M->>O: request OTP O-->>M: code sent U->>M: submit OTP M->>N:
+            signIn credentials(otp) N-->>U: authenticated session
           </div>
 
-          <div class="mermaid">sequenceDiagram
-  participant U as User
-  participant C as Cart
-  participant A as Checkout Action
-  participant DB as Database
-  U->>C: add/edit items
-  U->>A: submit checkout
-  A->>DB: read prices/discounts/allergies
-  A->>A: recompute and validate
-  A->>DB: write order + order items
-  A-->>U: order confirmation
+          <div class="mermaid">
+            sequenceDiagram participant U as User participant C as Cart
+            participant A as Checkout Action participant DB as Database U->>C:
+            add/edit items U->>A: submit checkout A->>DB: read
+            prices/discounts/allergies A->>A: recompute and validate A->>DB:
+            write order + order items A-->>U: order confirmation
           </div>
 
           <h4 class="lang-en">Onboarding Timeline (Detailed)</h4>
-          <h4 class="lang-fa" style="display:none;">تقویم آنبوردینگ (جزئی)</h4>
+          <h4 class="lang-fa" style="display: none">تقویم آنبوردینگ (جزئی)</h4>
           <table>
-            <thead><tr><th>Timeline</th><th>Focus</th><th>Files to Read First</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Timeline</th>
+                <th>Focus</th>
+                <th>Files to Read First</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Day 1</td><td>Run app and understand auth/routing boundaries</td><td>app/layout.tsx, middleware.ts, lib/auth/*</td></tr>
-              <tr><td>Day 2</td><td>Checkout and order lifecycle</td><td>app/checkout/actions.ts, lib/server/orders.ts</td></tr>
-              <tr><td>Week 1</td><td>Dashboard and admin workflows</td><td>app/dashboard/*, app/admin/*, lib/server/*</td></tr>
-              <tr><td>Week 2</td><td>Data model and migrations</td><td>prisma/schema.prisma, prisma/migrations/*</td></tr>
-              <tr><td>Week 3</td><td>Security/performance hardening</td><td>lib/validation/*, auth and API route handlers</td></tr>
-              <tr><td>Month 1</td><td>Own one production feature end-to-end</td><td>domain-specific modules and actions</td></tr>
-              <tr><td>Month 2</td><td>Ship one infrastructure quality improvement</td><td>CI, logging, deployment docs</td></tr>
-              <tr><td>Month 3</td><td>Lead migration or architecture refinement</td><td>admin migration and ADR sections</td></tr>
+              <tr>
+                <td>Day 1</td>
+                <td>Run app and understand auth/routing boundaries</td>
+                <td>app/layout.tsx, middleware.ts, lib/auth/*</td>
+              </tr>
+              <tr>
+                <td>Day 2</td>
+                <td>Checkout and order lifecycle</td>
+                <td>app/checkout/actions.ts, lib/server/orders.ts</td>
+              </tr>
+              <tr>
+                <td>Week 1</td>
+                <td>Dashboard and admin workflows</td>
+                <td>app/dashboard/*, app/admin/*, lib/server/*</td>
+              </tr>
+              <tr>
+                <td>Week 2</td>
+                <td>Data model and migrations</td>
+                <td>prisma/schema.prisma, prisma/migrations/*</td>
+              </tr>
+              <tr>
+                <td>Week 3</td>
+                <td>Security/performance hardening</td>
+                <td>lib/validation/*, auth and API route handlers</td>
+              </tr>
+              <tr>
+                <td>Month 1</td>
+                <td>Own one production feature end-to-end</td>
+                <td>domain-specific modules and actions</td>
+              </tr>
+              <tr>
+                <td>Month 2</td>
+                <td>Ship one infrastructure quality improvement</td>
+                <td>CI, logging, deployment docs</td>
+              </tr>
+              <tr>
+                <td>Month 3</td>
+                <td>Lead migration or architecture refinement</td>
+                <td>admin migration and ADR sections</td>
+              </tr>
             </tbody>
           </table>
         </section>
 
         <section id="governance" class="section">
-          <h3 class="lang-en">25-27) Decision Records, Coding Standards, Glossary</h3>
-          <h3 class="lang-fa" style="display:none;">25-27) تصمیمات معماری، استاندارد کدنویسی، واژه‌نامه</h3>
+          <h3 class="lang-en">
+            25-27) Decision Records, Coding Standards, Glossary
+          </h3>
+          <h3 class="lang-fa" style="display: none">
+            25-27) تصمیمات معماری، استاندارد کدنویسی، واژه‌نامه
+          </h3>
 
           <details>
-            <summary class="lang-en">Architecture Decision Record (ADR) Snapshot</summary>
-            <summary class="lang-fa" style="display:none;">خلاصه ADR</summary>
+            <summary class="lang-en">
+              Architecture Decision Record (ADR) Snapshot
+            </summary>
+            <summary class="lang-fa" style="display: none">خلاصه ADR</summary>
             <ul class="lang-en">
-              <li>ADR-001: App Router + Server Actions as primary app architecture.</li>
-              <li>ADR-002: Auth.js OTP-first authentication for phone-centric UX.</li>
-              <li>ADR-003: Prisma + Postgres as transactional source of truth.</li>
-              <li>ADR-004: Progressive migration of legacy admin state to DB-backed services.</li>
+              <li>
+                ADR-001: App Router + Server Actions as primary app
+                architecture.
+              </li>
+              <li>
+                ADR-002: Auth.js OTP-first authentication for phone-centric UX.
+              </li>
+              <li>
+                ADR-003: Prisma + Postgres as transactional source of truth.
+              </li>
+              <li>
+                ADR-004: Progressive migration of legacy admin state to
+                DB-backed services.
+              </li>
             </ul>
-            <ul class="lang-fa" style="display:none;">
-              <li>ADR-001: انتخاب App Router + Server Action به‌عنوان معماری اصلی.</li>
-              <li>ADR-002: احراز هویت OTP-first با Auth.js برای UX موبایل‌محور.</li>
+            <ul class="lang-fa" style="display: none">
+              <li>
+                ADR-001: انتخاب App Router + Server Action به‌عنوان معماری اصلی.
+              </li>
+              <li>
+                ADR-002: احراز هویت OTP-first با Auth.js برای UX موبایل‌محور.
+              </li>
               <li>ADR-003: Prisma + Postgres به‌عنوان منبع حقیقت تراکنشی.</li>
-              <li>ADR-004: مهاجرت تدریجی state قدیمی ادمین به سرویس DB-backed.</li>
+              <li>
+                ADR-004: مهاجرت تدریجی state قدیمی ادمین به سرویس DB-backed.
+              </li>
             </ul>
           </details>
 
           <details>
             <summary class="lang-en">Coding Standards</summary>
-            <summary class="lang-fa" style="display:none;">استانداردهای کدنویسی</summary>
+            <summary class="lang-fa" style="display: none">
+              استانداردهای کدنویسی
+            </summary>
             <ul class="lang-en">
-              <li>TypeScript strict-first and explicit validation at boundaries.</li>
+              <li>
+                TypeScript strict-first and explicit validation at boundaries.
+              </li>
               <li>No business logic in presentational components.</li>
               <li>Server is source of truth for auth and monetary values.</li>
-              <li>All schema changes require migration notes and rollback plan.</li>
+              <li>
+                All schema changes require migration notes and rollback plan.
+              </li>
             </ul>
-            <ul class="lang-fa" style="display:none;">
+            <ul class="lang-fa" style="display: none">
               <li>TypeScript strict-first و اعتبارسنجی صریح روی مرزها.</li>
               <li>عدم قراردادن منطق دامنه در کامپوننت صرفاً نمایشی.</li>
               <li>سرور منبع حقیقت برای auth و مبالغ مالی است.</li>
-              <li>تغییرات schema نیازمند توضیح migration و برنامه rollback است.</li>
+              <li>
+                تغییرات schema نیازمند توضیح migration و برنامه rollback است.
+              </li>
             </ul>
           </details>
 
           <details>
             <summary class="lang-en">Glossary</summary>
-            <summary class="lang-fa" style="display:none;">واژه‌نامه</summary>
+            <summary class="lang-fa" style="display: none">واژه‌نامه</summary>
             <table>
-              <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Term</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
               <tbody>
-                <tr><td>Custom Sandwich</td><td>User-defined recipe with optional public publish</td></tr>
-                <tr><td>Recipe Hash</td><td>Deterministic hash for duplicate recipe detection</td></tr>
-                <tr><td>Rateable</td><td>User is allowed to rate only after purchase</td></tr>
-                <tr><td>Dual-write</td><td>Writing to old and new data stores during migration</td></tr>
+                <tr>
+                  <td>Custom Sandwich</td>
+                  <td>User-defined recipe with optional public publish</td>
+                </tr>
+                <tr>
+                  <td>Recipe Hash</td>
+                  <td>Deterministic hash for duplicate recipe detection</td>
+                </tr>
+                <tr>
+                  <td>Rateable</td>
+                  <td>User is allowed to rate only after purchase</td>
+                </tr>
+                <tr>
+                  <td>Dual-write</td>
+                  <td>Writing to old and new data stores during migration</td>
+                </tr>
               </tbody>
             </table>
           </details>
@@ -851,24 +1395,65 @@ npm start</code></pre>
         <section id="ai-analysis" class="section">
           <h3>AI Analysis (Architecture + Code Health)</h3>
           <table>
-            <thead><tr><th>Priority</th><th>Issue</th><th>Recommendation</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Priority</th>
+                <th>Issue</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td><span class="tag">Critical</span></td><td>No test automation across critical flows</td><td>Introduce test pyramid: unit, integration, E2E in CI immediately.</td></tr>
-              <tr><td><span class="tag">High</span></td><td>Split source of truth in admin domains</td><td>Complete DB-backed migration and remove legacy write/read paths.</td></tr>
-              <tr><td><span class="tag">High</span></td><td>Limited observability</td><td>Add structured logs, error tracking, and synthetic health checks.</td></tr>
-              <tr><td><span class="tag">Medium</span></td><td>Potential ranking bias in community feed</td><td>Version ranking formula and monitor business KPIs.</td></tr>
-              <tr><td><span class="tag">Medium</span></td><td>No centralized feature flagging</td><td>Implement config-driven feature gates for safer rollouts.</td></tr>
+              <tr>
+                <td><span class="tag">Critical</span></td>
+                <td>No test automation across critical flows</td>
+                <td>
+                  Introduce test pyramid: unit, integration, E2E in CI
+                  immediately.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="tag">High</span></td>
+                <td>Split source of truth in admin domains</td>
+                <td>
+                  Complete DB-backed migration and remove legacy write/read
+                  paths.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="tag">High</span></td>
+                <td>Limited observability</td>
+                <td>
+                  Add structured logs, error tracking, and synthetic health
+                  checks.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="tag">Medium</span></td>
+                <td>Potential ranking bias in community feed</td>
+                <td>Version ranking formula and monitor business KPIs.</td>
+              </tr>
+              <tr>
+                <td><span class="tag">Medium</span></td>
+                <td>No centralized feature flagging</td>
+                <td>
+                  Implement config-driven feature gates for safer rollouts.
+                </td>
+              </tr>
             </tbody>
           </table>
         </section>
 
         <section id="db-migration-roadmap" class="section">
           <h3 class="lang-en">Database Migration Roadmap (When Needed)</h3>
-          <h3 class="lang-fa" style="display:none;">نقشه راه مهاجرت دیتابیس (در صورت نیاز)</h3>
+          <h3 class="lang-fa" style="display: none">
+            نقشه راه مهاجرت دیتابیس (در صورت نیاز)
+          </h3>
 
           <div class="mode-beginner">
             <h4 class="lang-en">Safe 6-Step Migration Path</h4>
-            <h4 class="lang-fa" style="display:none;">مسیر امن 6 مرحله‌ای مهاجرت</h4>
+            <h4 class="lang-fa" style="display: none">
+              مسیر امن 6 مرحله‌ای مهاجرت
+            </h4>
             <ol class="lang-en">
               <li>Add schema changes in Prisma with backward compatibility.</li>
               <li>Create migration and apply in staging.</li>
@@ -877,7 +1462,7 @@ npm start</code></pre>
               <li>Switch writes fully to new schema.</li>
               <li>Remove legacy fields/tables in a later release.</li>
             </ol>
-            <ol class="lang-fa" style="display:none;">
+            <ol class="lang-fa" style="display: none">
               <li>تغییر schema را با سازگاری عقب‌رو در Prisma اضافه کنید.</li>
               <li>migration بسازید و روی staging اعمال کنید.</li>
               <li>کدی deploy کنید که هم فرم قدیم هم جدید را بخواند.</li>
@@ -887,24 +1472,58 @@ npm start</code></pre>
             </ol>
           </div>
 
-          <div class="mode-expert" style="display:none;">
+          <div class="mode-expert" style="display: none">
             <h4 class="lang-en">Operational Migration Matrix</h4>
-            <h4 class="lang-fa" style="display:none;">ماتریس عملیاتی مهاجرت</h4>
+            <h4 class="lang-fa" style="display: none">ماتریس عملیاتی مهاجرت</h4>
             <table>
-              <thead><tr><th>Phase</th><th>Action</th><th>Guardrail</th><th>Rollback</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Phase</th>
+                  <th>Action</th>
+                  <th>Guardrail</th>
+                  <th>Rollback</th>
+                </tr>
+              </thead>
               <tbody>
-                <tr><td>Expand</td><td>Add nullable columns / new tables</td><td>No breaking constraints</td><td>Revert code only</td></tr>
-                <tr><td>Migrate</td><td>Backfill and dual-read</td><td>Validation and row counts</td><td>Disable new readers</td></tr>
-                <tr><td>Switch</td><td>Flip writes to new model</td><td>Canary + metrics</td><td>Toggle write path back</td></tr>
-                <tr><td>Contract</td><td>Drop old columns/tables</td><td>Post-release stability window</td><td>Restore from backup snapshot</td></tr>
+                <tr>
+                  <td>Expand</td>
+                  <td>Add nullable columns / new tables</td>
+                  <td>No breaking constraints</td>
+                  <td>Revert code only</td>
+                </tr>
+                <tr>
+                  <td>Migrate</td>
+                  <td>Backfill and dual-read</td>
+                  <td>Validation and row counts</td>
+                  <td>Disable new readers</td>
+                </tr>
+                <tr>
+                  <td>Switch</td>
+                  <td>Flip writes to new model</td>
+                  <td>Canary + metrics</td>
+                  <td>Toggle write path back</td>
+                </tr>
+                <tr>
+                  <td>Contract</td>
+                  <td>Drop old columns/tables</td>
+                  <td>Post-release stability window</td>
+                  <td>Restore from backup snapshot</td>
+                </tr>
               </tbody>
             </table>
-            <div class="callout danger lang-en">Never run destructive schema drops in the same release as first-write switch unless you have verified backups and rollback drills.</div>
-            <div class="callout danger lang-fa" style="display:none;">حذف تخریبی schema را همزمان با اولین سوئیچ write اجرا نکنید مگر اینکه بکاپ معتبر و تمرین rollback داشته باشید.</div>
+            <div class="callout danger lang-en">
+              Never run destructive schema drops in the same release as
+              first-write switch unless you have verified backups and rollback
+              drills.
+            </div>
+            <div class="callout danger lang-fa" style="display: none">
+              حذف تخریبی schema را همزمان با اولین سوئیچ write اجرا نکنید مگر
+              اینکه بکاپ معتبر و تمرین rollback داشته باشید.
+            </div>
           </div>
 
           <h4 class="lang-en">Recommended Commands</h4>
-          <h4 class="lang-fa" style="display:none;">دستورات پیشنهادی</h4>
+          <h4 class="lang-fa" style="display: none">دستورات پیشنهادی</h4>
           <pre><code># create migration (dev)
 npm run db:migrate
 
@@ -919,18 +1538,36 @@ npm run db:reset</code></pre>
 
           <details>
             <summary class="lang-en">Migration Best Practices</summary>
-            <summary class="lang-fa" style="display:none;">بهترین‌رویه‌های Migration</summary>
+            <summary class="lang-fa" style="display: none">
+              بهترین‌رویه‌های Migration
+            </summary>
             <ul class="lang-en">
-              <li>Prefer additive changes first; remove columns only after a stable release window.</li>
+              <li>
+                Prefer additive changes first; remove columns only after a
+                stable release window.
+              </li>
               <li>Run backfill in idempotent batches with checkpoints.</li>
-              <li>Gate risky behavior changes behind feature flags when possible.</li>
-              <li>Attach rollback instructions to every production migration PR.</li>
+              <li>
+                Gate risky behavior changes behind feature flags when possible.
+              </li>
+              <li>
+                Attach rollback instructions to every production migration PR.
+              </li>
             </ul>
-            <ul class="lang-fa" style="display:none;">
-              <li>ابتدا تغییرات افزودنی را انجام دهید و حذف ستون را به نسخه بعدی موکول کنید.</li>
-              <li>backfill را به‌صورت batch و idempotent با checkpoint اجرا کنید.</li>
-              <li>تغییرات پرریسک را در صورت امکان پشت feature flag قرار دهید.</li>
-              <li>برای هر migration پروداکشن، راهنمای rollback را در PR ثبت کنید.</li>
+            <ul class="lang-fa" style="display: none">
+              <li>
+                ابتدا تغییرات افزودنی را انجام دهید و حذف ستون را به نسخه بعدی
+                موکول کنید.
+              </li>
+              <li>
+                backfill را به‌صورت batch و idempotent با checkpoint اجرا کنید.
+              </li>
+              <li>
+                تغییرات پرریسک را در صورت امکان پشت feature flag قرار دهید.
+              </li>
+              <li>
+                برای هر migration پروداکشن، راهنمای rollback را در PR ثبت کنید.
+              </li>
             </ul>
           </details>
         </section>
@@ -953,7 +1590,11 @@ npm run db:reset</code></pre>
         .filter(Boolean);
 
       if (window.mermaid) {
-        mermaid.initialize({ startOnLoad: true, securityLevel: "loose", theme: "dark" });
+        mermaid.initialize({
+          startOnLoad: true,
+          securityLevel: "loose",
+          theme: "dark",
+        });
       }
 
       function setLanguage(lang) {
@@ -1015,7 +1656,7 @@ npm run db:reset</code></pre>
             });
           });
         },
-        { rootMargin: "-40% 0px -50% 0px", threshold: 0.01 }
+        { rootMargin: "-40% 0px -50% 0px", threshold: 0.01 },
       );
 
       sections.forEach((s) => observer.observe(s));

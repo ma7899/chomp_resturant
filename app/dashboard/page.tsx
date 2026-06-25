@@ -45,22 +45,22 @@ export default async function DashboardOverview() {
           label="تعداد سفارش‌ها"
           value={stats.totalOrders.toLocaleString("fa-IR")}
         />
-        <Stat
+        {/* <Stat
           icon={<Wallet size={20} />}
           label="مجموع خرید"
           value={`${formatPrice(stats.totalSpent)} ت`}
-        />
+        /> */}
         <Stat
           icon={<ChefHat size={20} />}
           label="ساندویچ محبوب"
           value={stats.favorite ?? "—"}
         />
-        <Stat
+        {/* <Stat
           icon={<Users size={20} />}
           label="دعوت‌شده‌ها"
           value={referral.registered.toLocaleString("fa-IR")}
           hint={`نرخ تبدیل ${formatPercent(referral.conversionRate)}`}
-        />
+        /> */}
         <Stat
           icon={<MapPin size={20} />}
           label="آدرس‌ها"

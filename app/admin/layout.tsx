@@ -36,7 +36,7 @@ const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/admin/tags", label: "برچسب‌ها", icon: TagIcon },
   { href: "/admin/orders", label: "سفارش‌ها", icon: ClipboardList },
   { href: "/admin/discounts", label: "تخفیف‌ها", icon: Ticket },
-  { href: "/admin/combos", label: "کمبوها", icon: Boxes },
+  // { href: "/admin/combos", label: "کمبوها", icon: Boxes },
   { href: "/admin/customers", label: "مشتریان", icon: Users },
   { href: "/admin/referrals", label: "دعوت‌ها", icon: Share2 },
   { href: "/admin/reports", label: "گزارش‌ها", icon: FileBarChart },
