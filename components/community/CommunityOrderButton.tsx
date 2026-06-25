@@ -24,27 +24,16 @@ export default function CommunityOrderButton({
   const openCart = useCart((s) => s.open);
 
   function order() {
-    if (sandwich.baseSlug) {
-      // Based on a menu sandwich → reuse the normal cart line so pricing and
-      // checkout work exactly like the builder, but preserve the saved/public
-      // sandwich name in the cart UI.
-      addItem({
-        sandwichSlug: sandwich.baseSlug,
-        toppingIds: sandwich.ingredientIds,
-        qty: 1,
-        customName: sandwich.name,
-      });
-    } else {
-      // From-scratch recipe → carry its own price + name as a custom line.
-      addItem({
-        sandwichSlug: "custom",
-        toppingIds: sandwich.ingredientIds,
-        qty: 1,
-        customSandwichId: sandwich.id,
-        customName: sandwich.name,
-        customPrice: sandwich.basePrice,
-      });
-    }
+    // Always pass customSandwichId so the order item stays linked to this
+    // community sandwich (enables rating + aggregate updates after delivery).
+    addItem({
+      sandwichSlug: sandwich.baseSlug ?? "custom",
+      toppingIds: sandwich.ingredientIds,
+      qty: 1,
+      customSandwichId: sandwich.id,
+      customName: sandwich.name,
+      customPrice: sandwich.basePrice,
+    });
     openCart();
   }
 

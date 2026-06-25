@@ -96,6 +96,7 @@ export async function rateSandwichAction(raw: unknown): Promise<RateResult> {
   if (result.ok) {
     revalidatePath("/community");
     if (customSandwichId) revalidatePath(`/community/${customSandwichId}`);
+    if (menuSandwichSlug) revalidatePath(`/menu/${menuSandwichSlug}`);
     revalidatePath("/dashboard/orders");
   }
   return result;
@@ -139,6 +140,7 @@ export async function deleteSandwichRatingAction(
   if (result.ok) {
     revalidatePath("/community");
     if (customSandwichId) revalidatePath(`/community/${customSandwichId}`);
+    if (menuSandwichSlug) revalidatePath(`/menu/${menuSandwichSlug}`);
     revalidatePath("/dashboard/orders");
   }
   return result;

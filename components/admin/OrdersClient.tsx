@@ -134,9 +134,7 @@ function OrderRow({ o }: { o: OrdersClientProps["orders"][0] }) {
           disabled={pending}
         />
       </div>
-      {error && (
-        <p className="text-xs text-red-600 px-4 pb-2">{error}</p>
-      )}
+      {error && <p className="text-xs text-red-600 px-4 pb-2">{error}</p>}
 
       {open && (
         <div className="border-t border-ink-100 bg-ink-50/30 p-4 space-y-3">

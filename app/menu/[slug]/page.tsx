@@ -1,39 +1,26 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ArrowLeft, ChefHat, Plus, Star } from "lucide-react";
-import { formatPrice, useSandwiches, useTags } from "@/lib/menu";
-import ItemReviews from "@/components/ItemReviews";
-import { useMemo } from "react";
+import { formatPrice, formatDateFa } from "@/lib/format";
+import { prisma } from "@/lib/db";
+import { getMenuSandwichReviews } from "@/lib/server/ratings";
 
-export default function SandwichDetailPage() {
-  const params = useParams<{ slug: string }>();
-  const slug = params?.slug as string;
-  const sandwiches = useSandwiches();
-  const tags = useTags();
+export const dynamic = "force-dynamic";
 
-  const s = useMemo(
-    () => sandwiches.find((x) => x.slug === slug),
-    [sandwiches, slug],
-  );
+export default async function SandwichDetailPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const slug = params.slug;
 
-  if (sandwiches.length > 0 && !s) {
-    // Render a not-found state without breaking SSR (component is client).
-    return (
-      <div className="container-x py-20 text-center">
-        <h1 className="heading text-2xl font-black">آیتم پیدا نشد</h1>
-        <Link href="/menu" className="btn-primary mt-6 inline-flex">
-          بازگشت به منو
-        </Link>
-      </div>
-    );
-  }
+  const [s, { reviews, averageRating, totalRatings }] = await Promise.all([
+    prisma.sandwich.findUnique({ where: { slug }, include: { tags: true } }),
+    getMenuSandwichReviews(slug),
+  ]);
 
-  if (!s) return null;
-
-  const itemTags = tags.filter((t) => s.tagIds.includes(t.id));
+  if (!s) notFound();
 
   return (
     <div className="container-x py-10 md:py-16">
@@ -65,19 +52,27 @@ export default function SandwichDetailPage() {
         <div className="space-y-6">
           <div>
             <span className="chip mb-3">ساندویچ امضایی</span>
-            <h1 className="heading text-3xl md:text-5xl font-black">
-              {s.name}
-            </h1>
+            <h1 className="heading text-3xl md:text-5xl font-black">{s.name}</h1>
             <p className="text-brand-600 font-medium mt-2">{s.tagline}</p>
           </div>
 
+          {totalRatings > 0 && (
+            <div className="inline-flex items-center gap-1.5 text-sm text-amber-600 font-semibold">
+              <Star size={16} className="fill-amber-400 text-amber-400" />
+              {averageRating.toFixed(1)}
+              <span className="text-ink-400 font-normal">
+                ({totalRatings.toLocaleString("fa-IR")} نظر)
+              </span>
+            </div>
+          )}
+
           <p className="text-ink-600 leading-8 text-[15px]">{s.description}</p>
 
-          {itemTags.length > 0 && (
+          {s.tags.length > 0 && (
             <div>
               <h3 className="text-xs font-bold text-ink-500 mb-2">برچسب‌ها</h3>
               <div className="flex flex-wrap gap-2">
-                {itemTags.map((t) => (
+                {s.tags.map((t) => (
                   <span
                     key={t.id}
                     className="px-3 py-1 text-xs font-medium rounded-full bg-brand-50 text-brand-700 border border-brand-100">
@@ -121,7 +116,77 @@ export default function SandwichDetailPage() {
         </div>
       </div>
 
-      <ItemReviews itemType="sandwich" itemId={s.slug} />
+      {/* Reviews section — read-only; users rate from My Orders after delivery */}
+      <section className="mt-12">
+        <header className="flex items-end justify-between flex-wrap gap-3 mb-6">
+          <div>
+            <h2 className="heading text-2xl font-black">نظرات مشتریان</h2>
+            <p className="text-sm text-ink-500 mt-1">
+              {totalRatings > 0
+                ? `${totalRatings.toLocaleString("fa-IR")} امتیاز — میانگین ${averageRating.toFixed(1)} از ۵`
+                : "هنوز نظری ثبت نشده. پس از دریافت سفارش از «سفارش‌های من» نظر بده!"}
+            </p>
+          </div>
+          {totalRatings > 0 && (
+            <div className="inline-flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <Star
+                  key={n}
+                  size={16}
+                  className={
+                    n <= Math.round(averageRating)
+                      ? "fill-amber-400 text-amber-400"
+                      : "text-ink-200 fill-ink-200"
+                  }
+                />
+              ))}
+            </div>
+          )}
+        </header>
+
+        {reviews.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-ink-200 p-8 text-center text-ink-400">
+            فعلاً نظری ثبت نشده است. پس از دریافت سفارش از بخش «سفارش‌های من» نظر بدهید.
+          </div>
+        ) : (
+          <ul className="space-y-4">
+            {reviews.map((r) => (
+              <li
+                key={r.id}
+                className="rounded-2xl bg-white border border-ink-100 p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+                      {(r.user.name || "؟").slice(0, 1)}
+                    </span>
+                    <div>
+                      <div className="font-bold text-sm">{r.user.name || "کاربر"}</div>
+                      <div className="text-[11px] text-ink-400 tabular">
+                        {formatDateFa(r.createdAt)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <Star
+                        key={n}
+                        size={14}
+                        className={
+                          n <= r.rating
+                            ? "fill-amber-400 text-amber-400"
+                            : "text-ink-200 fill-ink-200"
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-ink-700 mt-3 leading-7">{r.review}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
+

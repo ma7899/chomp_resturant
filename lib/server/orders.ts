@@ -70,7 +70,10 @@ export async function listAllOrders() {
 }
 
 /** Admin: Update order status. */
-export async function updateOrderStatus(id: string, status: import("@prisma/client").OrderStatus) {
+export async function updateOrderStatus(
+  id: string,
+  status: import("@prisma/client").OrderStatus,
+) {
   return prisma.order.update({ where: { id }, data: { status } });
 }
 

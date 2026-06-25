@@ -20,7 +20,7 @@ export async function getRateableForUser(userId: string) {
   const orders = await prisma.order.findMany({
     where: {
       userId,
-      status: { not: "CANCELLED" },
+      status: "DELIVERED",
     },
     orderBy: { createdAt: "desc" },
     include: { items: true },
@@ -275,4 +275,26 @@ export async function getSandwichReviews(customSandwichId: string) {
     take: 20,
     include: { user: { select: { name: true } } },
   });
+}
+
+/** Reviews and avg rating for a menu sandwich detail page. */
+export async function getMenuSandwichReviews(slug: string) {
+  const [rows, agg] = await Promise.all([
+    prisma.sandwichRating.findMany({
+      where: { menuSandwichSlug: slug, review: { not: null } },
+      orderBy: { createdAt: "desc" },
+      take: 30,
+      include: { user: { select: { name: true } } },
+    }),
+    prisma.sandwichRating.aggregate({
+      where: { menuSandwichSlug: slug },
+      _avg: { rating: true },
+      _count: { rating: true },
+    }),
+  ]);
+  return {
+    reviews: rows,
+    averageRating: agg._avg.rating ?? 0,
+    totalRatings: agg._count.rating,
+  };
 }
