@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Card } from "@/components/admin/AdminUI";
 import { StatusPill } from "@/components/admin/StatusPill";
 import { formatPrice } from "@/lib/format";
+import { changeOrderStatusAction } from "@/app/admin/actions";
 import type { OrderStatus } from "@prisma/client";
 
 const STATUSES: OrderStatus[] = ["NEW", "PREPARING", "DELIVERED", "CANCELLED"];
@@ -86,6 +87,23 @@ function pill(active: boolean) {
 
 function OrderRow({ o }: { o: OrdersClientProps["orders"][0] }) {
   const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState<OrderStatus>(o.status);
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  function handleStatusChange(next: OrderStatus) {
+    if (next === status) return;
+    setError(null);
+    startTransition(async () => {
+      const res = await changeOrderStatusAction(o.id, next);
+      if (res.ok) {
+        setStatus(next);
+      } else {
+        setError(res.error);
+      }
+    });
+  }
+
   return (
     <Card className="!p-0 overflow-hidden">
       <div className="flex items-center gap-3 p-4 flex-wrap">
@@ -110,8 +128,15 @@ function OrderRow({ o }: { o: OrdersClientProps["orders"][0] }) {
           <span className="text-ink-500">مبلغ: </span>
           <span className="price text-brand-700">{formatPrice(o.total)} ت</span>
         </div>
-        <StatusPill status={o.status} />
+        <StatusSelect
+          value={status}
+          onChange={handleStatusChange}
+          disabled={pending}
+        />
       </div>
+      {error && (
+        <p className="text-xs text-red-600 px-4 pb-2">{error}</p>
+      )}
 
       {open && (
         <div className="border-t border-ink-100 bg-ink-50/30 p-4 space-y-3">
@@ -178,5 +203,43 @@ function Info({ label, value }: { label: string; value: string }) {
       <div className="text-[10px] text-ink-400">{label}</div>
       <div className="font-medium mt-0.5 leading-6 break-words">{value}</div>
     </div>
+  );
+}
+
+const STATUS_LABELS: Record<OrderStatus, string> = {
+  NEW: "جدید",
+  PREPARING: "در حال آماده‌سازی",
+  DELIVERED: "تحویل داده شده",
+  CANCELLED: "لغو شده",
+};
+
+const STATUS_COLORS: Record<OrderStatus, string> = {
+  NEW: "border-blue-300 bg-blue-50 text-blue-700",
+  PREPARING: "border-yellow-300 bg-yellow-50 text-yellow-700",
+  DELIVERED: "border-green-300 bg-green-50 text-green-700",
+  CANCELLED: "border-red-300 bg-red-50 text-red-700",
+};
+
+function StatusSelect({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: OrderStatus;
+  onChange: (s: OrderStatus) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <select
+      value={value}
+      disabled={disabled}
+      onChange={(e) => onChange(e.target.value as OrderStatus)}
+      className={`text-xs font-bold rounded-full px-3 py-1.5 border cursor-pointer appearance-none outline-none transition disabled:opacity-60 ${STATUS_COLORS[value]}`}>
+      {STATUSES.map((s) => (
+        <option key={s} value={s}>
+          {STATUS_LABELS[s]}
+        </option>
+      ))}
+    </select>
   );
 }

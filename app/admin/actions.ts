@@ -28,6 +28,8 @@ import {
   categorySchema,
   comboSchema,
 } from "@/lib/validation/admin";
+import { updateOrderStatus } from "@/lib/server/orders";
+import type { OrderStatus } from "@prisma/client";
 
 type Result = { ok: true } | { ok: false; error: string };
 
@@ -165,4 +167,20 @@ export async function removeCustomerDiscountAction(
   await removeDiscountFromCustomer(customerId, discountId);
   revalidatePath(`/admin/customers/${customerId}`);
   return { ok: true };
+}
+
+/* ───────── Orders ───────── */
+
+export async function changeOrderStatusAction(
+  orderId: string,
+  status: OrderStatus,
+): Promise<Result> {
+  try {
+    await requireAdmin();
+    await updateOrderStatus(orderId, status);
+    revalidatePath("/admin/orders");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: "خطا در به‌روزرسانی وضعیت سفارش." };
+  }
 }

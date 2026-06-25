@@ -69,6 +69,11 @@ export async function listAllOrders() {
   });
 }
 
+/** Admin: Update order status. */
+export async function updateOrderStatus(id: string, status: import("@prisma/client").OrderStatus) {
+  return prisma.order.update({ where: { id }, data: { status } });
+}
+
 /** Lightweight spend/summary stats for the customer dashboard overview. */
 export async function getUserOrderStats(userId: string) {
   const orders = await prisma.order.findMany({
