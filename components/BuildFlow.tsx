@@ -126,11 +126,17 @@ export default function BuildFlow({
 
   const submit = () => {
     if (sandwich) {
+      // If a saved/community sandwich with a base was selected, include customSandwichId
+      // so the order item stays linked to it (enables rating after delivery)
       addItem({
         sandwichSlug: sandwich.slug,
         toppingIds: toppings,
         qty,
         customName: selectedSavedName || undefined,
+        ...(selectedSavedId && {
+          customSandwichId: selectedSavedId,
+          customPrice: total / qty,
+        }),
       });
     } else {
       addItem({

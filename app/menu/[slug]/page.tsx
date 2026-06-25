@@ -25,9 +25,13 @@ export default async function SandwichDetailPage({
   return (
     <div className="container-x py-10 md:py-16">
       <nav className="text-xs text-ink-500 mb-6 flex items-center gap-2">
-        <Link href="/" className="hover:text-brand-600">خانه</Link>
+        <Link href="/" className="hover:text-brand-600">
+          خانه
+        </Link>
         <span>›</span>
-        <Link href="/menu" className="hover:text-brand-600">منو</Link>
+        <Link href="/menu" className="hover:text-brand-600">
+          منو
+        </Link>
         <span>›</span>
         <span className="text-ink-700">{s.name}</span>
       </nav>
@@ -52,7 +56,9 @@ export default async function SandwichDetailPage({
         <div className="space-y-6">
           <div>
             <span className="chip mb-3">ساندویچ امضایی</span>
-            <h1 className="heading text-3xl md:text-5xl font-black">{s.name}</h1>
+            <h1 className="heading text-3xl md:text-5xl font-black">
+              {s.name}
+            </h1>
             <p className="text-brand-600 font-medium mt-2">{s.tagline}</p>
           </div>
 
@@ -146,7 +152,8 @@ export default async function SandwichDetailPage({
 
         {reviews.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-ink-200 p-8 text-center text-ink-400">
-            فعلاً نظری ثبت نشده است. پس از دریافت سفارش از بخش «سفارش‌های من» نظر بدهید.
+            فعلاً نظری ثبت نشده است. پس از دریافت سفارش از بخش «سفارش‌های من»
+            نظر بدهید.
           </div>
         ) : (
           <ul className="space-y-4">
@@ -160,7 +167,9 @@ export default async function SandwichDetailPage({
                       {(r.user.name || "؟").slice(0, 1)}
                     </span>
                     <div>
-                      <div className="font-bold text-sm">{r.user.name || "کاربر"}</div>
+                      <div className="font-bold text-sm">
+                        {r.user.name || "کاربر"}
+                      </div>
                       <div className="text-[11px] text-ink-400 tabular">
                         {formatDateFa(r.createdAt)}
                       </div>
@@ -180,7 +189,9 @@ export default async function SandwichDetailPage({
                     ))}
                   </div>
                 </div>
-                <p className="text-sm text-ink-700 mt-3 leading-7">{r.review}</p>
+                <p className="text-sm text-ink-700 mt-3 leading-7">
+                  {r.review}
+                </p>
               </li>
             ))}
           </ul>
@@ -189,4 +200,3 @@ export default async function SandwichDetailPage({
     </div>
   );
 }
-
